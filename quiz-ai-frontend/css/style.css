@@ -1,0 +1,149 @@
+/* ===== Fonts ===== */
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+.font-body, body {
+  font-family: 'Inter', sans-serif;
+}
+.font-mono {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ===== Pipeline rail ===== */
+.rail-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #1E2536;
+  color: #8B93A7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.rail-dot.active {
+  background: #E8A33D;
+  color: #0F1420;
+}
+.rail-dot.done {
+  background: #4FD1B5;
+  color: #0F1420;
+}
+.rail-label {
+  color: #8B93A7;
+  white-space: nowrap;
+}
+.rail-label.active {
+  color: #EDEFF5;
+}
+.rail-line {
+  flex: 1;
+  height: 1px;
+  background: #2A3145;
+  margin: 0 8px;
+}
+.rail-step:last-child .rail-line {
+  display: none;
+}
+
+/* ===== Cards ===== */
+.panel-card {
+  background: #171D2E;
+  border: 1px solid #232B40;
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.summary-card {
+  background: rgba(79, 209, 181, 0.08);
+  border: 1px solid rgba(79, 209, 181, 0.25);
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.score-card {
+  background: rgba(79, 209, 181, 0.08);
+  border: 1px solid rgba(79, 209, 181, 0.25);
+  border-radius: 14px;
+  padding: 2rem;
+}
+
+/* ===== Drop zone ===== */
+.drop-zone {
+  display: block;
+  border: 1.5px dashed #2A3145;
+  border-radius: 12px;
+  padding: 2rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.drop-zone:hover {
+  border-color: #E8A33D;
+  background: rgba(232, 163, 61, 0.05);
+}
+.drop-zone i {
+  font-size: 24px;
+  color: #8B93A7;
+}
+
+/* ===== Buttons ===== */
+.btn-primary {
+  background: #E8A33D;
+  color: #171016;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  padding: 0.85rem 1.5rem;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.05s ease;
+}
+.btn-primary:hover {
+  background: #f0b25c;
+}
+.btn-primary:active {
+  transform: scale(0.98);
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== Quiz options ===== */
+.quiz-option {
+  display: block;
+  font-size: 13px;
+  padding: 8px 0;
+  color: #B7BDCC;
+  cursor: pointer;
+}
+.quiz-option input {
+  margin-right: 8px;
+}
+.quiz-option.correct {
+  color: #4FD1B5;
+}
+.quiz-option.incorrect {
+  color: #E24B4A;
+}
+
+/* ===== Loader ===== */
+.loader-spin {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #2A3145;
+  border-top-color: #E8A33D;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.hidden {
+  display: none;
+}

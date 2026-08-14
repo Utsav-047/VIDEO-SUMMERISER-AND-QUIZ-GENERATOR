@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SummarizeAI — Turn videos into summaries and quizzes</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "on-primary-fixed": "#00174b",
+          "inverse-primary": "#b4c5ff",
+          "secondary-fixed": "#d3e4fe",
+          "on-tertiary-container": "#eff1f3",
+          "on-tertiary-fixed-variant": "#444749",
+          "surface-bright": "#f9f9ff",
+          "outline": "#737686",
+          "on-background": "#111c2d",
+          "secondary": "#505f76",
+          "surface-container-highest": "#d8e3fb",
+          "on-secondary-fixed-variant": "#38485d",
+          "on-primary-fixed-variant": "#003ea8",
+          "inverse-surface": "#263143",
+          "primary-container": "#2563eb",
+          "surface": "#f9f9ff",
+          "surface-dim": "#cfdaf2",
+          "on-secondary-fixed": "#0b1c30",
+          "outline-variant": "#c3c6d7",
+          "on-surface-variant": "#434655",
+          "primary": "#004ac6",
+          "on-surface": "#111c2d",
+          "tertiary": "#525657",
+          "on-tertiary": "#ffffff",
+          "secondary-container": "#d0e1fb",
+          "on-error-container": "#93000a",
+          "surface-variant": "#d8e3fb",
+          "error": "#ba1a1a",
+          "tertiary-fixed": "#e0e3e5",
+          "on-secondary-container": "#54647a",
+          "surface-container-high": "#dee8ff",
+          "tertiary-fixed-dim": "#c4c7c9",
+          "surface-container": "#e7eeff",
+          "background": "#f9f9ff",
+          "secondary-fixed-dim": "#b7c8e1",
+          "on-primary-container": "#eeefff",
+          "primary-fixed-dim": "#b4c5ff",
+          "inverse-on-surface": "#ecf1ff",
+          "error-container": "#ffdad6",
+          "on-error": "#ffffff",
+          "surface-container-low": "#f0f3ff",
+          "tertiary-container": "#6b6e70",
+          "surface-container-lowest": "#ffffff",
+          "on-secondary": "#ffffff",
+          "on-primary": "#ffffff",
+          "primary-fixed": "#dbe1ff",
+          "surface-tint": "#0053db",
+          "on-tertiary-fixed": "#191c1e"
+        },
+        borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+        spacing: {
+          "container-padding-mobile": "20px",
+          base: "8px",
+          gutter: "24px",
+          "stack-md": "24px",
+          "container-padding-desktop": "40px",
+          "stack-sm": "12px",
+          "stack-lg": "48px"
+        },
+        fontFamily: {
+          "body-sm": ["Inter"], "label-sm": ["Geist"], "label-md": ["Geist"],
+          "body-md": ["Inter"], "body-lg": ["Inter"], "headline-md": ["Geist"],
+          "headline-lg": ["Geist"], "headline-lg-mobile": ["Geist"]
+        },
+        fontSize: {
+          "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+          "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }],
+          "label-md": ["14px", { lineHeight: "20px", letterSpacing: "0.02em", fontWeight: "500" }],
+          "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+          "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+          "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "500" }],
+          "headline-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "600" }],
+          "headline-lg-mobile": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .soft-shadow { box-shadow: 0 10px 40px -10px rgba(0, 74, 198, 0.08); }
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+</style>
+</head>
+<body class="bg-background text-on-surface antialiased font-sans">
+
+<!-- Navigation -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto h-16 bg-surface shadow-sm">
+  <div class="flex items-center gap-2">
+    <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">movie_filter</span>
+    <span class="font-headline-md text-headline-md font-bold text-primary">SummarizeAI</span>
+  </div>
+  <nav class="hidden md:flex items-center gap-gutter">
+    <a class="font-label-md text-label-md text-primary border-b-2 border-primary pb-1" href="#features">Features</a>
+    <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#how-it-works">How it works</a>
+  </nav>
+  <div class="flex items-center gap-stack-sm">
+    <a href="login.html" class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors px-3 py-2 hidden sm:inline-block">Log in</a>
+    <a href="register.html" class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors shadow-sm">
+      Get started
+    </a>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="pt-24 pb-16 px-container-padding-mobile md:px-container-padding-desktop max-w-[1200px] mx-auto flex flex-col gap-stack-lg">
+
+  <!-- Hero Section -->
+  <section class="flex flex-col md:flex-row items-center gap-gutter min-h-[70vh]">
+    <div class="flex-1 flex flex-col gap-stack-md text-center md:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-low text-primary w-fit mx-auto md:mx-0 border border-surface-variant">
+        <span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+        <span class="font-label-sm text-label-sm uppercase">AI-Powered Learning</span>
+      </div>
+      <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">
+        Turn any video into a summary and a quiz, instantly.
+      </h1>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mx-auto md:mx-0">
+        Paste a YouTube link or upload a file. Our AI transcribes the audio, writes a concise summary, and builds a quiz to test what you actually remember.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start mt-4">
+        <a href="register.html" class="w-full sm:w-auto bg-primary text-on-primary px-6 py-3 rounded-lg font-label-md text-label-md hover:bg-on-primary-fixed hover:text-inverse-primary transition-all duration-300 shadow-sm flex items-center justify-center gap-2">
+          Start for free
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </a>
+        <a href="dashboard.html" class="w-full sm:w-auto bg-surface-container-lowest text-on-surface border border-outline-variant px-6 py-3 rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-all duration-300 flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">play_circle</span>
+          Try the demo
+        </a>
+      </div>
+    </div>
+
+    <!-- Hero Visual -->
+    <div class="flex-1 w-full relative">
+      <div class="absolute inset-0 bg-primary/5 rounded-[24px] transform rotate-3 scale-105 -z-10"></div>
+      <div class="bg-surface-container-lowest rounded-xl border border-surface-variant shadow-lg soft-shadow overflow-hidden relative">
+        <div class="h-10 bg-surface-container border-b border-surface-variant flex items-center px-4 gap-2">
+          <div class="w-3 h-3 rounded-full bg-error/80"></div>
+          <div class="w-3 h-3 rounded-full bg-secondary-fixed-dim/80"></div>
+          <div class="w-3 h-3 rounded-full bg-outline-variant/80"></div>
+        </div>
+        <div class="flex flex-col md:flex-row p-4 gap-4">
+          <!-- Transcript / Summary side -->
+          <div class="flex-1 flex flex-col gap-2">
+            <div class="aspect-video bg-surface-container-high rounded-lg relative overflow-hidden flex items-center justify-center">
+              <span class="material-symbols-outlined text-[48px] text-outline-variant">smart_display</span>
+              <div class="absolute bottom-2 left-2 right-2 bg-surface-container-highest/90 backdrop-blur-sm rounded h-1 flex items-center">
+                <div class="h-full bg-primary rounded w-[65%]"></div>
+              </div>
+            </div>
+            <div class="bg-surface-container-low p-3 rounded-lg border border-surface-variant">
+              <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                <strong class="text-on-surface">AI Summary:</strong> Neural networks are layered systems of weighted connections trained via backpropagation...
+              </p>
+            </div>
+          </div>
+          <!-- Quiz Sidebar -->
+          <div class="w-full md:w-64 flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b border-surface-variant pb-2">
+              <span class="font-label-md text-label-md text-on-surface">Knowledge check</span>
+              <span class="font-label-sm text-label-sm text-primary bg-primary-container/20 px-2 py-0.5 rounded">1/5</span>
+            </div>
+            <p class="font-body-sm text-body-sm text-on-surface font-medium">What adjusts the weights during training?</p>
+            <div class="flex flex-col gap-2">
+              <div class="p-2 border-2 border-primary bg-primary/5 rounded-lg flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full border border-primary bg-primary flex items-center justify-center">
+                  <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                </div>
+                <span class="font-body-sm text-body-sm text-on-surface">Backpropagation</span>
+              </div>
+              <div class="p-2 border border-outline-variant rounded-lg flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full border border-outline-variant"></div>
+                <span class="font-body-sm text-body-sm text-on-surface-variant">Forward pass</span>
+              </div>
+              <div class="p-2 border border-outline-variant rounded-lg flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full border border-outline-variant"></div>
+                <span class="font-body-sm text-body-sm text-on-surface-variant">Activation function</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how-it-works" class="py-stack-md border-y border-surface-variant/50">
+    <p class="text-center font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-6">How it works</p>
+    <div class="flex flex-col md:flex-row justify-center gap-8 md:gap-16">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary text-[28px]">link</span>
+        <span class="font-label-md text-label-md text-on-surface">1. Paste a link or upload a video</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary text-[28px]">graphic_eq</span>
+        <span class="font-label-md text-label-md text-on-surface">2. AI transcribes and summarizes it</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary text-[28px]">quiz</span>
+        <span class="font-label-md text-label-md text-on-surface">3. Take the auto-generated quiz</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section id="features" class="py-stack-lg">
+    <div class="text-center mb-stack-lg">
+      <h2 class="font-headline-md text-headline-md text-on-surface mb-2">Designed for cognitive ease</h2>
+      <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Extract the signal from the noise. We automate the heavy lifting of processing long-form video content.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+      <div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-6 soft-shadow hover:-translate-y-1 transition-transform duration-300 flex flex-col items-start gap-4">
+        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">subject</span>
+        </div>
+        <h3 class="font-headline-md text-headline-md text-[20px] text-on-surface">Smart summaries</h3>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">
+          Our AI transcribes the full video with Whisper, then condenses it into a clear, structured summary — skip the filler, keep the core ideas.
+        </p>
+      </div>
+      <div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-6 soft-shadow hover:-translate-y-1 transition-transform duration-300 flex flex-col items-start gap-4">
+        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">quiz</span>
+        </div>
+        <h3 class="font-headline-md text-headline-md text-[20px] text-on-surface">Interactive quizzes</h3>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">
+          Multiple-choice questions generated directly from the video content, so you can test what you actually retained.
+        </p>
+      </div>
+      <div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-6 soft-shadow hover:-translate-y-1 transition-transform duration-300 flex flex-col items-start gap-4">
+        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">schedule</span>
+        </div>
+        <h3 class="font-headline-md text-headline-md text-[20px] text-on-surface">Time-saving</h3>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">
+          Turn a 30-minute lecture into a 30-second read plus a 2-minute quiz. Learn the same material in a fraction of the time.
+        </p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="w-full py-stack-lg px-container-padding-desktop flex flex-col items-center gap-stack-md bg-surface-dim border-t border-outline-variant mt-stack-lg">
+  <div class="flex items-center gap-2 mb-4">
+    <span class="material-symbols-outlined text-on-surface" style="font-variation-settings: 'FILL' 1;">movie_filter</span>
+    <span class="font-headline-md text-headline-md text-on-surface font-bold">SummarizeAI</span>
+  </div>
+  <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">
+    A college project — AI Video Summarizer and Quiz Generator.
+  </p>
+</footer>
+
+</body>
+</html>

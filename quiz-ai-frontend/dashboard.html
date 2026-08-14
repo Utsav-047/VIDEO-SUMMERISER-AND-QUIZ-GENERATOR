@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SummarizeAI — Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "on-primary-fixed": "#00174b", "inverse-primary": "#b4c5ff", "secondary-fixed": "#d3e4fe",
+          "on-tertiary-container": "#eff1f3", "on-tertiary-fixed-variant": "#444749", "surface-bright": "#f9f9ff",
+          "outline": "#737686", "on-background": "#111c2d", "secondary": "#505f76",
+          "surface-container-highest": "#d8e3fb", "on-secondary-fixed-variant": "#38485d",
+          "on-primary-fixed-variant": "#003ea8", "inverse-surface": "#263143", "primary-container": "#2563eb",
+          "surface": "#f9f9ff", "surface-dim": "#cfdaf2", "on-secondary-fixed": "#0b1c30",
+          "outline-variant": "#c3c6d7", "on-surface-variant": "#434655", "primary": "#004ac6",
+          "on-surface": "#111c2d", "tertiary": "#525657", "on-tertiary": "#ffffff",
+          "secondary-container": "#d0e1fb", "on-error-container": "#93000a", "surface-variant": "#d8e3fb",
+          "error": "#ba1a1a", "tertiary-fixed": "#e0e3e5", "on-secondary-container": "#54647a",
+          "surface-container-high": "#dee8ff", "tertiary-fixed-dim": "#c4c7c9", "surface-container": "#e7eeff",
+          "background": "#f9f9ff", "secondary-fixed-dim": "#b7c8e1", "on-primary-container": "#eeefff",
+          "primary-fixed-dim": "#b4c5ff", "inverse-on-surface": "#ecf1ff", "error-container": "#ffdad6",
+          "on-error": "#ffffff", "surface-container-low": "#f0f3ff", "tertiary-container": "#6b6e70",
+          "surface-container-lowest": "#ffffff", "on-secondary": "#ffffff", "on-primary": "#ffffff",
+          "primary-fixed": "#dbe1ff", "surface-tint": "#0053db", "on-tertiary-fixed": "#191c1e",
+          "success": "#1a7a4c", "on-success-container": "#0a3d26", "success-container": "#d4f5e4"
+        },
+        borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+        spacing: {
+          "container-padding-mobile": "20px", base: "8px", gutter: "24px", "stack-md": "24px",
+          "container-padding-desktop": "40px", "stack-sm": "12px", "stack-lg": "48px"
+        },
+        fontFamily: {
+          "body-sm": ["Inter"], "label-sm": ["Geist"], "label-md": ["Geist"],
+          "body-md": ["Inter"], "body-lg": ["Inter"], "headline-md": ["Geist"],
+          "headline-lg": ["Geist"], "headline-lg-mobile": ["Geist"]
+        },
+        fontSize: {
+          "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+          "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }],
+          "label-md": ["14px", { lineHeight: "20px", letterSpacing: "0.02em", fontWeight: "500" }],
+          "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+          "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+          "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "500" }],
+          "headline-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "600" }],
+          "headline-lg-mobile": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .soft-shadow { box-shadow: 0 4px 20px rgba(0, 74, 198, 0.04); }
+  .inner-light { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 4px 12px rgba(0, 0, 0, 0.05); }
+
+  /* Pipeline rail */
+  .rail-dot {
+    width: 28px; height: 28px; border-radius: 9999px;
+    background: #d8e3fb; color: #737686;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; flex-shrink: 0;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  .rail-dot.active { background: #004ac6; color: #ffffff; }
+  .rail-dot.done { background: #1a7a4c; color: #ffffff; }
+  .rail-label { color: #737686; white-space: nowrap; }
+  .rail-label.active { color: #111c2d; font-weight: 500; }
+  .rail-line { flex: 1; height: 1px; background: #c3c6d7; margin: 0 8px; }
+  .rail-step:last-child .rail-line { display: none; }
+
+  .quiz-option { display: block; font-size: 14px; padding: 10px 12px; border: 1px solid #c3c6d7; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s ease; }
+  .quiz-option:hover { background: #f0f3ff; }
+  .quiz-option.correct { border-color: #1a7a4c; background: #d4f5e4; color: #0a3d26; }
+  .quiz-option.incorrect { border-color: #ba1a1a; background: #ffdad6; color: #93000a; }
+
+  .loader-spin {
+    width: 28px; height: 28px; border: 3px solid #d8e3fb; border-top-color: #004ac6;
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body class="font-body-md text-body-md bg-background text-on-surface flex h-screen overflow-hidden">
+
+<!-- Side Nav -->
+<aside class="fixed left-0 top-0 h-screen w-64 flex-col p-spacing-base gap-stack-sm bg-surface-container-low shadow-sm z-40 md:flex hidden">
+  <a href="landing.html" class="flex items-center gap-3 p-4 mb-4">
+    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary font-headline-md">S</div>
+    <div>
+      <h1 class="font-headline-md text-headline-md text-primary">SummarizeAI</h1>
+      <p class="font-body-sm text-body-sm text-on-surface-variant">Dashboard</p>
+    </div>
+  </a>
+  <nav class="flex-1 flex flex-col gap-2">
+    <span class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold">
+      <span class="material-symbols-outlined">video_library</span>
+      <span class="font-label-md text-label-md">New Summary</span>
+    </span>
+  </nav>
+  <div id="backendStatus" class="text-xs font-mono px-3 py-2 rounded-lg text-center" style="background:#e7eeff; color:#737686;">
+    Checking backend...
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 md:ml-64 h-full overflow-y-auto px-container-padding-mobile md:px-container-padding-desktop py-stack-md flex flex-col gap-stack-lg">
+
+  <header class="w-full max-w-[900px] mx-auto">
+    <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Welcome back</h2>
+    <p class="font-body-md text-body-md text-on-surface-variant mt-1">Paste a link below to get started.</p>
+  </header>
+
+  <div class="w-full max-w-[900px] mx-auto flex flex-col gap-stack-md">
+
+    <!-- Pipeline rail -->
+    <div class="flex items-center" id="pipelineRail">
+      <div class="rail-step flex-1" data-step="1">
+        <div class="flex items-center gap-2">
+          <div class="rail-dot active">1</div>
+          <span class="rail-label text-sm active">Upload</span>
+          <div class="rail-line"></div>
+        </div>
+      </div>
+      <div class="rail-step flex-1" data-step="2">
+        <div class="flex items-center gap-2">
+          <div class="rail-dot">2</div>
+          <span class="rail-label text-sm">Transcript</span>
+          <div class="rail-line"></div>
+        </div>
+      </div>
+      <div class="rail-step flex-1" data-step="3">
+        <div class="flex items-center gap-2">
+          <div class="rail-dot">3</div>
+          <span class="rail-label text-sm">Summary</span>
+          <div class="rail-line"></div>
+        </div>
+      </div>
+      <div class="rail-step" data-step="4">
+        <div class="flex items-center gap-2">
+          <div class="rail-dot">4</div>
+          <span class="rail-label text-sm">Quiz</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 1: Upload -->
+    <section id="panel-upload" class="bg-surface-container-lowest rounded-xl p-6 soft-shadow border border-outline-variant/30">
+      <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Summarize a new video</h3>
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1 relative">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">link</span>
+          <input id="ytLink" class="w-full pl-12 pr-4 py-4 rounded-lg bg-surface-bright border border-outline-variant/50 focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 font-body-md text-body-md text-on-surface placeholder:text-outline-variant inner-light" placeholder="Paste YouTube URL here..." type="url" value="https://www.youtube.com/watch?v=dQw4w9WgXcQ"/>
+        </div>
+        <button id="processBtn" class="py-4 px-8 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-all soft-shadow whitespace-nowrap flex items-center justify-center gap-2">
+          Generate
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- PANEL LOADING -->
+    <section id="panel-loading" class="hidden bg-surface-container-lowest rounded-xl p-8 soft-shadow border border-outline-variant/30 text-center">
+      <div class="loader-spin mx-auto mb-3"></div>
+      <p id="loaderText" class="font-body-md text-body-md text-on-surface-variant">Extracting audio track...</p>
+    </section>
+
+    <!-- PANEL 2: Transcript + Summary -->
+    <section id="panel-result" class="hidden flex flex-col gap-stack-md">
+      <div class="bg-surface-container-lowest rounded-xl p-6 soft-shadow border border-outline-variant/30">
+        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-3">Transcript</p>
+        <p id="transcriptText" class="font-body-sm text-body-sm text-on-surface-variant leading-6" style="max-height:220px; overflow-y:auto;"></p>
+      </div>
+      <div class="bg-secondary-container/40 rounded-xl p-6 soft-shadow border border-primary/20">
+        <p class="font-label-sm text-label-sm text-primary uppercase tracking-wider mb-3">AI summary</p>
+        <p id="summaryText" class="font-body-md text-body-md text-on-surface leading-7"></p>
+      </div>
+      <button id="toQuizBtn" class="py-4 px-8 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-all soft-shadow flex items-center justify-center gap-2">
+        Generate quiz
+        <span class="material-symbols-outlined">quiz</span>
+      </button>
+    </section>
+
+    <!-- PANEL 3: Quiz -->
+    <section id="panel-quiz" class="hidden flex flex-col gap-stack-md">
+      <div id="quizContainer" class="flex flex-col gap-4"></div>
+      <button id="submitQuizBtn" class="py-4 px-8 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-all soft-shadow">
+        Submit answers
+      </button>
+    </section>
+
+    <!-- PANEL: Score -->
+    <section id="panel-score" class="hidden bg-success-container rounded-xl p-8 soft-shadow border border-success/20 text-center">
+      <p class="font-label-sm text-label-sm text-on-success-container uppercase tracking-wider mb-1">Quiz complete</p>
+      <p id="scoreText" class="font-headline-lg text-headline-lg text-on-success-container">0 / 0</p>
+    </section>
+
+  </div>
+</main>
+
+<script src="js/dashboard.js"></script>
+</body>
+</html>
