@@ -164,6 +164,18 @@
           <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
         </button>
       </div>
+
+      <div class="flex items-center gap-4 my-5">
+        <div class="h-px flex-1 bg-outline-variant/40"></div>
+        <span class="font-label-sm text-label-sm text-outline">OR</span>
+        <div class="h-px flex-1 bg-outline-variant/40"></div>
+      </div>
+
+      <label for="fileInput" id="dropZone" class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-outline-variant rounded-lg py-8 cursor-pointer hover:border-primary hover:bg-surface-container-low transition-all">
+        <span class="material-symbols-outlined text-outline text-[32px]">upload_file</span>
+        <span id="dropZoneText" class="font-body-sm text-body-sm text-on-surface-variant">Click to upload a video file, or drag one here</span>
+        <input type="file" id="fileInput" accept="video/*" class="hidden"/>
+      </label>
     </section>
 
     <!-- PANEL LOADING -->

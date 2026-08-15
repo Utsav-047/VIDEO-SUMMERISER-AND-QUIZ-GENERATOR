@@ -33,6 +33,43 @@ const transcriptText = document.getElementById('transcriptText');
 const summaryText    = document.getElementById('summaryText');
 const quizContainer  = document.getElementById('quizContainer');
 const ytLinkInput    = document.getElementById('ytLink');
+const fileInput      = document.getElementById('fileInput');
+const dropZone       = document.getElementById('dropZone');
+const dropZoneText   = document.getElementById('dropZoneText');
+
+// ===== Drag & drop + file selection feedback =====
+fileInput.addEventListener('change', () => {
+  if (fileInput.files[0]) {
+    dropZoneText.textContent = 'Selected: ' + fileInput.files[0].name;
+    ytLinkInput.value = ''; // clear link if a file is chosen instead
+  }
+});
+
+dropZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropZone.classList.add('border-primary', 'bg-surface-container-low');
+});
+
+dropZone.addEventListener('dragleave', () => {
+  dropZone.classList.remove('border-primary', 'bg-surface-container-low');
+});
+
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('border-primary', 'bg-surface-container-low');
+  if (e.dataTransfer.files[0]) {
+    fileInput.files = e.dataTransfer.files;
+    dropZoneText.textContent = 'Selected: ' + e.dataTransfer.files[0].name;
+    ytLinkInput.value = '';
+  }
+});
+
+ytLinkInput.addEventListener('input', () => {
+  if (ytLinkInput.value.trim()) {
+    fileInput.value = ''; // clear file if a link is typed instead
+    dropZoneText.textContent = 'Click to upload a video file, or drag one here';
+  }
+});
 
 // ===== State =====
 let currentVideoId = null;
@@ -81,20 +118,36 @@ function showError(message) {
 // ===== Step 1 -> Step 2: Process video =====
 processBtn.addEventListener('click', async () => {
   const youtubeUrl = ytLinkInput.value.trim();
+  const file = fileInput.files[0];
 
-  if (!youtubeUrl) {
-    alert('Please paste a YouTube link');
+  if (!youtubeUrl && !file) {
+    alert('Paste a YouTube link or choose a video file');
     return;
   }
 
   showLoader('Downloading video and extracting audio...');
 
   try {
-    const response = await fetch(BACKEND_URL + '/api/process', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ youtube_url: youtubeUrl }),
-    });
+    let response;
+
+    if (file) {
+      // File upload path — send as multipart/form-data (no manual Content-Type header,
+      // the browser sets the correct multipart boundary automatically)
+      const formData = new FormData();
+      formData.append('file', file);
+
+      response = await fetch(BACKEND_URL + '/api/process', {
+        method: 'POST',
+        body: formData,
+      });
+    } else {
+      // YouTube link path — send as JSON
+      response = await fetch(BACKEND_URL + '/api/process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ youtube_url: youtubeUrl }),
+      });
+    }
 
     const data = await response.json();
 
