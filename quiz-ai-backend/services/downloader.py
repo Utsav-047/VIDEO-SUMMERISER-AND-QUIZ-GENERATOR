@@ -6,18 +6,22 @@ from config import Config
 
 def download_youtube_video(youtube_url):
     """
-    Downloads a YouTube video and returns (local_file_path, video_title).
-    Restricts to videos under MAX_VIDEO_MINUTES to keep processing time reasonable.
+    Downloads audio from a YouTube video and returns (local_file_path, video_title).
+    Uses the smallest available audio stream — we only need clear speech for
+    transcription, not high-fidelity audio, so this keeps downloads fast.
     """
     os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)
     file_id = str(uuid.uuid4())
     output_path = os.path.join(Config.UPLOAD_FOLDER, f"{file_id}.%(ext)s")
 
     ydl_opts = {
-        "format": "bestaudio/best",
+        "format": "worstaudio/worst",
         "outtmpl": output_path,
         "quiet": True,
         "noplaylist": True,
+        "extractor_args": {"youtube": {"player_client": ["android"]}},
+        "socket_timeout": 30,     # fail loudly instead of hanging forever on a stalled connection
+        "retries": 3,
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:

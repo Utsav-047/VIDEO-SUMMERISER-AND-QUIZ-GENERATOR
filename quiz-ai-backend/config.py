@@ -5,6 +5,7 @@ load_dotenv()
 
 class Config:
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-this-in-production")
 
     DB_HOST = os.getenv("DB_HOST", "localhost")
     DB_PORT = int(os.getenv("DB_PORT", 3306))
@@ -13,4 +14,4 @@ class Config:
     DB_NAME = os.getenv("DB_NAME", "quiz_ai_db")
 
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")
-    MAX_VIDEO_MINUTES = int(os.getenv("MAX_VIDEO_MINUTES", 45))
+    MAX_VIDEO_MINUTES = int(os.getenv("MAX_VIDEO_MINUTES", 50))

@@ -5,7 +5,6 @@ from config import Config
 
 
 def get_connection():
-    """Open a fresh MySQL connection. Called per-request (simple, safe for a college project)."""
     return pymysql.connect(
         host=Config.DB_HOST,
         port=Config.DB_PORT,
@@ -17,14 +16,51 @@ def get_connection():
     )
 
 
-# ---------- videos ----------
-def insert_video(source_type, source_ref, title=None):
+# ---------- users ----------
+def insert_user(full_name, email, password_hash):
     conn = get_connection()
     try:
         with conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO videos (source_type, source_ref, title) VALUES (%s, %s, %s)",
-                (source_type, source_ref, title),
+                "INSERT INTO users (full_name, email, password_hash) VALUES (%s, %s, %s)",
+                (full_name, email, password_hash),
+            )
+            return cur.lastrowid
+    finally:
+        conn.close()
+
+
+def get_user_by_email(email):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def get_user_by_id(user_id):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT id, full_name, email, created_at FROM users WHERE id = %s",
+                (user_id,),
+            )
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+# ---------- videos ----------
+def insert_video(source_type, source_ref, title=None, user_id=None):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO videos (user_id, source_type, source_ref, title) VALUES (%s, %s, %s, %s)",
+                (user_id, source_type, source_ref, title),
             )
             return cur.lastrowid
     finally:
@@ -114,18 +150,30 @@ def insert_attempt(quiz_id, score, total_questions, answers):
 
 
 # ---------- history ----------
-def get_history():
+def get_history(user_id=None):
+    """If user_id is given, only that user's videos are returned. Otherwise returns everyone's (used pre-auth)."""
     conn = get_connection()
     try:
         with conn.cursor() as cur:
-            cur.execute("""
-                SELECT v.id AS video_id, v.title, v.source_type, v.created_at,
-                       s.summary_text, q.id AS quiz_id
-                FROM videos v
-                LEFT JOIN summaries s ON s.video_id = v.id
-                LEFT JOIN quizzes q ON q.video_id = v.id
-                ORDER BY v.created_at DESC
-            """)
+            if user_id is not None:
+                cur.execute("""
+                    SELECT v.id AS video_id, v.title, v.source_type, v.created_at,
+                           s.summary_text, q.id AS quiz_id
+                    FROM videos v
+                    LEFT JOIN summaries s ON s.video_id = v.id
+                    LEFT JOIN quizzes q ON q.video_id = v.id
+                    WHERE v.user_id = %s
+                    ORDER BY v.created_at DESC
+                """, (user_id,))
+            else:
+                cur.execute("""
+                    SELECT v.id AS video_id, v.title, v.source_type, v.created_at,
+                           s.summary_text, q.id AS quiz_id
+                    FROM videos v
+                    LEFT JOIN summaries s ON s.video_id = v.id
+                    LEFT JOIN quizzes q ON q.video_id = v.id
+                    ORDER BY v.created_at DESC
+                """)
             return cur.fetchall()
     finally:
         conn.close()

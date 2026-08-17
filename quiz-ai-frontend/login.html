@@ -64,7 +64,6 @@
 
 <main class="w-full max-w-[1000px] h-full min-h-[600px] bg-surface-container-lowest rounded-xl tactile-shadow-base overflow-hidden flex flex-col md:flex-row relative z-10">
 
-  <!-- Left Side: Branding -->
   <div class="hidden md:flex md:w-5/12 bg-surface-container-low flex-col justify-between p-stack-lg relative overflow-hidden">
     <div class="z-10 relative">
       <a href="landing.html" class="flex items-center gap-2 mb-stack-md">
@@ -91,7 +90,6 @@
     <div class="absolute -top-32 -right-32 w-80 h-80 bg-surface-container-highest opacity-40 rounded-full blur-[80px]"></div>
   </div>
 
-  <!-- Right Side: Form -->
   <div class="w-full md:w-7/12 p-container-padding-mobile md:p-stack-lg flex flex-col bg-surface-container-lowest relative">
     <div class="md:hidden flex items-center justify-center gap-2 mb-stack-lg">
       <span class="material-symbols-outlined text-primary text-[28px]">movie_filter</span>
@@ -104,7 +102,6 @@
         <p class="font-body-sm text-body-sm text-on-surface-variant">Sign in to continue to your dashboard.</p>
       </div>
 
-      <!-- Tabs -->
       <div class="flex p-1 bg-surface-container-low rounded-lg mb-stack-lg">
         <button class="flex-1 py-2 font-label-md text-label-md rounded-md bg-surface-container-lowest text-primary shadow-sm transition-all duration-200">
           Sign In
@@ -139,7 +136,7 @@
 
         <p id="loginError" class="hidden font-body-sm text-body-sm text-error"></p>
 
-        <button class="mt-4 h-12 w-full bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-on-primary-fixed-variant transition-colors duration-200 tactile-shadow-active flex items-center justify-center gap-2" type="submit">
+        <button id="loginSubmitBtn" class="mt-4 h-12 w-full bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-on-primary-fixed-variant transition-colors duration-200 tactile-shadow-active flex items-center justify-center gap-2" type="submit">
           Sign In
           <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
         </button>
@@ -156,6 +153,8 @@
 </main>
 
 <script>
+  const BACKEND_URL = 'http://127.0.0.1:5000';
+
   function togglePassword(inputId, btn) {
     const input = document.getElementById(inputId);
     const icon = btn.querySelector('.material-symbols-outlined');
@@ -168,12 +167,40 @@
     }
   }
 
-  // NOTE: No backend authentication exists yet — this is UI only for now.
-  // TODO: once a /api/login route is built, replace this with a real fetch() call.
-  document.getElementById('loginForm').addEventListener('submit', (e) => {
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+  const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+
+  loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    // Placeholder: just go to the dashboard for demo purposes until real auth is wired up.
-    window.location.href = 'dashboard.html';
+    loginError.classList.add('hidden');
+    loginSubmitBtn.disabled = true;
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    try {
+      const response = await fetch(BACKEND_URL + '/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // sends/receives the session cookie
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      // Real login succeeded — go to the dashboard
+      window.location.href = 'dashboard.html';
+
+    } catch (err) {
+      loginError.textContent = err.message;
+      loginError.classList.remove('hidden');
+      loginSubmitBtn.disabled = false;
+    }
   });
 </script>
 

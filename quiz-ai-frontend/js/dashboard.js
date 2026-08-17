@@ -1,6 +1,42 @@
-// ===== Backend connection check =====
+// ===== Auth check — must run before anything else =====
 const BACKEND_URL = 'http://127.0.0.1:5000';
 
+let currentUser = null;
+
+async function checkAuth() {
+  try {
+    const response = await fetch(BACKEND_URL + '/api/me', {
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    currentUser = await response.json();
+    document.getElementById('userName').textContent = currentUser.full_name;
+
+  } catch (err) {
+    window.location.href = 'login.html';
+  }
+}
+
+checkAuth();
+
+// ===== Logout =====
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  try {
+    await fetch(BACKEND_URL + '/api/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+  } finally {
+    window.location.href = 'landing.html';
+  }
+});
+
+// ===== Backend connection check =====
 const backendStatus = document.getElementById('backendStatus');
 
 fetch(BACKEND_URL + '/')
@@ -41,7 +77,7 @@ const dropZoneText   = document.getElementById('dropZoneText');
 fileInput.addEventListener('change', () => {
   if (fileInput.files[0]) {
     dropZoneText.textContent = 'Selected: ' + fileInput.files[0].name;
-    ytLinkInput.value = ''; // clear link if a file is chosen instead
+    ytLinkInput.value = '';
   }
 });
 
@@ -66,7 +102,7 @@ dropZone.addEventListener('drop', (e) => {
 
 ytLinkInput.addEventListener('input', () => {
   if (ytLinkInput.value.trim()) {
-    fileInput.value = ''; // clear file if a link is typed instead
+    fileInput.value = '';
     dropZoneText.textContent = 'Click to upload a video file, or drag one here';
   }
 });
@@ -131,19 +167,18 @@ processBtn.addEventListener('click', async () => {
     let response;
 
     if (file) {
-      // File upload path — send as multipart/form-data (no manual Content-Type header,
-      // the browser sets the correct multipart boundary automatically)
       const formData = new FormData();
       formData.append('file', file);
 
       response = await fetch(BACKEND_URL + '/api/process', {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       });
     } else {
-      // YouTube link path — send as JSON
       response = await fetch(BACKEND_URL + '/api/process', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ youtube_url: youtubeUrl }),
       });
@@ -176,6 +211,7 @@ toQuizBtn.addEventListener('click', async () => {
   try {
     const response = await fetch(BACKEND_URL + '/api/generate/' + currentVideoId, {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ transcript: currentTranscript }),
     });
@@ -244,6 +280,7 @@ submitQuizBtn.addEventListener('click', async () => {
   try {
     const response = await fetch(BACKEND_URL + '/api/quiz/' + currentQuizId + '/submit', {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ answers }),
     });

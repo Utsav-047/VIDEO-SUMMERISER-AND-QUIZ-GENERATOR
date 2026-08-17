@@ -64,7 +64,6 @@
 
 <main class="w-full max-w-[1000px] h-full min-h-[600px] bg-surface-container-lowest rounded-xl tactile-shadow-base overflow-hidden flex flex-col md:flex-row relative z-10">
 
-  <!-- Left Side: Branding -->
   <div class="hidden md:flex md:w-5/12 bg-surface-container-low flex-col justify-between p-stack-lg relative overflow-hidden">
     <div class="z-10 relative">
       <a href="landing.html" class="flex items-center gap-2 mb-stack-md">
@@ -91,7 +90,6 @@
     <div class="absolute -top-32 -right-32 w-80 h-80 bg-surface-container-highest opacity-40 rounded-full blur-[80px]"></div>
   </div>
 
-  <!-- Right Side: Form -->
   <div class="w-full md:w-7/12 p-container-padding-mobile md:p-stack-lg flex flex-col bg-surface-container-lowest relative">
     <div class="md:hidden flex items-center justify-center gap-2 mb-stack-lg">
       <span class="material-symbols-outlined text-primary text-[28px]">movie_filter</span>
@@ -104,7 +102,6 @@
         <p class="font-body-sm text-body-sm text-on-surface-variant">Start summarizing videos in minutes.</p>
       </div>
 
-      <!-- Tabs -->
       <div class="flex p-1 bg-surface-container-low rounded-lg mb-stack-lg">
         <a href="login.html" class="flex-1 py-2 font-label-md text-label-md rounded-md text-on-surface-variant hover:text-on-surface transition-all duration-200 text-center">
           Sign In
@@ -155,7 +152,7 @@
 
         <p id="registerError" class="hidden font-body-sm text-body-sm text-error"></p>
 
-        <button class="mt-4 h-12 w-full bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-on-primary-fixed-variant transition-colors duration-200 tactile-shadow-active flex items-center justify-center gap-2" type="submit">
+        <button id="registerSubmitBtn" class="mt-4 h-12 w-full bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-on-primary-fixed-variant transition-colors duration-200 tactile-shadow-active flex items-center justify-center gap-2" type="submit">
           Create Account
           <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
         </button>
@@ -172,6 +169,8 @@
 </main>
 
 <script>
+  const BACKEND_URL = 'http://127.0.0.1:5000';
+
   function togglePassword(inputId, btn) {
     const input = document.getElementById(inputId);
     const icon = btn.querySelector('.material-symbols-outlined');
@@ -184,23 +183,49 @@
     }
   }
 
-  // NOTE: No backend authentication exists yet — this is UI only for now.
-  // TODO: once a /api/register route is built, replace this with a real fetch() call.
-  document.getElementById('registerForm').addEventListener('submit', (e) => {
-    e.preventDefault();
+  const registerForm = document.getElementById('registerForm');
+  const registerError = document.getElementById('registerError');
+  const registerSubmitBtn = document.getElementById('registerSubmitBtn');
 
+  registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    registerError.classList.add('hidden');
+
+    const fullName = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
-    const errorEl = document.getElementById('registerError');
 
     if (password !== confirmPassword) {
-      errorEl.textContent = 'Passwords do not match.';
-      errorEl.classList.remove('hidden');
+      registerError.textContent = 'Passwords do not match.';
+      registerError.classList.remove('hidden');
       return;
     }
 
-    // Placeholder: just go to the dashboard for demo purposes until real auth is wired up.
-    window.location.href = 'dashboard.html';
+    registerSubmitBtn.disabled = true;
+
+    try {
+      const response = await fetch(BACKEND_URL + '/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // sends/receives the session cookie
+        body: JSON.stringify({ full_name: fullName, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed');
+      }
+
+      // Real registration succeeded (and logged them in) — go to the dashboard
+      window.location.href = 'dashboard.html';
+
+    } catch (err) {
+      registerError.textContent = err.message;
+      registerError.classList.remove('hidden');
+      registerSubmitBtn.disabled = false;
+    }
   });
 </script>
 
