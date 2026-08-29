@@ -18,17 +18,33 @@
   <link rel="stylesheet" href="css/style.css"/>
 
   <style>
-    /* Tech grid background pattern */
-    .tech-grid-bg {
-      background-size: 36px 36px;
+    /* =========================================================
+       CUSTOM DISTINCT BACKGROUNDS FOR LIGHT & DARK THEMES
+       ========================================================= */
+
+    /* 1. LIGHT MODE: Aurora AI Studio with Geometric Dot Grid */
+    .light-theme-bg {
+      background-color: #f8fafc;
       background-image: 
-        linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+        radial-gradient(circle, rgba(99, 102, 241, 0.12) 1.2px, transparent 1.2px),
+        radial-gradient(at 0% 0%, rgba(224, 242, 254, 0.7) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(237, 233, 254, 0.7) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(240, 253, 250, 0.5) 0px, transparent 50%);
+      background-size: 28px 28px, 100% 100%, 100% 100%, 100% 100%;
+      background-attachment: fixed;
     }
-    .dark .tech-grid-bg {
+
+    /* 2. DARK MODE: Deep Cosmic Cyber Matrix */
+    .dark .dark-theme-bg {
+      background-color: #030712;
       background-image: 
-        linear-gradient(to right, rgba(99, 102, 241, 0.08) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+        linear-gradient(to right, rgba(56, 189, 248, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(56, 189, 248, 0.06) 1px, transparent 1px),
+        radial-gradient(at 20% 15%, rgba(30, 58, 138, 0.35) 0px, transparent 55%),
+        radial-gradient(at 80% 25%, rgba(88, 28, 135, 0.3) 0px, transparent 55%),
+        radial-gradient(at 50% 85%, rgba(15, 23, 42, 0.9) 0px, transparent 65%);
+      background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%, 100% 100%;
+      background-attachment: fixed;
     }
   </style>
 
@@ -58,16 +74,16 @@
     }
   </script>
 </head>
-<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-blue-500 selection:text-white transition-colors duration-200 relative overflow-x-hidden tech-grid-bg">
+<body id="pageBody" class="light-theme-bg dark:dark-theme-bg text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-blue-500 selection:text-white transition-colors duration-300 relative overflow-x-hidden min-h-screen">
 
-  <!-- Interactive Neural Synapse Canvas Background -->
-  <canvas id="synapseBgCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-80 dark:opacity-90"></canvas>
+  <!-- Interactive Dynamic Canvas Background -->
+  <canvas id="synapseBgCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-85 dark:opacity-95"></canvas>
 
   <!-- Mouse Spotlight Glow Overlay -->
-  <div id="ambientSpotlight" class="fixed inset-0 pointer-events-none z-0 transition-opacity duration-300 opacity-60 dark:opacity-80" style="background: radial-gradient(650px circle at 50% 30%, rgba(59, 130, 246, 0.08), transparent 80%);"></div>
+  <div id="ambientSpotlight" class="fixed inset-0 pointer-events-none z-0 transition-opacity duration-300 opacity-70 dark:opacity-85"></div>
 
   <!-- Top Sticky Navigation -->
-  <header class="fixed top-0 inset-x-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-all duration-200">
+  <header class="fixed top-0 inset-x-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-all duration-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
       
       <!-- Brand Logo -->
@@ -80,7 +96,7 @@
         </div>
         <div class="flex items-center gap-1.5">
           <span class="font-extrabold text-slate-900 dark:text-white tracking-tight text-xl">Synapse</span>
-          <span class="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 rounded border border-blue-200 dark:border-blue-800">AI</span>
+          <span class="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 rounded border border-blue-200 dark:border-blue-800">AI</span>
         </div>
       </a>
 
@@ -116,20 +132,20 @@
   <!-- Hero Section -->
   <section class="pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden relative z-10">
     
-    <!-- Background Gradient Blobs -->
-    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-blue-200/50 via-indigo-200/30 to-purple-200/40 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-purple-900/20 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+    <!-- Background Gradient Glows -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-gradient-to-tr from-blue-300/40 via-indigo-300/30 to-purple-300/30 dark:from-blue-600/20 dark:via-indigo-600/15 dark:to-purple-600/20 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
       
       <!-- Feature Pill -->
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/80 text-blue-700 dark:text-blue-300 text-xs font-bold shadow-sm mb-6 animate-pulse-subtle">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50/90 dark:bg-blue-950/70 border border-blue-200/80 dark:border-blue-800/80 text-blue-700 dark:text-blue-300 text-xs font-bold shadow-sm mb-6 animate-pulse-subtle backdrop-blur-md">
         <span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400"></span>
         <span>Next-Gen Video Intelligence & Active Recall Engine</span>
       </div>
 
       <!-- Main Headline -->
       <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight max-w-4xl leading-[1.15]">
-        Turn hours of video into <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-800 dark:from-blue-400 dark:via-indigo-400 dark:to-blue-300">instant summaries</span> & adaptive quizzes.
+        Turn hours of video into <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-800 dark:from-cyan-400 dark:via-blue-400 dark:to-indigo-300">instant summaries</span> & adaptive quizzes.
       </h1>
 
       <!-- Subtitle -->
@@ -143,7 +159,7 @@
           <span>Start Learning Free</span>
           <span class="material-symbols-outlined text-[18px]">bolt</span>
         </a>
-        <a href="#interactive-demo" class="w-full sm:w-auto px-8 py-4 bg-white/90 dark:bg-slate-900/90 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-base rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all flex items-center justify-center gap-2">
+        <a href="#interactive-demo" class="w-full sm:w-auto px-8 py-4 bg-white/90 dark:bg-slate-900/90 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-base rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm transition-all flex items-center justify-center gap-2 backdrop-blur-md">
           <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[20px]">play_circle</span>
           <span>Try Interactive Demo</span>
         </a>
@@ -170,7 +186,7 @@
       </div>
 
       <!-- INTERACTIVE DEMO PLAYGROUND -->
-      <div id="interactive-demo" class="mt-16 w-full max-w-5xl rounded-3xl p-3 sm:p-4 bg-slate-900/5 dark:bg-slate-800/30 ring-1 ring-slate-900/10 dark:ring-white/10 shadow-2xl backdrop-blur-sm">
+      <div id="interactive-demo" class="mt-16 w-full max-w-5xl rounded-3xl p-3 sm:p-4 bg-slate-900/5 dark:bg-slate-800/40 ring-1 ring-slate-900/10 dark:ring-white/10 shadow-2xl backdrop-blur-md">
         <div class="bg-white/95 dark:bg-slate-900/95 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-inner overflow-hidden text-left p-6 sm:p-8">
           
           <!-- Interactive Topic Selector Tabs -->
@@ -183,7 +199,7 @@
             </div>
 
             <!-- Demo Tabs -->
-            <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/70 p-1 rounded-xl">
+            <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
               <button type="button" onclick="switchDemoTopic('cs')" id="tabBtn_cs" class="demo-tab-btn active-tab px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm">
                 Algorithms
               </button>
@@ -201,7 +217,7 @@
             
             <!-- Left Mock: Video Title & Live Summary -->
             <div class="md:col-span-7 flex flex-col gap-4">
-              <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/70 dark:border-slate-700/60">
+              <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/70 dark:border-slate-700/60">
                 <div class="flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400 mb-1">
                   <span class="material-symbols-outlined text-[18px]">smart_display</span>
                   <span id="demoVideoTitle">MIT 6.0001: Introduction to Algorithms & Computational Complexity</span>
@@ -209,7 +225,7 @@
                 <p id="demoVideoMeta" class="text-xs text-slate-500 dark:text-slate-400">Duration: 48 mins • Transcribed in 2.8s via Whisper 16kHz MP3</p>
               </div>
 
-              <div class="p-5 bg-blue-50/50 dark:bg-blue-950/30 rounded-xl border border-blue-100 dark:border-blue-900/50 flex flex-col gap-3">
+              <div class="p-5 bg-blue-50/60 dark:bg-blue-950/30 rounded-xl border border-blue-100 dark:border-blue-900/50 flex flex-col gap-3">
                 <div class="flex items-center justify-between">
                   <h4 class="text-xs font-bold uppercase tracking-wider text-blue-800 dark:text-blue-300 flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-[16px]">summarize</span>
@@ -226,7 +242,7 @@
             </div>
 
             <!-- Right Mock: Interactive Playable Quiz Card -->
-            <div class="md:col-span-5 p-5 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between gap-4">
+            <div class="md:col-span-5 p-5 bg-white dark:bg-slate-800/90 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between gap-4">
               <div>
                 <div class="flex items-center justify-between text-xs mb-2">
                   <span id="demoQuizIndex" class="font-bold text-blue-600 dark:text-blue-400">Interactive Quiz Preview</span>
@@ -540,7 +556,7 @@
 
   <!-- Interactive Background Canvas & Page Scripts -->
   <script>
-    // 1. Interactive Neural Synapse Canvas Background
+    // 1. Interactive Dual-Theme Canvas Background (Aurora Light vs Cyber Dark)
     const canvas = document.getElementById('synapseBgCanvas');
     const ctx = canvas.getContext('2d');
     const spotlight = document.getElementById('ambientSpotlight');
@@ -549,6 +565,15 @@
     let height = (canvas.height = window.innerHeight);
 
     let mouse = { x: width / 2, y: height / 2, isActive: false };
+
+    function updateSpotlight(isDark) {
+      if (!spotlight) return;
+      if (isDark) {
+        spotlight.style.background = `radial-gradient(650px circle at ${mouse.x}px ${mouse.y}px, rgba(56, 189, 248, 0.18), rgba(168, 85, 247, 0.10), transparent 75%)`;
+      } else {
+        spotlight.style.background = `radial-gradient(700px circle at ${mouse.x}px ${mouse.y}px, rgba(99, 102, 241, 0.12), rgba(56, 189, 248, 0.07), transparent 75%)`;
+      }
+    }
 
     window.addEventListener('resize', () => {
       width = canvas.width = window.innerWidth;
@@ -560,11 +585,8 @@
       mouse.x = e.clientX;
       mouse.y = e.clientY;
       mouse.isActive = true;
-
-      // Update ambient spotlight position
-      if (spotlight) {
-        spotlight.style.background = `radial-gradient(650px circle at ${e.clientX}px ${e.clientY}px, rgba(59, 130, 246, 0.12), transparent 75%)`;
-      }
+      const isDark = document.documentElement.classList.contains('dark');
+      updateSpotlight(isDark);
     });
 
     window.addEventListener('mouseleave', () => {
@@ -573,36 +595,64 @@
 
     class Particle {
       constructor() {
+        this.reset();
+      }
+
+      reset() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.7;
-        this.vy = (Math.random() - 0.5) * 0.7;
-        this.radius = Math.random() * 1.8 + 1.2;
+        this.vx = (Math.random() - 0.5) * 0.75;
+        this.vy = (Math.random() - 0.5) * 0.75;
+        this.radius = Math.random() * 2 + 1.2;
+        this.colorIndex = Math.floor(Math.random() * 3);
+        this.pulseAngle = Math.random() * Math.PI * 2;
       }
 
       update() {
         this.x += this.vx;
         this.y += this.vy;
+        this.pulseAngle += 0.03;
 
         if (this.x < 0 || this.x > width) this.vx *= -1;
         if (this.y < 0 || this.y > height) this.vy *= -1;
 
-        // Subtle mouse attraction/synapse pull
+        // Interactive mouse attraction
         if (mouse.isActive) {
           const dx = mouse.x - this.x;
           const dy = mouse.y - this.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 140) {
-            this.x += dx * 0.015;
-            this.y += dy * 0.015;
+          if (dist < 150) {
+            this.x += dx * 0.018;
+            this.y += dy * 0.018;
           }
         }
       }
 
       draw(isDark) {
+        const pulse = Math.sin(this.pulseAngle) * 0.4 + 1;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = isDark ? 'rgba(96, 165, 250, 0.7)' : 'rgba(79, 70, 229, 0.45)';
+        ctx.arc(this.x, this.y, this.radius * pulse, 0, Math.PI * 2);
+
+        if (isDark) {
+          // Cyber Dark Mode Palette: Electric Cyan, Violet, Laser Blue
+          const darkColors = [
+            'rgba(56, 189, 248, 0.85)',  // Cyan
+            'rgba(192, 132, 252, 0.85)', // Violet
+            'rgba(96, 165, 250, 0.85)'   // Blue
+          ];
+          ctx.fillStyle = darkColors[this.colorIndex];
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = darkColors[this.colorIndex];
+        } else {
+          // Daylight Aurora Palette: Indigo, Azure, Soft Emerald
+          const lightColors = [
+            'rgba(79, 70, 229, 0.55)',   // Indigo
+            'rgba(2, 132, 199, 0.55)',   // Sky Azure
+            'rgba(16, 185, 129, 0.45)'   // Mint
+          ];
+          ctx.fillStyle = lightColors[this.colorIndex];
+          ctx.shadowBlur = 0;
+        }
         ctx.fill();
       }
     }
@@ -610,8 +660,8 @@
     let particles = [];
     function initParticles() {
       particles = [];
-      const particleCount = Math.floor((width * height) / 18000); // responsive count
-      for (let i = 0; i < Math.min(particleCount, 85); i++) {
+      const particleCount = Math.floor((width * height) / 16000);
+      for (let i = 0; i < Math.min(particleCount, 80); i++) {
         particles.push(new Particle());
       }
     }
@@ -621,7 +671,7 @@
       ctx.clearRect(0, 0, width, height);
       const isDark = document.documentElement.classList.contains('dark');
 
-      // Draw particle connections (Synapses)
+      // Draw particle connection synapses
       for (let i = 0; i < particles.length; i++) {
         particles[i].update();
         particles[i].draw(isDark);
@@ -631,13 +681,20 @@
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 115) {
+          if (dist < 125) {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            const alpha = (1 - dist / 115) * (isDark ? 0.35 : 0.22);
-            ctx.strokeStyle = isDark ? `rgba(96, 165, 250, ${alpha})` : `rgba(79, 70, 229, ${alpha})`;
-            ctx.lineWidth = 0.9;
+            
+            if (isDark) {
+              const alpha = (1 - dist / 125) * 0.45;
+              ctx.strokeStyle = `rgba(56, 189, 248, ${alpha})`;
+              ctx.lineWidth = 1.0;
+            } else {
+              const alpha = (1 - dist / 125) * 0.28;
+              ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
+              ctx.lineWidth = 0.85;
+            }
             ctx.stroke();
           }
         }
@@ -648,13 +705,20 @@
           const mdy = particles[i].y - mouse.y;
           const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
 
-          if (mdist < 140) {
+          if (mdist < 150) {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(mouse.x, mouse.y);
-            const mAlpha = (1 - mdist / 140) * (isDark ? 0.6 : 0.35);
-            ctx.strokeStyle = isDark ? `rgba(56, 189, 248, ${mAlpha})` : `rgba(37, 99, 235, ${mAlpha})`;
-            ctx.lineWidth = 1.2;
+            
+            if (isDark) {
+              const mAlpha = (1 - mdist / 150) * 0.75;
+              ctx.strokeStyle = `rgba(168, 85, 247, ${mAlpha})`;
+              ctx.lineWidth = 1.4;
+            } else {
+              const mAlpha = (1 - mdist / 150) * 0.42;
+              ctx.strokeStyle = `rgba(37, 99, 235, ${mAlpha})`;
+              ctx.lineWidth = 1.1;
+            }
             ctx.stroke();
           }
         }
@@ -679,6 +743,7 @@
         themeIcon.textContent = 'dark_mode';
         localStorage.setItem('theme', 'light');
       }
+      updateSpotlight(isDark);
     }
 
     const savedTheme = localStorage.getItem('theme');
