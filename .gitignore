@@ -1,12 +1,56 @@
+# Environment variables & secrets
 .env
 *.env
+.env.*
+!.env.example
 **/.env
+**/*.env
+**/.env.*
+!**/.env.example
+
+# Python cache & artifacts
 __pycache__/
-**/__pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
 venv/
-**/venv/
 .venv/
-**/.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Uploaded / generated media files
 uploads/
-**/uploads/
+**/uploads/*
+!**/uploads/.gitkeep
+temp/
+*.mp4
+*.mp3
+*.wav
+
+# OS & IDE files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
