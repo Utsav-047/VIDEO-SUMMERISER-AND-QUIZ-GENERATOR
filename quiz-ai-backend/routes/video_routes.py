@@ -7,7 +7,7 @@ from services.transcriber import transcribe_audio
 from services.ai_generator import generate_summary, generate_quiz
 from models.db import (
     insert_video, insert_transcript, insert_summary, insert_quiz,
-    insert_attempt, get_quiz, get_history,
+    insert_attempt, get_quiz, get_history, get_performance_stats,
 )
 
 video_bp = Blueprint("video_bp", __name__)
@@ -46,8 +46,9 @@ def process_video():
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 400
     except Exception as e:
+        import traceback
+        traceback.print_exc()  # prints the full error to your terminal
         return jsonify({"error": f"Processing failed: {str(e)}"}), 500
-
 
 @video_bp.route("/api/generate/<int:video_id>", methods=["POST"])
 def generate(video_id):
@@ -59,11 +60,18 @@ def generate(video_id):
     if not transcript_text:
         return jsonify({"error": "transcript is required"}), 400
 
+    # New settings from the frontend — all optional with sensible defaults
+    difficulty = data.get("difficulty", "medium")
+    num_questions = data.get("num_questions", 5)
+    summary_format = data.get("summary_format", "executive")
+
     try:
-        summary_text = generate_summary(transcript_text)
-        quiz_questions = generate_quiz(transcript_text, num_questions=5)
+        summary_text = generate_summary(transcript_text, summary_format=summary_format)
+        quiz_questions = generate_quiz(transcript_text, num_questions=num_questions, difficulty=difficulty)
+
         insert_summary(video_id, summary_text)
-        quiz_id = insert_quiz(video_id, quiz_questions)
+        quiz_id = insert_quiz(video_id, quiz_questions, difficulty=difficulty)
+
         return jsonify({"quiz_id": quiz_id, "summary": summary_text, "quiz": quiz_questions})
     except Exception as e:
         return jsonify({"error": f"Generation failed: {str(e)}"}), 500
@@ -95,3 +103,11 @@ def history():
     if not user_id:
         return jsonify({"error": "You must be logged in"}), 401
     return jsonify(get_history(user_id=user_id))
+
+
+@video_bp.route("/api/performance", methods=["GET"])
+def performance():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "You must be logged in"}), 401
+    return jsonify(get_performance_stats(user_id=user_id))
