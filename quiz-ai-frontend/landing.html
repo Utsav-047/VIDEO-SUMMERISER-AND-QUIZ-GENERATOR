@@ -43,10 +43,10 @@
     }
   </script>
 </head>
-<body class="bg-[#f8fafc] text-slate-800 font-sans antialiased selection:bg-blue-500 selection:text-white">
+<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-blue-500 selection:text-white transition-colors duration-200">
 
   <!-- Top Sticky Navigation -->
-  <header class="fixed top-0 inset-x-0 z-50 bg-white/85 backdrop-blur-md border-b border-slate-200/80 transition-all duration-200">
+  <header class="fixed top-0 inset-x-0 z-50 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-all duration-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
       
       <!-- Brand Logo -->
@@ -58,22 +58,29 @@
           </svg>
         </div>
         <div class="flex items-center gap-1.5">
-          <span class="font-extrabold text-slate-900 tracking-tight text-xl">Synapse</span>
-          <span class="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 rounded">PRO</span>
+          <span class="font-extrabold text-slate-900 dark:text-white tracking-tight text-xl">Synapse</span>
+          <span class="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 rounded border border-blue-200 dark:border-blue-800">AI</span>
         </div>
       </a>
 
       <!-- Desktop Nav Links -->
-      <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
-        <a href="#features" class="hover:text-blue-600 transition-colors">Features</a>
-        <a href="#how-it-works" class="hover:text-blue-600 transition-colors">How It Works</a>
-        <a href="#quiz-engine" class="hover:text-blue-600 transition-colors">Quiz Engine</a>
-        <a href="#faq" class="hover:text-blue-600 transition-colors">FAQ</a>
+      <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600 dark:text-slate-300">
+        <a href="#interactive-demo" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Live Demo</a>
+        <a href="#features" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Features</a>
+        <a href="#calculator" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">ROI Calculator</a>
+        <a href="#how-it-works" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">How It Works</a>
+        <a href="#faq" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">FAQ</a>
       </nav>
 
-      <!-- Auth Actions -->
+      <!-- Auth Actions & Dark Mode Toggle -->
       <div class="flex items-center gap-3">
-        <a href="login.html" class="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors hidden sm:inline-block">
+        
+        <!-- Dark Mode Switcher -->
+        <button id="themeToggleBtn" type="button" aria-label="Toggle Theme" class="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <span id="themeIcon" class="material-symbols-outlined text-[20px]">dark_mode</span>
+        </button>
+
+        <a href="login.html" class="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hidden sm:inline-block">
           Log in
         </a>
         <a href="register.html" class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-bold rounded-xl shadow-md shadow-blue-600/25 hover:shadow-blue-600/35 transition-all flex items-center gap-1.5">
@@ -89,24 +96,24 @@
   <section class="pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden relative">
     
     <!-- Background Gradient Blobs -->
-    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-blue-200/50 to-indigo-200/40 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-blue-200/50 via-indigo-200/30 to-purple-200/40 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-purple-900/20 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
       
       <!-- Feature Pill -->
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/60 text-blue-700 text-xs font-bold shadow-sm mb-6 animate-pulse-subtle">
-        <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-        <span>Next-Gen Video Intelligence & Learning Platform</span>
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/80 text-blue-700 dark:text-blue-300 text-xs font-bold shadow-sm mb-6 animate-pulse-subtle">
+        <span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400"></span>
+        <span>Next-Gen Video Intelligence & Active Recall Engine</span>
       </div>
 
       <!-- Main Headline -->
-      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight max-w-4xl leading-[1.15]">
-        Turn hours of video into <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-800">instant summaries</span> & adaptive quizzes.
+      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight max-w-4xl leading-[1.15]">
+        Turn hours of video into <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-800 dark:from-blue-400 dark:via-indigo-400 dark:to-blue-300">instant summaries</span> & adaptive quizzes.
       </h1>
 
       <!-- Subtitle -->
-      <p class="mt-6 text-base sm:text-lg md:text-xl text-slate-600 max-w-2xl font-normal leading-relaxed">
-        Paste any YouTube link or upload a video. Synapse extracts the transcript, synthesizes structured core takeaways, and creates interactive quizzes tailored to your difficulty.
+      <p class="mt-6 text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl font-normal leading-relaxed">
+        Paste any YouTube link or upload lecture files. Synapse extracts the transcript, synthesizes structured core takeaways, and creates interactive quizzes tailored to test your mastery.
       </p>
 
       <!-- Primary CTA Buttons -->
@@ -115,95 +122,117 @@
           <span>Start Learning Free</span>
           <span class="material-symbols-outlined text-[18px]">bolt</span>
         </a>
-        <a href="dashboard.html" class="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-50 text-slate-800 font-bold text-base rounded-2xl border border-slate-200 shadow-sm transition-all flex items-center justify-center gap-2">
-          <span class="material-symbols-outlined text-blue-600 text-[20px]">play_circle</span>
-          <span>Open Web Studio</span>
+        <a href="#interactive-demo" class="w-full sm:w-auto px-8 py-4 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-base rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[20px]">play_circle</span>
+          <span>Try Interactive Demo</span>
         </a>
       </div>
 
       <!-- Trust Bar -->
-      <div class="mt-14 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 text-slate-500 border-t border-slate-200/80 pt-10 max-w-4xl w-full">
+      <div class="mt-14 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 text-slate-500 dark:text-slate-400 border-t border-slate-200/80 dark:border-slate-800 pt-10 max-w-4xl w-full">
         <div>
-          <p class="text-2xl md:text-3xl font-extrabold text-slate-900">50K+</p>
-          <p class="text-xs font-semibold text-slate-500 mt-0.5">Videos Analyzed</p>
+          <p class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">50K+</p>
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">Videos Analyzed</p>
         </div>
         <div>
-          <p class="text-2xl md:text-3xl font-extrabold text-slate-900">99.4%</p>
-          <p class="text-xs font-semibold text-slate-500 mt-0.5">Transcript Accuracy</p>
+          <p class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">99.4%</p>
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">Whisper Accuracy</p>
         </div>
         <div>
-          <p class="text-2xl md:text-3xl font-extrabold text-slate-900">3x</p>
-          <p class="text-xs font-semibold text-slate-500 mt-0.5">Faster Retention</p>
+          <p class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">3.5x</p>
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">Faster Study Speed</p>
         </div>
         <div>
-          <p class="text-2xl md:text-3xl font-extrabold text-slate-900">20 Qs</p>
-          <p class="text-xs font-semibold text-slate-500 mt-0.5">Custom Quiz Depth</p>
+          <p class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">100%</p>
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">Account Streak Sync</p>
         </div>
       </div>
 
-      <!-- App Interface Preview Mockup -->
-      <div class="mt-16 w-full max-w-5xl rounded-3xl p-3 sm:p-4 bg-slate-900/5 ring-1 ring-slate-900/10 shadow-2xl">
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-inner overflow-hidden text-left p-6 sm:p-8">
+      <!-- INTERACTIVE DEMO PLAYGROUND -->
+      <div id="interactive-demo" class="mt-16 w-full max-w-5xl rounded-3xl p-3 sm:p-4 bg-slate-900/5 dark:bg-slate-800/30 ring-1 ring-slate-900/10 dark:ring-white/10 shadow-2xl">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-inner overflow-hidden text-left p-6 sm:p-8">
           
-          <!-- Mockup Top Bar -->
-          <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+          <!-- Interactive Topic Selector Tabs -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5 mb-6">
             <div class="flex items-center gap-2">
               <span class="w-3 h-3 rounded-full bg-rose-400"></span>
               <span class="w-3 h-3 rounded-full bg-amber-400"></span>
               <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
-              <span class="ml-2 text-xs font-bold text-slate-400">synapse.app/studio</span>
+              <span class="ml-2 text-xs font-bold text-slate-400 dark:text-slate-500">synapse.app/studio-demo</span>
             </div>
-            <span class="px-2.5 py-1 text-xs font-bold bg-emerald-50 text-emerald-700 rounded-lg">● Active Synthesis</span>
+
+            <!-- Demo Tabs -->
+            <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/70 p-1 rounded-xl">
+              <button type="button" onclick="switchDemoTopic('cs')" id="tabBtn_cs" class="demo-tab-btn active-tab px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm">
+                Algorithms
+              </button>
+              <button type="button" onclick="switchDemoTopic('ai')" id="tabBtn_ai" class="demo-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 transition-all">
+                Neural Networks
+              </button>
+              <button type="button" onclick="switchDemoTopic('bio')" id="tabBtn_bio" class="demo-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 transition-all">
+                Molecular Biology
+              </button>
+            </div>
           </div>
 
           <!-- Mockup Body Split -->
           <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
             
-            <!-- Left Mock: Video & Summary -->
+            <!-- Left Mock: Video Title & Live Summary -->
             <div class="md:col-span-7 flex flex-col gap-4">
-              <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/70">
-                <div class="flex items-center gap-2 text-xs font-bold text-blue-600 mb-1">
-                  <span class="material-symbols-outlined text-[16px]">smart_display</span>
-                  <span>MIT 6.0001: Introduction to Algorithms & Computation</span>
+              <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/70 dark:border-slate-700/60">
+                <div class="flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400 mb-1">
+                  <span class="material-symbols-outlined text-[18px]">smart_display</span>
+                  <span id="demoVideoTitle">MIT 6.0001: Introduction to Algorithms & Computational Complexity</span>
                 </div>
-                <p class="text-xs text-slate-500">Duration: 48 mins • Transcribed in 4.2s</p>
+                <p id="demoVideoMeta" class="text-xs text-slate-500 dark:text-slate-400">Duration: 48 mins • Transcribed in 2.8s via Whisper 16kHz MP3</p>
               </div>
 
-              <div class="p-5 bg-blue-50/40 rounded-xl border border-blue-100 flex flex-col gap-2.5">
-                <h4 class="text-xs font-bold uppercase tracking-wider text-blue-800 flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[16px]">summarize</span>
-                  Executive Summary Takeaways
-                </h4>
-                <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside">
-                  <li><strong>Big O Notation:</strong> Provides an upper bound on growth rate of asymptotic runtimes.</li>
-                  <li><strong>Divide and Conquer:</strong> Breaks problems into sub-problems solved recursively.</li>
-                  <li><strong>Space-Time Tradeoff:</strong> Memory footprint vs compute throughput optimization.</li>
+              <div class="p-5 bg-blue-50/50 dark:bg-blue-950/30 rounded-xl border border-blue-100 dark:border-blue-900/50 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                  <h4 class="text-xs font-bold uppercase tracking-wider text-blue-800 dark:text-blue-300 flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px]">summarize</span>
+                    Executive Summary Takeaways
+                  </h4>
+                  <span class="px-2 py-0.5 text-[10px] font-bold bg-blue-100 dark:bg-blue-900/80 text-blue-700 dark:text-blue-300 rounded">AI Synthesized</span>
+                </div>
+                <ul id="demoSummaryList" class="text-xs text-slate-700 dark:text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
+                  <li><strong>Big O Notation:</strong> Provides a mathematical upper bound on the asymptotic growth rate of execution runtimes.</li>
+                  <li><strong>Divide and Conquer:</strong> Breaks problems into independent sub-problems solved recursively (e.g. Merge Sort).</li>
+                  <li><strong>Space-Time Tradeoff:</strong> Optimizing algorithmic memory footprint vs overall CPU compute throughput.</li>
                 </ul>
               </div>
             </div>
 
-            <!-- Right Mock: Quiz Card Preview -->
-            <div class="md:col-span-5 p-5 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between gap-4">
+            <!-- Right Mock: Interactive Playable Quiz Card -->
+            <div class="md:col-span-5 p-5 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between gap-4">
               <div>
                 <div class="flex items-center justify-between text-xs mb-2">
-                  <span class="font-bold text-blue-600">Question 3 of 10</span>
-                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700">Medium</span>
+                  <span id="demoQuizIndex" class="font-bold text-blue-600 dark:text-blue-400">Interactive Quiz Preview</span>
+                  <span id="demoQuizDifficulty" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300">Medium</span>
                 </div>
-                <p class="text-xs font-bold text-slate-800">What is the worst-case time complexity of standard Merge Sort?</p>
+                <p id="demoQuizQuestion" class="text-xs font-bold text-slate-900 dark:text-white leading-snug">
+                  What is the worst-case time complexity of standard Merge Sort algorithm?
+                </p>
 
-                <div class="mt-3 flex flex-col gap-2 text-xs">
-                  <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 font-medium">A) O(n)</div>
-                  <div class="p-2.5 rounded-lg border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold flex items-center justify-between">
-                    <span>B) O(n log n)</span>
-                    <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+                <!-- Options List (Clickable!) -->
+                <div id="demoOptionsContainer" class="mt-3 flex flex-col gap-2 text-xs">
+                  <!-- Dynamic Options rendered via JavaScript -->
+                </div>
+
+                <!-- Explanation / Feedback Banner -->
+                <div id="demoFeedbackBanner" class="hidden mt-3 p-3 rounded-xl text-xs flex items-start gap-2">
+                  <span id="demoFeedbackIcon" class="material-symbols-outlined text-[18px]"></span>
+                  <div>
+                    <p id="demoFeedbackTitle" class="font-bold"></p>
+                    <p id="demoFeedbackText" class="font-normal mt-0.5"></p>
                   </div>
-                  <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 font-medium">C) O(n²)</div>
                 </div>
               </div>
 
-              <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] font-bold text-slate-400">
-                <span>Auto-graded in real time</span>
-                <span class="text-emerald-600">+100 XP</span>
+              <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700/60 text-[11px] font-bold text-slate-400">
+                <span>🎯 Click any option to test</span>
+                <span id="demoScorePill" class="text-emerald-600 dark:text-emerald-400 font-bold">+100 XP Ready</span>
               </div>
             </div>
 
@@ -215,58 +244,118 @@
     </div>
   </section>
 
-  <!-- Feature Grid Section -->
-  <section id="features" class="py-24 bg-white border-t border-slate-200/80">
+  <!-- Interactive ROI & Time Saved Calculator Section -->
+  <section id="calculator" class="py-24 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="text-center max-w-3xl mx-auto">
-        <h2 class="text-xs font-bold uppercase tracking-widest text-blue-600">Engineered for Rapid Learning</h2>
-        <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Everything you need to master video content</p>
-        <p class="mt-3 text-slate-600 text-sm sm:text-base">Stop scrubbing through timeline bars. Get instant comprehension and active recall assessments.</p>
+        <h2 class="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">Quantifiable Productivity</h2>
+        <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Calculate How Much Time Synapse Saves You</p>
+        <p class="mt-3 text-slate-600 dark:text-slate-400 text-sm sm:text-base">Move the slider below to see how many study hours you recover each month.</p>
+      </div>
+
+      <div class="mt-14 max-w-4xl mx-auto bg-slate-50 dark:bg-slate-800/50 p-6 sm:p-10 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        
+        <!-- Slider Controls -->
+        <div class="flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <label for="hoursSlider" class="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100">
+              Video hours watched per week:
+            </label>
+            <span class="text-2xl font-extrabold text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-900 px-4 py-1 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+              <span id="hoursDisplay">6</span> hrs/week
+            </span>
+          </div>
+
+          <input id="hoursSlider" type="range" min="1" max="25" value="6" step="1" class="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600"/>
+          
+          <div class="flex justify-between text-xs text-slate-400 font-semibold">
+            <span>1 hr (Casual)</span>
+            <span>12 hrs (Student)</span>
+            <span>25 hrs (Heavy Research)</span>
+          </div>
+        </div>
+
+        <!-- Calculated Metrics Grid -->
+        <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col gap-1">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Hours Saved / Month</span>
+            <p id="calcHoursSaved" class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">18.5 hrs</p>
+            <span class="text-[11px] text-slate-500">Replaced by concise summaries</span>
+          </div>
+
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col gap-1">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Summary Reading Time</span>
+            <p id="calcReadingTime" class="text-3xl font-extrabold text-blue-600 dark:text-blue-400">18 mins</p>
+            <span class="text-[11px] text-slate-500">To absorb the full weekly curriculum</span>
+          </div>
+
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col gap-1">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Retention Boost</span>
+            <p id="calcRetention" class="text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">+78%</p>
+            <span class="text-[11px] text-slate-500">Via immediate active recall testing</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Feature Grid Section -->
+  <section id="features" class="py-24 bg-[#f8fafc] dark:bg-slate-950 border-t border-slate-200/80 dark:border-slate-800 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto">
+        <h2 class="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">Engineered for Deep Learning</h2>
+        <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Everything you need to master video content</p>
+        <p class="mt-3 text-slate-600 dark:text-slate-400 text-sm sm:text-base">Stop scrubbing through timeline bars. Get instant comprehension and active recall assessments.</p>
       </div>
 
       <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
         
         <!-- Feature 1 -->
-        <div class="soft-card p-8 rounded-3xl flex flex-col justify-between gap-6 hover:-translate-y-1 transition-transform">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between gap-6 hover:-translate-y-1 transition-all">
           <div class="flex flex-col gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center">
+            <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center">
               <span class="material-symbols-outlined text-[24px]">psychology</span>
             </div>
-            <h3 class="text-lg font-bold text-slate-900">Adaptive Quiz Generation</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
-              Choose your challenge: Easy, Medium, or Hard. Customize quiz size from 3 to 20 questions with instant answer explanations.
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Adaptive Quiz Generation</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              Choose your challenge: Easy, Medium, or Hard. Customize quiz size from 3 to 20 questions with instant answer explanations and correct option insights.
             </p>
           </div>
-          <span class="text-xs font-bold text-blue-600 flex items-center gap-1">Customizable Difficulty →</span>
+          <span class="text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1">Customizable Difficulty →</span>
         </div>
 
         <!-- Feature 2 -->
-        <div class="soft-card p-8 rounded-3xl flex flex-col justify-between gap-6 hover:-translate-y-1 transition-transform">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between gap-6 hover:-translate-y-1 transition-all">
           <div class="flex flex-col gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
               <span class="material-symbols-outlined text-[24px]">summarize</span>
             </div>
-            <h3 class="text-lg font-bold text-slate-900">Structured Executive Summaries</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Structured Executive Summaries</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               Clear hierarchical bullet points, key takeaways, and definitions. Includes one-click audio playback and Markdown export.
             </p>
           </div>
-          <span class="text-xs font-bold text-indigo-600 flex items-center gap-1">One-Click Export →</span>
+          <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1">One-Click Export →</span>
         </div>
 
         <!-- Feature 3 -->
-        <div class="soft-card p-8 rounded-3xl flex flex-col justify-between gap-6 hover:-translate-y-1 transition-transform">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between gap-6 hover:-translate-y-1 transition-all">
           <div class="flex flex-col gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <span class="material-symbols-outlined text-[24px]">insights</span>
             </div>
-            <h3 class="text-lg font-bold text-slate-900">Performance Analytics & History</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
-              Every video analysis and quiz score is saved to your account. Track your learning streaks, accuracy rates, and topic mastery.
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Performance Analytics & History</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              Every video analysis and quiz score is saved to your account. Track your learning streaks, accuracy rates, and difficulty breakdown in real time.
             </p>
           </div>
-          <span class="text-xs font-bold text-emerald-600 flex items-center gap-1">Track Progress →</span>
+          <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">Track Progress →</span>
         </div>
 
       </div>
@@ -275,41 +364,101 @@
   </section>
 
   <!-- How It Works Section -->
-  <section id="how-it-works" class="py-24 bg-[#f8fafc]">
+  <section id="how-it-works" class="py-24 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="text-center max-w-3xl mx-auto">
-        <h2 class="text-xs font-bold uppercase tracking-widest text-blue-600">Seamless Workflow</h2>
-        <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">How Synapse Works in 3 Steps</p>
+        <h2 class="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">Seamless Workflow</h2>
+        <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">How Synapse Works in 3 Steps</p>
       </div>
 
       <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 relative">
         
         <!-- Step 1 -->
-        <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col gap-4 relative">
+        <div class="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col gap-4 relative">
           <span class="w-10 h-10 rounded-xl bg-blue-600 text-white font-extrabold text-sm flex items-center justify-center shadow-md shadow-blue-500/20">1</span>
-          <h3 class="text-lg font-bold text-slate-900">Input Your Video</h3>
-          <p class="text-sm text-slate-600 leading-relaxed">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Input Your Video</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
             Paste any YouTube URL or drag & drop video files (MP4, MKV, MOV, WebM). Synapse handles audio extraction in the background.
           </p>
         </div>
 
         <!-- Step 2 -->
-        <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col gap-4 relative">
+        <div class="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col gap-4 relative">
           <span class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-extrabold text-sm flex items-center justify-center shadow-md shadow-indigo-500/20">2</span>
-          <h3 class="text-lg font-bold text-slate-900">Synthesize & Review</h3>
-          <p class="text-sm text-slate-600 leading-relaxed">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Synthesize & Review</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
             Our AI generates verbatim searchable transcripts and a high-yield executive summary highlighting critical concepts.
           </p>
         </div>
 
         <!-- Step 3 -->
-        <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col gap-4 relative">
+        <div class="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col gap-4 relative">
           <span class="w-10 h-10 rounded-xl bg-emerald-600 text-white font-extrabold text-sm flex items-center justify-center shadow-md shadow-emerald-500/20">3</span>
-          <h3 class="text-lg font-bold text-slate-900">Master via Interactive Quiz</h3>
-          <p class="text-sm text-slate-600 leading-relaxed">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Master via Interactive Quiz</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
             Answer questions tailored to your chosen difficulty level. Review detailed feedback and monitor your long-term retention stats.
           </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interactive FAQ Accordion Section -->
+  <section id="faq" class="py-24 bg-[#f8fafc] dark:bg-slate-950 border-t border-slate-200/80 dark:border-slate-800 transition-colors">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <h2 class="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">Frequently Asked Questions</h2>
+        <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Got Questions? We've Got Answers</p>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        
+        <!-- FAQ 1 -->
+        <div class="faq-item bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm transition-all">
+          <button type="button" class="faq-toggle w-full p-6 text-left flex items-center justify-between gap-4 font-bold text-slate-900 dark:text-white text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            <span>Which video formats and sources are supported?</span>
+            <span class="faq-icon material-symbols-outlined text-slate-400 transition-transform duration-200">expand_more</span>
+          </button>
+          <div class="faq-content hidden px-6 pb-6 text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-800/60 pt-4">
+            Synapse supports all public YouTube URLs directly, as well as local video uploads in <strong>MP4, MKV, MOV, and WebM</strong> formats up to 50 minutes in length.
+          </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="faq-item bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm transition-all">
+          <button type="button" class="faq-toggle w-full p-6 text-left flex items-center justify-between gap-4 font-bold text-slate-900 dark:text-white text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            <span>How does the AI generate quizzes from transcripts?</span>
+            <span class="faq-icon material-symbols-outlined text-slate-400 transition-transform duration-200">expand_more</span>
+          </button>
+          <div class="faq-content hidden px-6 pb-6 text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-800/60 pt-4">
+            We extract audio and transcribe speech using high-speed Whisper models. Then, Groq LLMs analyze key arguments, factual relationships, and definitions to generate multiple-choice questions matching your selected difficulty (Easy, Medium, or Hard).
+          </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="faq-item bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm transition-all">
+          <button type="button" class="faq-toggle w-full p-6 text-left flex items-center justify-between gap-4 font-bold text-slate-900 dark:text-white text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            <span>Are my quiz scores and study history saved across devices?</span>
+            <span class="faq-icon material-symbols-outlined text-slate-400 transition-transform duration-200">expand_more</span>
+          </button>
+          <div class="faq-content hidden px-6 pb-6 text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-800/60 pt-4">
+            Yes! All quizzes, summaries, and performance scores are securely stored in your MySQL database tied directly to your account. You can log in from any browser and continue your learning streak.
+          </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="faq-item bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm transition-all">
+          <button type="button" class="faq-toggle w-full p-6 text-left flex items-center justify-between gap-4 font-bold text-slate-900 dark:text-white text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            <span>Is Synapse free to use?</span>
+            <span class="faq-icon material-symbols-outlined text-slate-400 transition-transform duration-200">expand_more</span>
+          </button>
+          <div class="faq-content hidden px-6 pb-6 text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-800/60 pt-4">
+            Yes, the platform is open-source and free to use with your own Groq API key and MySQL setup.
+          </div>
         </div>
 
       </div>
@@ -326,7 +475,7 @@
         Ready to supercharge your video learning?
       </h2>
       <p class="mt-4 text-slate-300 text-sm sm:text-base max-w-xl">
-        Join thousands of students and professionals who learn 3x faster with Synapse Summarizer.
+        Join students and professionals who learn 3x faster with Synapse Summarizer.
       </p>
 
       <div class="mt-8 flex flex-col sm:flex-row items-center gap-4">
@@ -335,14 +484,14 @@
           <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
         </a>
         <a href="login.html" class="px-8 py-4 bg-white/10 hover:bg-white/15 text-white font-semibold text-sm rounded-2xl backdrop-blur-sm border border-white/10 transition-all">
-          Sign In
+          Sign In to Studio
         </a>
       </div>
     </div>
   </section>
 
   <!-- Clean Footer -->
-  <footer class="bg-white border-t border-slate-200/80 py-12">
+  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 py-12 transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
       
       <div class="flex items-center gap-3">
@@ -352,21 +501,236 @@
             <line x1="19" y1="5" x2="19" y2="19"></line>
           </svg>
         </div>
-        <span class="font-bold text-slate-900 text-base">Synapse Summarizer</span>
+        <span class="font-bold text-slate-900 dark:text-white text-base">Synapse Video Intelligence</span>
       </div>
 
       <p class="text-xs text-slate-400 font-medium">
         © 2026 Synapse Video Intelligence. All rights reserved.
       </p>
 
-      <div class="flex items-center gap-6 text-xs font-semibold text-slate-500">
-        <a href="dashboard.html" class="hover:text-blue-600">Studio Dashboard</a>
-        <a href="login.html" class="hover:text-blue-600">Login</a>
-        <a href="register.html" class="hover:text-blue-600">Register</a>
+      <div class="flex items-center gap-6 text-xs font-semibold text-slate-500 dark:text-slate-400">
+        <a href="dashboard.html" class="hover:text-blue-600 dark:hover:text-blue-400">Studio Dashboard</a>
+        <a href="login.html" class="hover:text-blue-600 dark:hover:text-blue-400">Login</a>
+        <a href="register.html" class="hover:text-blue-600 dark:hover:text-blue-400">Register</a>
       </div>
 
     </div>
   </footer>
+
+  <!-- Interactive Scripts -->
+  <script>
+    // 1. Dark Mode Toggle
+    const htmlEl = document.documentElement;
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+
+    function applyTheme(isDark) {
+      if (isDark) {
+        htmlEl.classList.add('dark');
+        themeIcon.textContent = 'light_mode';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        htmlEl.classList.remove('dark');
+        themeIcon.textContent = 'dark_mode';
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      applyTheme(true);
+    } else {
+      applyTheme(false);
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      applyTheme(!htmlEl.classList.contains('dark'));
+    });
+
+    // 2. Interactive Demo Data & Logic
+    const demoTopics = {
+      cs: {
+        title: "MIT 6.0001: Introduction to Algorithms & Computational Complexity",
+        meta: "Duration: 48 mins • Transcribed in 2.8s via Whisper 16kHz MP3",
+        summary: [
+          "<strong>Big O Notation:</strong> Provides a mathematical upper bound on the asymptotic growth rate of execution runtimes.",
+          "<strong>Divide and Conquer:</strong> Breaks problems into independent sub-problems solved recursively (e.g. Merge Sort).",
+          "<strong>Space-Time Tradeoff:</strong> Optimizing algorithmic memory footprint vs overall CPU compute throughput."
+        ],
+        difficulty: "Medium",
+        question: "What is the worst-case time complexity of standard Merge Sort algorithm?",
+        options: [
+          { text: "A) O(n)", isCorrect: false, exp: "Incorrect. Linear time applies to single-pass array traversal, not recursive partitioning." },
+          { text: "B) O(n log n)", isCorrect: true, exp: "Correct! Merge Sort divides the array into log(n) levels and merges them in linear O(n) time." },
+          { text: "C) O(n²)", isCorrect: false, exp: "Incorrect. O(n²) is the worst-case for unoptimized Bubble Sort or Quick Sort." }
+        ]
+      },
+      ai: {
+        title: "Stanford CS229: Deep Learning & Neural Network Backpropagation",
+        meta: "Duration: 54 mins • Transcribed in 3.1s via Whisper 16kHz MP3",
+        summary: [
+          "<strong>Gradient Descent:</strong> Iteratively updates weight tensors in the direction of steepest loss reduction.",
+          "<strong>Backpropagation:</strong> Computes the partial derivative chain rule from the output loss layer backward.",
+          "<strong>Activation Functions:</strong> ReLU introduces non-linearity, avoiding vanishing gradients in deep networks."
+        ],
+        difficulty: "Hard",
+        question: "Why is the ReLU activation function preferred over Sigmoid in deep hidden layers?",
+        options: [
+          { text: "A) It limits activations strictly between 0 and 1", isCorrect: false, exp: "Incorrect. That is the behavior of the Sigmoid function, which suffers from vanishing gradients." },
+          { text: "B) It mitigates vanishing gradients for positive inputs and is computationally fast", isCorrect: true, exp: "Correct! ReLU gradient is constant 1 for positive activations, preventing gradient decay." },
+          { text: "C) It guarantees zero loss in convex optimization", isCorrect: false, exp: "Incorrect. Deep neural network loss landscapes are non-convex." }
+        ]
+      },
+      bio: {
+        title: "Harvard MCB 80: Molecular Biology & CRISPR-Cas9 Gene Editing",
+        meta: "Duration: 42 mins • Transcribed in 2.4s via Whisper 16kHz MP3",
+        summary: [
+          "<strong>Guide RNA (gRNA):</strong> Directs the Cas9 endonuclease to a precise complementary DNA sequence.",
+          "<strong>PAM Sequence:</strong> Protospacer adjacent motif required for Cas9 binding and double-strand cleavage.",
+          "<strong>DNA Repair:</strong> Non-homologous end joining (NHEJ) causes knockouts, while HDR enables targeted insertions."
+        ],
+        difficulty: "Easy",
+        question: "What component directs the Cas9 enzyme to the specific target DNA locus?",
+        options: [
+          { text: "A) Single Guide RNA (sgRNA)", isCorrect: true, exp: "Correct! The sgRNA contains the 20-nucleotide matching sequence that guides Cas9 to the cut site." },
+          { text: "B) DNA Polymerase III", isCorrect: false, exp: "Incorrect. DNA Polymerase synthesizes DNA strands during replication." },
+          { text: "C) Ribosomal 16S Subunit", isCorrect: false, exp: "Incorrect. Ribosomes synthesize proteins, not target DNA sequences." }
+        ]
+      }
+    };
+
+    let currentDemoKey = 'cs';
+    let answered = false;
+
+    function renderDemo(key) {
+      currentDemoKey = key;
+      answered = false;
+      const data = demoTopics[key];
+
+      document.getElementById('demoVideoTitle').textContent = data.title;
+      document.getElementById('demoVideoMeta').textContent = data.meta;
+      document.getElementById('demoQuizDifficulty').textContent = data.difficulty;
+      document.getElementById('demoQuizQuestion').textContent = data.question;
+
+      // Render summary
+      const summaryList = document.getElementById('demoSummaryList');
+      summaryList.innerHTML = data.summary.map(item => `<li>${item}</li>`).join('');
+
+      // Render options
+      const container = document.getElementById('demoOptionsContainer');
+      container.innerHTML = '';
+      const feedbackBanner = document.getElementById('demoFeedbackBanner');
+      feedbackBanner.classList.add('hidden');
+
+      data.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'w-full text-left p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-700/60 font-medium text-slate-700 dark:text-slate-200 transition-all flex items-center justify-between group';
+        btn.innerHTML = `<span>${opt.text}</span><span class="material-symbols-outlined text-[18px] opacity-0 group-hover:opacity-60 transition-opacity">radio_button_unchecked</span>`;
+
+        btn.onclick = () => handleDemoAnswer(idx, btn, opt, data);
+        container.appendChild(btn);
+      });
+    }
+
+    function handleDemoAnswer(idx, clickedBtn, opt, data) {
+      if (answered) return;
+      answered = true;
+
+      const container = document.getElementById('demoOptionsContainer');
+      const allBtns = container.querySelectorAll('button');
+      const feedbackBanner = document.getElementById('demoFeedbackBanner');
+      const feedbackIcon = document.getElementById('demoFeedbackIcon');
+      const feedbackTitle = document.getElementById('demoFeedbackTitle');
+      const feedbackText = document.getElementById('demoFeedbackText');
+
+      allBtns.forEach((btn, i) => {
+        btn.disabled = true;
+        const optData = data.options[i];
+        if (optData.isCorrect) {
+          btn.className = 'w-full text-left p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 font-bold flex items-center justify-between shadow-sm';
+          btn.innerHTML = `<span>${optData.text}</span><span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>`;
+        } else if (i === idx && !opt.isCorrect) {
+          btn.className = 'w-full text-left p-3 rounded-xl border-2 border-rose-500 bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-200 font-bold flex items-center justify-between shadow-sm';
+          btn.innerHTML = `<span>${optData.text}</span><span class="material-symbols-outlined text-[18px] text-rose-600">cancel</span>`;
+        } else {
+          btn.className = 'w-full text-left p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100/50 dark:bg-slate-800/30 text-slate-400 opacity-60 flex items-center justify-between';
+        }
+      });
+
+      feedbackBanner.classList.remove('hidden');
+      if (opt.isCorrect) {
+        feedbackBanner.className = 'mt-3 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 text-xs flex items-start gap-2';
+        feedbackIcon.textContent = 'verified';
+        feedbackIcon.className = 'material-symbols-outlined text-[18px] text-emerald-600';
+        feedbackTitle.textContent = 'Correct Answer!';
+      } else {
+        feedbackBanner.className = 'mt-3 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200 text-xs flex items-start gap-2';
+        feedbackIcon.textContent = 'error';
+        feedbackIcon.className = 'material-symbols-outlined text-[18px] text-rose-600';
+        feedbackTitle.textContent = 'Explanation:';
+      }
+      feedbackText.textContent = opt.exp;
+    }
+
+    function switchDemoTopic(key) {
+      document.querySelectorAll('.demo-tab-btn').forEach(btn => {
+        btn.className = 'demo-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 transition-all';
+      });
+      const activeTab = document.getElementById('tabBtn_' + key);
+      if (activeTab) {
+        activeTab.className = 'demo-tab-btn active-tab px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm';
+      }
+      renderDemo(key);
+    }
+
+    // Initialize demo on page load
+    renderDemo('cs');
+
+    // 3. Interactive ROI Calculator Logic
+    const hoursSlider = document.getElementById('hoursSlider');
+    const hoursDisplay = document.getElementById('hoursDisplay');
+    const calcHoursSaved = document.getElementById('calcHoursSaved');
+    const calcReadingTime = document.getElementById('calcReadingTime');
+    const calcRetention = document.getElementById('calcRetention');
+
+    function updateCalculator(hours) {
+      hoursDisplay.textContent = hours;
+      // Formula: Average video is condensed to 8% reading time, saving ~75-80% of time
+      const monthlyHours = hours * 4.33;
+      const hoursSaved = (monthlyHours * 0.75).toFixed(1);
+      const readingMinutesPerWeek = Math.round(hours * 60 * 0.08);
+      const retentionPercent = Math.min(95, 60 + Math.round(hours * 1.5));
+
+      calcHoursSaved.textContent = `${hoursSaved} hrs`;
+      calcReadingTime.textContent = `${readingMinutesPerWeek} mins`;
+      calcRetention.textContent = `+${retentionPercent}%`;
+    }
+
+    hoursSlider.addEventListener('input', (e) => {
+      updateCalculator(parseInt(e.target.value, 10));
+    });
+    updateCalculator(6);
+
+    // 4. Interactive FAQ Accordion Logic
+    document.querySelectorAll('.faq-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const content = item.querySelector('.faq-content');
+        const icon = item.querySelector('.faq-icon');
+        const isHidden = content.classList.contains('hidden');
+
+        // Close others
+        document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.faq-icon').forEach(i => i.style.transform = 'rotate(0deg)');
+
+        if (isHidden) {
+          content.classList.remove('hidden');
+          icon.style.transform = 'rotate(180deg)';
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>
