@@ -4,6 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign In — Synapse Video Intelligence</title>
+  <link rel="icon" type="image/png" href="img/logo.png"/>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -53,29 +54,38 @@
       
       <!-- Brand Logo -->
       <a href="landing.html" class="flex items-center gap-3 relative z-10">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="6 3 20 12 6 21 6 3"></polygon>
-            <line x1="19" y1="5" x2="19" y2="19"></line>
-          </svg>
-        </div>
+        <img src="img/logo.png" alt="Synapse AI Logo" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-blue-500/30 border border-blue-500/20"/>
         <div class="flex items-center gap-1.5">
-          <span class="font-extrabold tracking-tight text-xl">Synapse</span>
-          <span class="px-1.5 py-0.5 text-[10px] font-bold uppercase bg-blue-500/20 text-blue-300 rounded border border-blue-400/30">STUDIO</span>
+          <span class="font-extrabold text-white tracking-tight text-xl">Synapse</span>
+          <span class="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 rounded border border-blue-400/30">AI</span>
         </div>
       </a>
 
-      <!-- Testimonial & Value Prop -->
-      <div class="max-w-md relative z-10 flex flex-col gap-6">
-        <div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-blue-400 border border-white/10">
-          <span class="material-symbols-outlined text-[28px]">format_quote</span>
+      <!-- Hero Value Prop Content -->
+      <div class="relative z-10 max-w-md my-auto py-12 flex flex-col gap-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 text-xs font-bold w-fit">
+          <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+          <span>AI-Powered Video Summarization</span>
         </div>
-        <p class="text-xl font-medium text-slate-200 leading-relaxed">
-          "Synapse transformed how our study group reviews 2-hour university lectures. The custom quiz engine tests exact retention within minutes."
+
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+          Master any video in minutes, not hours.
+        </h1>
+
+        <p class="text-slate-300 text-sm leading-relaxed">
+          Log in to continue synthesizing your video lectures, generating active recall quizzes, and tracking your topic retention.
         </p>
-        <div>
-          <h4 class="font-bold text-white text-base">Sarah Lin</h4>
-          <p class="text-xs text-slate-400">Computer Science Researcher, Stanford</p>
+
+        <!-- Social Proof Stats -->
+        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-800">
+          <div>
+            <p class="text-2xl font-extrabold text-white">50K+</p>
+            <p class="text-xs text-slate-400">Transcribed Videos</p>
+          </div>
+          <div>
+            <p class="text-2xl font-extrabold text-white">99.4%</p>
+            <p class="text-xs text-slate-400">Whisper Accuracy</p>
+          </div>
         </div>
       </div>
 
@@ -96,11 +106,7 @@
         
         <!-- Mobile Logo -->
         <div class="lg:hidden flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="6 3 20 12 6 21 6 3"></polygon>
-            </svg>
-          </div>
+          <img src="img/logo.png" alt="Synapse AI Logo" class="w-9 h-9 rounded-xl object-cover shadow-md border border-blue-500/20"/>
           <span class="font-bold text-slate-900 text-lg">Synapse</span>
         </div>
 
