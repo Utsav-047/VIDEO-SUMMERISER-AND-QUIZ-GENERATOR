@@ -1,208 +1,224 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html lang="en" class="light">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>SummarizeAI — Log in</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Geist:wght@500;600&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        colors: {
-          "on-primary-fixed": "#00174b", "inverse-primary": "#b4c5ff", "secondary-fixed": "#d3e4fe",
-          "on-tertiary-container": "#eff1f3", "on-tertiary-fixed-variant": "#444749", "surface-bright": "#f9f9ff",
-          "outline": "#737686", "on-background": "#111c2d", "secondary": "#505f76",
-          "surface-container-highest": "#d8e3fb", "on-secondary-fixed-variant": "#38485d",
-          "on-primary-fixed-variant": "#003ea8", "inverse-surface": "#263143", "primary-container": "#2563eb",
-          "surface": "#f9f9ff", "surface-dim": "#cfdaf2", "on-secondary-fixed": "#0b1c30",
-          "outline-variant": "#c3c6d7", "on-surface-variant": "#434655", "primary": "#004ac6",
-          "on-surface": "#111c2d", "tertiary": "#525657", "on-tertiary": "#ffffff",
-          "secondary-container": "#d0e1fb", "on-error-container": "#93000a", "surface-variant": "#d8e3fb",
-          "error": "#ba1a1a", "tertiary-fixed": "#e0e3e5", "on-secondary-container": "#54647a",
-          "surface-container-high": "#dee8ff", "tertiary-fixed-dim": "#c4c7c9", "surface-container": "#e7eeff",
-          "background": "#f9f9ff", "secondary-fixed-dim": "#b7c8e1", "on-primary-container": "#eeefff",
-          "primary-fixed-dim": "#b4c5ff", "inverse-on-surface": "#ecf1ff", "error-container": "#ffdad6",
-          "on-error": "#ffffff", "surface-container-low": "#f0f3ff", "tertiary-container": "#6b6e70",
-          "surface-container-lowest": "#ffffff", "on-secondary": "#ffffff", "on-primary": "#ffffff",
-          "primary-fixed": "#dbe1ff", "surface-tint": "#0053db", "on-tertiary-fixed": "#191c1e"
-        },
-        borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
-        spacing: {
-          "container-padding-mobile": "20px", base: "8px", gutter: "24px", "stack-md": "24px",
-          "container-padding-desktop": "40px", "stack-sm": "12px", "stack-lg": "48px"
-        },
-        fontFamily: {
-          "body-sm": ["Inter", "sans-serif"], "label-sm": ["Geist", "sans-serif"], "label-md": ["Geist", "sans-serif"],
-          "body-md": ["Inter", "sans-serif"], "body-lg": ["Inter", "sans-serif"], "headline-md": ["Geist", "sans-serif"],
-          "headline-lg": ["Geist", "sans-serif"], "headline-lg-mobile": ["Geist", "sans-serif"]
-        },
-        fontSize: {
-          "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
-          "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }],
-          "label-md": ["14px", { lineHeight: "20px", letterSpacing: "0.02em", fontWeight: "500" }],
-          "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
-          "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
-          "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "500" }],
-          "headline-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "600" }],
-          "headline-lg-mobile": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }]
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In — Synapse Video Intelligence</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Material Symbols Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css"/>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          }
         }
       }
     }
-  }
-</script>
-<style>
-  .tactile-shadow-base { box-shadow: 0 4px 20px rgba(0, 74, 198, 0.04); }
-  .tactile-shadow-active { box-shadow: 0 8px 30px rgba(0, 74, 198, 0.08); border-top: 1px solid rgba(255, 255, 255, 0.8); }
-  .input-well { box-shadow: inset 0 2px 4px rgba(17, 28, 45, 0.02); }
-</style>
+  </script>
 </head>
-<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex items-center justify-center p-container-padding-mobile md:p-container-padding-desktop">
+<body class="bg-[#f8fafc] text-slate-800 font-sans min-h-screen flex flex-col justify-between antialiased">
 
-<main class="w-full max-w-[1000px] h-full min-h-[600px] bg-surface-container-lowest rounded-xl tactile-shadow-base overflow-hidden flex flex-col md:flex-row relative z-10">
-
-  <div class="hidden md:flex md:w-5/12 bg-surface-container-low flex-col justify-between p-stack-lg relative overflow-hidden">
-    <div class="z-10 relative">
-      <a href="landing.html" class="flex items-center gap-2 mb-stack-md">
-        <span class="material-symbols-outlined text-primary text-[32px]">movie_filter</span>
-        <h1 class="font-headline-md text-headline-md font-bold text-on-surface">SummarizeAI</h1>
+  <!-- Main Split Layout -->
+  <div class="flex-1 flex flex-col md:flex-row">
+    
+    <!-- Left Hero Brand Column (Desktop only) -->
+    <div class="hidden lg:flex lg:w-1/2 bg-slate-900 text-white p-12 flex-col justify-between relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-indigo-900/30 to-slate-950 pointer-events-none"></div>
+      
+      <!-- Brand Logo -->
+      <a href="landing.html" class="flex items-center gap-3 relative z-10">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="6 3 20 12 6 21 6 3"></polygon>
+            <line x1="19" y1="5" x2="19" y2="19"></line>
+          </svg>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-extrabold tracking-tight text-xl">Synapse</span>
+          <span class="px-1.5 py-0.5 text-[10px] font-bold uppercase bg-blue-500/20 text-blue-300 rounded border border-blue-400/30">STUDIO</span>
+        </div>
       </a>
-      <h2 class="font-headline-lg text-headline-lg text-on-surface mb-stack-sm">Learn faster</h2>
-      <p class="font-body-md text-body-md text-on-surface-variant max-w-sm">
-        Turn any video into a clear summary and a quiz that checks what you actually remember.
-      </p>
-    </div>
-    <div class="z-10 relative mt-auto">
-      <div class="bg-surface-container-lowest p-stack-md rounded-lg tactile-shadow-base backdrop-blur-sm bg-opacity-80">
-        <div class="flex items-center gap-3 mb-2">
-          <span class="material-symbols-outlined text-primary">speed</span>
-          <span class="font-label-md text-label-md text-on-surface">Speed &amp; clarity</span>
+
+      <!-- Testimonial & Value Prop -->
+      <div class="max-w-md relative z-10 flex flex-col gap-6">
+        <div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-blue-400 border border-white/10">
+          <span class="material-symbols-outlined text-[28px]">format_quote</span>
         </div>
-        <p class="font-body-sm text-body-sm text-on-surface-variant">
-          Skip the re-watching. Get the summary and test yourself in minutes.
+        <p class="text-xl font-medium text-slate-200 leading-relaxed">
+          "Synapse transformed how our study group reviews 2-hour university lectures. The custom quiz engine tests exact retention within minutes."
         </p>
+        <div>
+          <h4 class="font-bold text-white text-base">Sarah Lin</h4>
+          <p class="text-xs text-slate-400">Computer Science Researcher, Stanford</p>
+        </div>
+      </div>
+
+      <!-- Footer Micro Info -->
+      <div class="relative z-10 text-xs text-slate-500 flex items-center justify-between">
+        <span>© 2026 Synapse Video Intelligence</span>
+        <div class="flex items-center gap-4">
+          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> 99.9% Uptime</span>
+          <span>SSL 256-bit Encrypted</span>
+        </div>
       </div>
     </div>
-    <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-primary-container opacity-20 rounded-full blur-[100px]"></div>
-    <div class="absolute -top-32 -right-32 w-80 h-80 bg-surface-container-highest opacity-40 rounded-full blur-[80px]"></div>
+
+    <!-- Right Sign In Form Column -->
+    <div class="flex-1 flex flex-col justify-center items-center p-6 sm:p-12 lg:p-16">
+      
+      <div class="w-full max-w-md flex flex-col gap-8">
+        
+        <!-- Mobile Logo -->
+        <div class="lg:hidden flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="6 3 20 12 6 21 6 3"></polygon>
+            </svg>
+          </div>
+          <span class="font-bold text-slate-900 text-lg">Synapse</span>
+        </div>
+
+        <!-- Form Title Header -->
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Welcome back</h2>
+          <p class="text-sm text-slate-500 mt-1">Enter your account credentials to access your video workspace.</p>
+        </div>
+
+        <!-- Error Notification Banner -->
+        <div id="loginError" class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">error</span>
+          <span id="loginErrorText">Invalid email or password</span>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="flex flex-col gap-4">
+          
+          <!-- Email Input -->
+          <div class="flex flex-col gap-1.5">
+            <label for="email" class="text-xs font-bold uppercase tracking-wider text-slate-600">Email Address</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">mail</span>
+              <input id="email" type="email" required placeholder="you@university.edu" class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl font-medium text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all"/>
+            </div>
+          </div>
+
+          <!-- Password Input -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex items-center justify-between">
+              <label for="password" class="text-xs font-bold uppercase tracking-wider text-slate-600">Password</label>
+              <a href="forgot-password.html" class="text-xs font-bold text-blue-600 hover:underline">Forgot password?</a>
+            </div>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">lock</span>
+              <input id="password" type="password" required placeholder="••••••••••••" class="w-full pl-10 pr-11 py-3 bg-white border border-slate-200 rounded-xl font-medium text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all"/>
+              <button type="button" onclick="togglePassword('password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1">
+                <span class="material-symbols-outlined text-[18px]">visibility</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button id="loginSubmitBtn" type="submit" class="mt-2 w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/25 transition-all flex items-center justify-center gap-2">
+            <span>Sign In to Dashboard</span>
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </button>
+
+        </form>
+
+        <!-- Switch to Register Link -->
+        <div class="pt-4 border-t border-slate-200 text-center">
+          <p class="text-xs text-slate-500 font-medium">
+            Don't have an account yet? 
+            <a href="register.html" class="font-bold text-blue-600 hover:underline">Create an account free</a>
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
 
-  <div class="w-full md:w-7/12 p-container-padding-mobile md:p-stack-lg flex flex-col bg-surface-container-lowest relative">
-    <div class="md:hidden flex items-center justify-center gap-2 mb-stack-lg">
-      <span class="material-symbols-outlined text-primary text-[28px]">movie_filter</span>
-      <h1 class="font-headline-md text-headline-md font-bold text-on-surface">SummarizeAI</h1>
-    </div>
+  <script>
+    const BACKEND_URL = 'http://127.0.0.1:5000';
 
-    <div class="w-full max-w-md mx-auto flex-1 flex flex-col justify-center">
-      <div class="text-center mb-stack-lg">
-        <h2 class="font-headline-md text-headline-md text-on-surface mb-2">Welcome back</h2>
-        <p class="font-body-sm text-body-sm text-on-surface-variant">Sign in to continue to your dashboard.</p>
-      </div>
-
-      <div class="flex p-1 bg-surface-container-low rounded-lg mb-stack-lg">
-        <button class="flex-1 py-2 font-label-md text-label-md rounded-md bg-surface-container-lowest text-primary shadow-sm transition-all duration-200">
-          Sign In
-        </button>
-        <a href="register.html" class="flex-1 py-2 font-label-md text-label-md rounded-md text-on-surface-variant hover:text-on-surface transition-all duration-200 text-center">
-          Create Account
-        </a>
-      </div>
-
-      <form id="loginForm" class="flex flex-col gap-stack-sm">
-        <div class="flex flex-col gap-1">
-          <label class="font-label-sm text-label-sm text-on-surface-variant" for="email">Email Address</label>
-          <div class="relative">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
-            <input class="w-full h-12 pl-10 pr-4 rounded-lg bg-surface-container-low border border-transparent focus:bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary-container focus:ring-opacity-20 transition-all duration-200 font-body-sm text-body-sm text-on-surface outline-none input-well placeholder:text-outline-variant" id="email" placeholder="you@example.com" type="email" required/>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-1 mt-2">
-          <div class="flex justify-between items-center">
-            <label class="font-label-sm text-label-sm text-on-surface-variant" for="password">Password</label>
-            <a class="font-label-sm text-label-sm text-primary hover:text-primary-fixed-dim transition-colors" href="#">Forgot password?</a>
-          </div>
-          <div class="relative">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
-            <input class="w-full h-12 pl-10 pr-10 rounded-lg bg-surface-container-low border border-transparent focus:bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary-container focus:ring-opacity-20 transition-all duration-200 font-body-sm text-body-sm text-on-surface outline-none input-well placeholder:text-outline-variant" id="password" placeholder="••••••••" type="password" required/>
-            <button type="button" onclick="togglePassword('password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors">
-              <span class="material-symbols-outlined text-[20px]">visibility_off</span>
-            </button>
-          </div>
-        </div>
-
-        <p id="loginError" class="hidden font-body-sm text-body-sm text-error"></p>
-
-        <button id="loginSubmitBtn" class="mt-4 h-12 w-full bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-on-primary-fixed-variant transition-colors duration-200 tactile-shadow-active flex items-center justify-center gap-2" type="submit">
-          Sign In
-          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-        </button>
-      </form>
-
-      <div class="mt-stack-lg text-center">
-        <p class="font-body-sm text-body-sm text-on-surface-variant">
-          Don't have an account?
-          <a class="text-primary hover:underline" href="register.html">Create one</a>
-        </p>
-      </div>
-    </div>
-  </div>
-</main>
-
-<script>
-  const BACKEND_URL = 'http://127.0.0.1:5000';
-
-  function togglePassword(inputId, btn) {
-    const input = document.getElementById(inputId);
-    const icon = btn.querySelector('.material-symbols-outlined');
-    if (input.type === 'password') {
-      input.type = 'text';
-      icon.textContent = 'visibility';
-    } else {
-      input.type = 'password';
-      icon.textContent = 'visibility_off';
-    }
-  }
-
-  const loginForm = document.getElementById('loginForm');
-  const loginError = document.getElementById('loginError');
-  const loginSubmitBtn = document.getElementById('loginSubmitBtn');
-
-  loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    loginError.classList.add('hidden');
-    loginSubmitBtn.disabled = true;
-
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-
-    try {
-      const response = await fetch(BACKEND_URL + '/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // sends/receives the session cookie
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
+    function togglePassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const icon = btn.querySelector('.material-symbols-outlined');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility';
       }
-
-      // Real login succeeded — go to the dashboard
-      window.location.href = 'dashboard.html';
-
-    } catch (err) {
-      loginError.textContent = err.message;
-      loginError.classList.remove('hidden');
-      loginSubmitBtn.disabled = false;
     }
-  });
-</script>
+
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const loginErrorText = document.getElementById('loginErrorText');
+    const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.classList.add('hidden');
+      loginSubmitBtn.disabled = true;
+      loginSubmitBtn.innerHTML = '<span>Verifying credentials...</span>';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch(BACKEND_URL + '/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Invalid email or password');
+        }
+
+        // Login succeeded
+        window.location.href = 'dashboard.html';
+
+      } catch (err) {
+        loginErrorText.textContent = err.message;
+        loginError.classList.remove('hidden');
+        loginSubmitBtn.disabled = false;
+        loginSubmitBtn.innerHTML = '<span>Sign In to Dashboard</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span>';
+      }
+    });
+  </script>
 
 </body>
 </html>

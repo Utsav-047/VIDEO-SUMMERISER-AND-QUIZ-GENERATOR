@@ -1,230 +1,787 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html lang="en" class="light">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>SummarizeAI — Dashboard</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        colors: {
-          "on-primary-fixed": "#00174b", "inverse-primary": "#b4c5ff", "secondary-fixed": "#d3e4fe",
-          "on-tertiary-container": "#eff1f3", "on-tertiary-fixed-variant": "#444749", "surface-bright": "#f9f9ff",
-          "outline": "#737686", "on-background": "#111c2d", "secondary": "#505f76",
-          "surface-container-highest": "#d8e3fb", "on-secondary-fixed-variant": "#38485d",
-          "on-primary-fixed-variant": "#003ea8", "inverse-surface": "#263143", "primary-container": "#2563eb",
-          "surface": "#f9f9ff", "surface-dim": "#cfdaf2", "on-secondary-fixed": "#0b1c30",
-          "outline-variant": "#c3c6d7", "on-surface-variant": "#434655", "primary": "#004ac6",
-          "on-surface": "#111c2d", "tertiary": "#525657", "on-tertiary": "#ffffff",
-          "secondary-container": "#d0e1fb", "on-error-container": "#93000a", "surface-variant": "#d8e3fb",
-          "error": "#ba1a1a", "tertiary-fixed": "#e0e3e5", "on-secondary-container": "#54647a",
-          "surface-container-high": "#dee8ff", "tertiary-fixed-dim": "#c4c7c9", "surface-container": "#e7eeff",
-          "background": "#f9f9ff", "secondary-fixed-dim": "#b7c8e1", "on-primary-container": "#eeefff",
-          "primary-fixed-dim": "#b4c5ff", "inverse-on-surface": "#ecf1ff", "error-container": "#ffdad6",
-          "on-error": "#ffffff", "surface-container-low": "#f0f3ff", "tertiary-container": "#6b6e70",
-          "surface-container-lowest": "#ffffff", "on-secondary": "#ffffff", "on-primary": "#ffffff",
-          "primary-fixed": "#dbe1ff", "surface-tint": "#0053db", "on-tertiary-fixed": "#191c1e",
-          "success": "#1a7a4c", "on-success-container": "#0a3d26", "success-container": "#d4f5e4"
-        },
-        borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
-        spacing: {
-          "container-padding-mobile": "20px", base: "8px", gutter: "24px", "stack-md": "24px",
-          "container-padding-desktop": "40px", "stack-sm": "12px", "stack-lg": "48px"
-        },
-        fontFamily: {
-          "body-sm": ["Inter"], "label-sm": ["Geist"], "label-md": ["Geist"],
-          "body-md": ["Inter"], "body-lg": ["Inter"], "headline-md": ["Geist"],
-          "headline-lg": ["Geist"], "headline-lg-mobile": ["Geist"]
-        },
-        fontSize: {
-          "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
-          "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }],
-          "label-md": ["14px", { lineHeight: "20px", letterSpacing: "0.02em", fontWeight: "500" }],
-          "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
-          "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
-          "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "500" }],
-          "headline-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "600" }],
-          "headline-lg-mobile": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }]
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Synapse Summarizer — Video Intelligence & Quiz Studio</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Material Symbols Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css"/>
+
+  <script>
+    // Init theme
+    if (localStorage.getItem('synapse_theme') === 'dark' || (!('synapse_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    }
+
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          }
         }
       }
     }
-  }
-</script>
-<style>
-  .soft-shadow { box-shadow: 0 4px 20px rgba(0, 74, 198, 0.04); }
-  .inner-light { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 4px 12px rgba(0, 0, 0, 0.05); }
-
-  /* Pipeline rail */
-  .rail-dot {
-    width: 28px; height: 28px; border-radius: 9999px;
-    background: #d8e3fb; color: #737686;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 600; flex-shrink: 0;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
-  .rail-dot.active { background: #004ac6; color: #ffffff; }
-  .rail-dot.done { background: #1a7a4c; color: #ffffff; }
-  .rail-label { color: #737686; white-space: nowrap; }
-  .rail-label.active { color: #111c2d; font-weight: 500; }
-  .rail-line { flex: 1; height: 1px; background: #c3c6d7; margin: 0 8px; }
-  .rail-step:last-child .rail-line { display: none; }
-
-  .quiz-option { display: block; font-size: 14px; padding: 10px 12px; border: 1px solid #c3c6d7; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s ease; }
-  .quiz-option:hover { background: #f0f3ff; }
-  .quiz-option.correct { border-color: #1a7a4c; background: #d4f5e4; color: #0a3d26; }
-  .quiz-option.incorrect { border-color: #ba1a1a; background: #ffdad6; color: #93000a; }
-
-  .loader-spin {
-    width: 28px; height: 28px; border: 3px solid #d8e3fb; border-top-color: #004ac6;
-    border-radius: 50%; animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .hidden { display: none; }
-</style>
+  </script>
 </head>
-<body class="font-body-md text-body-md bg-background text-on-surface flex h-screen overflow-hidden">
+<body class="font-sans bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex h-screen overflow-hidden antialiased select-none transition-colors duration-200">
 
-<!-- Side Nav -->
-<aside class="fixed left-0 top-0 h-screen w-64 flex-col p-spacing-base gap-stack-sm bg-surface-container-low shadow-sm z-40 md:flex hidden">
-  <a href="landing.html" class="flex items-center gap-3 p-4 mb-4">
-    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary font-headline-md">S</div>
-    <div>
-      <h1 class="font-headline-md text-headline-md text-primary">SummarizeAI</h1>
-      <p class="font-body-sm text-body-sm text-on-surface-variant">Dashboard</p>
+  <!-- Mobile Top Bar -->
+  <div class="md:hidden fixed top-0 left-0 right-0 h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 z-50 flex items-center justify-between px-4">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+      </div>
+      <span class="font-bold text-slate-900 dark:text-white text-lg tracking-tight">Synapse</span>
     </div>
-  </a>
-  <nav class="flex-1 flex flex-col gap-2">
-    <span class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold">
-      <span class="material-symbols-outlined">video_library</span>
-      <span class="font-label-md text-label-md">New Summary</span>
-    </span>
-  </nav>
-  <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-container-lowest">
-    <span class="material-symbols-outlined text-outline text-[20px]">account_circle</span>
-    <span id="userName" class="font-label-sm text-label-sm text-on-surface flex-1 truncate">Loading...</span>
-    <button id="logoutBtn" title="Log out" class="text-outline hover:text-error transition-colors">
-      <span class="material-symbols-outlined text-[18px]">logout</span>
+    <button id="mobileMenuBtn" class="p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+      <span class="material-symbols-outlined">menu</span>
     </button>
   </div>
 
-  <div id="backendStatus" class="text-xs font-mono px-3 py-2 rounded-lg text-center" style="background:#e7eeff; color:#737686;">
-    Checking backend...
-  </div>
-</aside>
+  <!-- Sidebar Overlay for Mobile -->
+  <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 hidden md:hidden"></div>
 
-<!-- Main Content -->
-<main class="flex-1 md:ml-64 h-full overflow-y-auto px-container-padding-mobile md:px-container-padding-desktop py-stack-md flex flex-col gap-stack-lg">
+  <!-- Sidebar Navigation -->
+  <aside id="sidebarNav" class="fixed md:static inset-y-0 left-0 w-64 bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800/80 z-50 flex flex-col justify-between p-4 transition-transform duration-300 -translate-x-full md:translate-x-0">
+    
+    <!-- Brand & Navigation -->
+    <div class="flex flex-col gap-6">
+      
+      <!-- Brand Logo -->
+      <a href="landing.html" class="flex items-center gap-3 px-2 py-1.5 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-800 flex items-center justify-center text-white shadow-lg shadow-blue-600/25 group-hover:scale-105 transition-transform duration-200">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="6 3 20 12 6 21 6 3"></polygon>
+            <line x1="19" y1="5" x2="19" y2="19"></line>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-extrabold text-slate-900 dark:text-white tracking-tight text-lg">Synapse</span>
+            <span class="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded">PRO</span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Video Intelligence</p>
+        </div>
+      </a>
 
-  <header class="w-full max-w-[900px] mx-auto">
-    <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Welcome back</h2>
-    <p class="font-body-md text-body-md text-on-surface-variant mt-1">Paste a link below to get started.</p>
-  </header>
+      <!-- Primary Navigation Links -->
+      <nav class="flex flex-col gap-1.5" id="mainNav">
+        
+        <!-- Tab 1: Studio / New Summary -->
+        <button id="tabBtn-studio" class="nav-tab active flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-150 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 shadow-sm shadow-blue-500/5">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[20px] text-blue-600 dark:text-blue-400">smart_display</span>
+            <span>New Summary</span>
+          </div>
+          <span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400"></span>
+        </button>
 
-  <div class="w-full max-w-[900px] mx-auto flex flex-col gap-stack-md">
+        <!-- Tab 2: History -->
+        <button id="tabBtn-history" class="nav-tab flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-150">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-600">history_edu</span>
+            <span>History</span>
+          </div>
+          <span id="historyCountBadge" class="px-2 py-0.5 text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full">0</span>
+        </button>
 
-    <!-- Pipeline rail -->
-    <div class="flex items-center" id="pipelineRail">
-      <div class="rail-step flex-1" data-step="1">
-        <div class="flex items-center gap-2">
-          <div class="rail-dot active">1</div>
-          <span class="rail-label text-sm active">Upload</span>
-          <div class="rail-line"></div>
-        </div>
-      </div>
-      <div class="rail-step flex-1" data-step="2">
-        <div class="flex items-center gap-2">
-          <div class="rail-dot">2</div>
-          <span class="rail-label text-sm">Transcript</span>
-          <div class="rail-line"></div>
-        </div>
-      </div>
-      <div class="rail-step flex-1" data-step="3">
-        <div class="flex items-center gap-2">
-          <div class="rail-dot">3</div>
-          <span class="rail-label text-sm">Summary</span>
-          <div class="rail-line"></div>
-        </div>
-      </div>
-      <div class="rail-step" data-step="4">
-        <div class="flex items-center gap-2">
-          <div class="rail-dot">4</div>
-          <span class="rail-label text-sm">Quiz</span>
-        </div>
-      </div>
+        <!-- Tab 3: Performance -->
+        <button id="tabBtn-performance" class="nav-tab flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-150">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[20px] text-slate-400">insights</span>
+            <span>Performance</span>
+          </div>
+          <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950 px-1.5 py-0.5 rounded">Live</span>
+        </button>
+
+      </nav>
+
     </div>
 
-    <!-- PANEL 1: Upload -->
-    <section id="panel-upload" class="bg-surface-container-lowest rounded-xl p-6 soft-shadow border border-outline-variant/30">
-      <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Summarize a new video</h3>
-      <div class="flex flex-col md:flex-row gap-4">
-        <div class="flex-1 relative">
-          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">link</span>
-          <input id="ytLink" class="w-full pl-12 pr-4 py-4 rounded-lg bg-surface-bright border border-outline-variant/50 focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 font-body-md text-body-md text-on-surface placeholder:text-outline-variant inner-light" placeholder="Paste YouTube URL here..." type="url"/>
-        </div>
-        <button id="processBtn" class="py-4 px-8 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-all soft-shadow whitespace-nowrap flex items-center justify-center gap-2">
-          Generate
-          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+    <!-- Bottom Controls: Theme Toggle, User Profile & Status -->
+    <div class="flex flex-col gap-3 pt-4 border-t border-slate-200/80 dark:border-slate-800">
+      
+      <!-- Theme Switcher -->
+      <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60">
+        <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px] text-amber-500">dark_mode</span>
+          Theme Mode
+        </span>
+        <button id="themeToggleBtn" title="Toggle Theme" class="p-1.5 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">
+          <span id="themeIcon" class="material-symbols-outlined text-[16px]">light_mode</span>
         </button>
       </div>
 
-      <div class="flex items-center gap-4 my-5">
-        <div class="h-px flex-1 bg-outline-variant/40"></div>
-        <span class="font-label-sm text-label-sm text-outline">OR</span>
-        <div class="h-px flex-1 bg-outline-variant/40"></div>
+      <!-- Backend Status Indicator -->
+      <div id="backendStatus" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <span id="backendStatusText" class="truncate">Checking service...</span>
       </div>
 
-      <label for="fileInput" id="dropZone" class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-outline-variant rounded-lg py-8 cursor-pointer hover:border-primary hover:bg-surface-container-low transition-all">
-        <span class="material-symbols-outlined text-outline text-[32px]">upload_file</span>
-        <span id="dropZoneText" class="font-body-sm text-body-sm text-on-surface-variant">Click to upload a video file, or drag one here</span>
-        <input type="file" id="fileInput" accept="video/*" class="hidden"/>
-      </label>
-    </section>
-
-    <!-- PANEL LOADING -->
-    <section id="panel-loading" class="hidden bg-surface-container-lowest rounded-xl p-8 soft-shadow border border-outline-variant/30 text-center">
-      <div class="loader-spin mx-auto mb-3"></div>
-      <p id="loaderText" class="font-body-md text-body-md text-on-surface-variant">Extracting audio track...</p>
-    </section>
-
-    <!-- PANEL 2: Transcript + Summary -->
-    <section id="panel-result" class="hidden flex flex-col gap-stack-md">
-      <div class="bg-surface-container-lowest rounded-xl p-6 soft-shadow border border-outline-variant/30">
-        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-3">Transcript</p>
-        <p id="transcriptText" class="font-body-sm text-body-sm text-on-surface-variant leading-6" style="max-height:220px; overflow-y:auto;"></p>
+      <!-- User Card -->
+      <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div id="userAvatar" class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xs">
+            U
+          </div>
+          <div class="min-w-0">
+            <p id="userName" class="text-xs font-bold text-slate-900 dark:text-white truncate">Loading user...</p>
+            <p id="userEmail" class="text-[11px] text-slate-500 dark:text-slate-400 truncate">student@synapse.app</p>
+          </div>
+        </div>
+        <button id="logoutBtn" title="Sign out" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors">
+          <span class="material-symbols-outlined text-[18px]">logout</span>
+        </button>
       </div>
-      <div class="bg-secondary-container/40 rounded-xl p-6 soft-shadow border border-primary/20">
-        <p class="font-label-sm text-label-sm text-primary uppercase tracking-wider mb-3">AI summary</p>
-        <p id="summaryText" class="font-body-md text-body-md text-on-surface leading-7"></p>
+
+    </div>
+
+  </aside>
+
+  <!-- Main Content Workspace -->
+  <main class="flex-1 h-full overflow-y-auto pt-16 md:pt-0 bg-[#f8fafc] dark:bg-slate-950 flex flex-col">
+    
+    <!-- View 1: Studio Workspace -->
+    <div id="view-studio" class="view-panel flex-1 px-4 md:px-10 py-8 max-w-5xl mx-auto w-full flex flex-col gap-6">
+      
+      <!-- Studio Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">AI Video Studio</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Transform long videos into actionable summaries and personalized test quizzes.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="quickSampleBtn" class="px-3 py-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">bolt</span>
+            Try Sample Video
+          </button>
+        </div>
       </div>
-      <button id="toQuizBtn" class="py-4 px-8 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-all soft-shadow flex items-center justify-center gap-2">
-        Generate quiz
-        <span class="material-symbols-outlined">quiz</span>
-      </button>
-    </section>
 
-    <!-- PANEL 3: Quiz -->
-    <section id="panel-quiz" class="hidden flex flex-col gap-stack-md">
-      <div id="quizContainer" class="flex flex-col gap-4"></div>
-      <button id="submitQuizBtn" class="py-4 px-8 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-all soft-shadow">
-        Submit answers
-      </button>
-    </section>
+      <!-- Pipeline Stepper Rail -->
+      <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between" id="pipelineRail">
+        
+        <div class="rail-step flex-1 flex items-center gap-2.5" data-step="1">
+          <div class="rail-step-badge active">1</div>
+          <div class="hidden sm:block">
+            <p class="text-xs font-bold text-slate-900 dark:text-white leading-none">Input Video</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">URL or File</p>
+          </div>
+          <div class="flex-1 h-[2px] bg-slate-200 dark:bg-slate-800 mx-2 hidden sm:block"></div>
+        </div>
 
-    <!-- PANEL: Score -->
-    <section id="panel-score" class="hidden bg-success-container rounded-xl p-8 soft-shadow border border-success/20 text-center">
-      <p class="font-label-sm text-label-sm text-on-success-container uppercase tracking-wider mb-1">Quiz complete</p>
-      <p id="scoreText" class="font-headline-lg text-headline-lg text-on-success-container">0 / 0</p>
-    </section>
+        <div class="rail-step flex-1 flex items-center gap-2.5" data-step="2">
+          <div class="rail-step-badge">2</div>
+          <div class="hidden sm:block">
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 leading-none">Transcript</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Audio Engine</p>
+          </div>
+          <div class="flex-1 h-[2px] bg-slate-200 dark:bg-slate-800 mx-2 hidden sm:block"></div>
+        </div>
 
+        <div class="rail-step flex-1 flex items-center gap-2.5" data-step="3">
+          <div class="rail-step-badge">3</div>
+          <div class="hidden sm:block">
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 leading-none">AI Summary</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Core Takeaways</p>
+          </div>
+          <div class="flex-1 h-[2px] bg-slate-200 dark:bg-slate-800 mx-2 hidden sm:block"></div>
+        </div>
+
+        <div class="rail-step flex items-center gap-2.5" data-step="4">
+          <div class="rail-step-badge">4</div>
+          <div class="hidden sm:block">
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 leading-none">Interactive Quiz</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Assessment</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PANEL 1: Upload & Quiz Settings -->
+      <section id="panel-upload" class="flex flex-col gap-6">
+        
+        <!-- Video Source Card -->
+        <div class="soft-card p-6 md:p-8 rounded-2xl flex flex-col gap-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+                <span class="material-symbols-outlined text-[18px]">video_file</span>
+              </span>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Step 1: Choose Video Source</h3>
+            </div>
+            <span class="text-xs text-slate-400 font-medium">YouTube URL or MP4/WebM</span>
+          </div>
+
+          <!-- YouTube Input -->
+          <div class="flex flex-col md:flex-row gap-3">
+            <div class="flex-1 relative">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">link</span>
+              <input id="ytLink" class="w-full pl-11 pr-24 py-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:bg-white dark:focus:bg-slate-800 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all font-medium text-sm text-slate-900 dark:text-white placeholder:text-slate-400" placeholder="https://www.youtube.com/watch?v=..." type="url"/>
+              <button id="pasteLinkBtn" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 px-2.5 py-1 text-xs font-semibold text-slate-500 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 rounded-md transition-colors">
+                Paste
+              </button>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="flex items-center gap-4">
+            <div class="h-px flex-1 bg-slate-200 dark:bg-slate-800"></div>
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">or upload file</span>
+            <div class="h-px flex-1 bg-slate-200 dark:bg-slate-800"></div>
+          </div>
+
+          <!-- Drop Zone -->
+          <label for="fileInput" id="dropZone" class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-blue-500 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-blue-50/30 rounded-xl py-7 cursor-pointer transition-all duration-200 group">
+            <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 group-hover:text-blue-600 group-hover:border-blue-200 transition-colors">
+              <span class="material-symbols-outlined text-[24px]">cloud_upload</span>
+            </div>
+            <div class="text-center">
+              <p id="dropZoneText" class="text-sm font-semibold text-slate-700 dark:text-slate-200">Click to upload video file or drag and drop here</p>
+              <p class="text-xs text-slate-400 mt-0.5">MP4, MOV, MKV, WebM up to 500MB</p>
+            </div>
+            <input type="file" id="fileInput" accept="video/*" class="hidden"/>
+          </label>
+        </div>
+
+        <!-- Quiz & Summary Settings Card -->
+        <div class="soft-card p-6 md:p-8 rounded-2xl flex flex-col gap-6">
+          
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+            <div class="flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
+                <span class="material-symbols-outlined text-[18px]">tune</span>
+              </span>
+              <div>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Step 2: Quiz & Summary Preferences</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Customize the assessment difficulty, question count, and summary format</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Format Selector (NEW) -->
+          <div class="flex flex-col gap-2.5">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Summary Format Style</label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="summaryFormatGroup">
+              <button type="button" data-format="executive" class="summary-format-btn active p-3.5 rounded-xl border-2 border-blue-600 bg-blue-50/60 dark:bg-blue-900/30 text-left transition-all">
+                <p class="text-xs font-bold text-blue-900 dark:text-blue-300 flex items-center gap-1.5">
+                  <span>🎯</span> Executive Takeaways
+                </p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">High-impact bullets & key points</p>
+              </button>
+              <button type="button" data-format="comprehensive" class="summary-format-btn p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 text-left transition-all">
+                <p class="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                  <span>📖</span> Study Guide
+                </p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Detailed sections & definitions</p>
+              </button>
+              <button type="button" data-format="flashcard" class="summary-format-btn p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 text-left transition-all">
+                <p class="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                  <span>💡</span> Q&A Flashcards
+                </p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Concept question & answer pairs</p>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+            
+            <!-- Difficulty Selector -->
+            <div class="flex flex-col gap-3">
+              <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Quiz Difficulty</label>
+              <div class="grid grid-cols-3 gap-2.5" id="difficultyGroup">
+                <button type="button" data-diff="easy" class="diff-btn flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-300 transition-all text-center">
+                  <span class="text-lg">🟢</span>
+                  <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Easy</span>
+                  <span class="text-[10px] text-slate-400">Core facts</span>
+                </button>
+                <button type="button" data-diff="medium" class="diff-btn active flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 border-blue-600 bg-blue-50/60 dark:bg-blue-900/30 text-center">
+                  <span class="text-lg">🟡</span>
+                  <span class="text-xs font-bold text-blue-900 dark:text-blue-300">Medium</span>
+                  <span class="text-[10px] text-blue-700 dark:text-blue-400">Concepts</span>
+                </button>
+                <button type="button" data-diff="hard" class="diff-btn flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 transition-all text-center">
+                  <span class="text-lg">🔴</span>
+                  <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Hard</span>
+                  <span class="text-[10px] text-slate-400">Deep analysis</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Question Count Selector -->
+            <div class="flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Number of Questions</label>
+                <span id="questionCountDisplay" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300">5 Questions</span>
+              </div>
+
+              <!-- Slider + quick chips -->
+              <div class="flex flex-col gap-3 pt-2">
+                <input id="questionSlider" type="range" min="3" max="20" value="5" step="1" class="w-full accent-blue-600 h-2 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"/>
+                <div class="flex items-center justify-between text-[11px] font-semibold text-slate-400 px-1">
+                  <span>3 min</span>
+                  <span>10</span>
+                  <span>15</span>
+                  <span>20 max</span>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="flex items-center gap-2 pt-1">
+                  <span class="text-xs text-slate-400">Quick set:</span>
+                  <button type="button" class="preset-count-btn px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300" data-count="3">3</button>
+                  <button type="button" class="preset-count-btn px-2.5 py-1 text-xs font-bold rounded-lg border border-blue-400 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300" data-count="5">5</button>
+                  <button type="button" class="preset-count-btn px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300" data-count="10">10</button>
+                  <button type="button" class="preset-count-btn px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300" data-count="15">15</button>
+                  <button type="button" class="preset-count-btn px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300" data-count="20">20</button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Process Action Button -->
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+            <button id="processBtn" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/25 transition-all flex items-center justify-center gap-2">
+              <span>Process Video & Generate Summary</span>
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- PANEL LOADING -->
+      <section id="panel-loading" class="hidden soft-card rounded-2xl p-10 text-center flex flex-col items-center justify-center gap-4">
+        <div class="spinner"></div>
+        <div>
+          <h4 id="loaderTitle" class="text-base font-bold text-slate-900 dark:text-white">Processing Video</h4>
+          <p id="loaderText" class="text-xs text-slate-500 dark:text-slate-400 mt-1">Extracting audio track from media source...</p>
+        </div>
+        <div class="w-full max-w-xs bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden mt-2">
+          <div id="loaderProgressBar" class="h-full bg-blue-600 rounded-full w-1/3 transition-all duration-500 animate-pulse"></div>
+        </div>
+      </section>
+
+      <!-- PANEL 2: Result (Summary + Transcript) -->
+      <section id="panel-result" class="hidden flex flex-col gap-6">
+        
+        <!-- Video Header Info Bar -->
+        <div class="soft-card p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-white via-slate-50 to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">movie</span>
+            </div>
+            <div>
+              <h3 id="resultVideoTitle" class="font-bold text-slate-900 dark:text-white text-base line-clamp-1">Processed Video</h3>
+              <div class="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                <span id="resultWordCount">~1,250 words</span>
+                <span>•</span>
+                <span id="resultReadTime">4 min read</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="copySummaryBtn" class="px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg shadow-sm transition-all flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">content_copy</span>
+              Copy Summary
+            </button>
+            <button id="ttsBtn" class="px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg shadow-sm transition-all flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">volume_up</span>
+              Listen
+            </button>
+            <button id="downloadSummaryBtn" class="px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg shadow-sm transition-all flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">download</span>
+              Export
+            </button>
+          </div>
+        </div>
+
+        <!-- Content Tabs (Summary vs Transcript) -->
+        <div class="flex flex-col gap-4">
+          
+          <div class="flex items-center border-b border-slate-200 dark:border-slate-800 gap-6 px-2">
+            <button id="tabResultSummary" class="py-2.5 font-bold text-sm text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">summarize</span>
+              AI Executive Summary
+            </button>
+            <button id="tabResultTranscript" class="py-2.5 font-semibold text-sm text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">description</span>
+              Full Audio Transcript
+            </button>
+          </div>
+
+          <!-- Tab Content 1: Summary -->
+          <div id="contentSummary" class="soft-card p-6 md:p-8 rounded-2xl flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                <span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+                Key Insights & Takeaways
+              </div>
+              <span class="text-xs text-slate-400">AI Structured Synthesis</span>
+            </div>
+            
+            <div id="summaryText" class="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-200 text-sm md:text-base leading-relaxed whitespace-pre-line">
+              Loading summary content...
+            </div>
+          </div>
+
+          <!-- Tab Content 2: Transcript -->
+          <div id="contentTranscript" class="hidden soft-card p-6 md:p-8 rounded-2xl flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <span class="material-symbols-outlined text-[16px]">record_voice_over</span>
+                Verbatim Audio Transcript
+              </div>
+              <div class="relative w-48">
+                <input id="transcriptSearchInput" type="text" placeholder="Search in text..." class="w-full text-xs py-1.5 pl-7 pr-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white">
+                <span class="material-symbols-outlined text-slate-400 text-[14px] absolute left-2 top-2">search</span>
+              </div>
+            </div>
+            
+            <div id="transcriptText" class="text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-6 max-h-96 overflow-y-auto pr-2 font-mono whitespace-pre-line bg-slate-50/50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+              Loading transcript...
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Quiz Call to Action Banner -->
+        <div class="p-6 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-800 text-white shadow-xl shadow-blue-600/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20">
+              <span class="material-symbols-outlined text-[24px]">quiz</span>
+            </div>
+            <div>
+              <h4 class="font-bold text-base">Ready for the Quiz Challenge?</h4>
+              <p id="quizBannerMeta" class="text-xs text-blue-100 mt-0.5">5 Questions • Medium Difficulty • Instant Scoring</p>
+            </div>
+          </div>
+          <button id="toQuizBtn" class="w-full sm:w-auto px-6 py-3 bg-white hover:bg-slate-50 text-blue-700 font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+            <span>Start Interactive Quiz</span>
+            <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- PANEL 3: Interactive Quiz -->
+      <section id="panel-quiz" class="hidden flex flex-col gap-6">
+        
+        <!-- Quiz Control Bar -->
+        <div class="soft-card p-4 rounded-2xl flex items-center justify-between bg-white dark:bg-slate-900">
+          <div class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
+              <span class="material-symbols-outlined text-[20px]">psychology</span>
+            </span>
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-sm">Knowledge Check</h3>
+              <p id="quizProgressText" class="text-xs text-slate-500 dark:text-slate-400">Answer all questions to view your final score and detailed explanations</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200">
+              <span class="material-symbols-outlined text-[16px] text-slate-400">timer</span>
+              <span id="quizTimer">00:00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quiz Questions List Container -->
+        <div id="quizContainer" class="flex flex-col gap-4"></div>
+
+        <!-- Quiz Submit Action -->
+        <div class="flex items-center justify-between pt-2">
+          <button id="backToSummaryBtn" class="px-5 py-3 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 transition-colors">
+            ← Back to Summary
+          </button>
+          <button id="submitQuizBtn" class="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/25 transition-all">
+            Submit Answers & View Explanations
+          </button>
+        </div>
+
+      </section>
+
+      <!-- PANEL 4: Score & Review -->
+      <section id="panel-score" class="hidden flex flex-col gap-6">
+        
+        <div class="soft-card p-8 rounded-2xl text-center flex flex-col items-center justify-center gap-4 bg-gradient-to-b from-white to-blue-50/20 dark:from-slate-900 dark:to-slate-800">
+          
+          <div id="scoreBadgeIcon" class="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-3xl shadow-md">
+            🏆
+          </div>
+
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Quiz Assessment Result</p>
+            <h2 id="scoreText" class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1">4 / 5</h2>
+            <p id="scoreFeedback" class="text-sm font-semibold text-emerald-600 dark:text-emerald-400 mt-2">Excellent mastery of this topic!</p>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <button id="retakeQuizBtn" class="px-5 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">replay</span>
+              Retake Quiz
+            </button>
+            <button id="newVideoBtn" class="px-6 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md shadow-blue-600/25 transition-all flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">add_circle</span>
+              Summarize Another Video
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- View 2: History View -->
+    <div id="view-history" class="view-panel hidden flex-1 px-4 md:px-10 py-8 max-w-5xl mx-auto w-full flex flex-col gap-6">
+      
+      <!-- History Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Saved History</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Review previously generated summaries, transcripts, and retake quizzes anytime.</p>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="flex items-center gap-3">
+          <div class="relative w-full md:w-64">
+            <input id="historySearchInput" type="text" placeholder="Search summaries..." class="w-full text-xs py-2.5 pl-8 pr-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white"/>
+            <span class="material-symbols-outlined text-slate-400 text-[16px] absolute left-2.5 top-2.5">search</span>
+          </div>
+          <button id="refreshHistoryBtn" title="Refresh history" class="p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 rounded-xl text-slate-600 dark:text-slate-300 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">refresh</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- History List / Grid -->
+      <div id="historyListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Dynamically rendered -->
+      </div>
+
+      <!-- Empty History State -->
+      <div id="historyEmptyState" class="hidden soft-card rounded-2xl p-12 text-center flex flex-col items-center justify-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[24px]">history</span>
+        </div>
+        <h4 class="font-bold text-slate-800 dark:text-slate-200 text-base">No Saved History Yet</h4>
+        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm">Process your first video in the Studio tab to automatically save summaries and quizzes to your account.</p>
+        <button id="historyGoStudioBtn" class="mt-2 px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all">
+          Go to Studio
+        </button>
+      </div>
+
+    </div>
+
+    <!-- View 3: User Performance Dashboard -->
+    <div id="view-performance" class="view-panel hidden flex-1 px-4 md:px-10 py-8 max-w-5xl mx-auto w-full flex flex-col gap-6">
+      
+      <!-- Performance Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Performance & Analytics</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Track your quiz retention scores, learning streak, and topic mastery.</p>
+        </div>
+      </div>
+
+      <!-- Metric Stats Grid -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- Metric 1 -->
+        <div class="soft-card p-5 rounded-2xl flex flex-col gap-2">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-bold uppercase tracking-wider">Quizzes Taken</span>
+            <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[20px]">assignment_turned_in</span>
+          </div>
+          <h3 id="statTotalQuizzes" class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">0</h3>
+          <p class="text-[11px] text-slate-400 font-medium">Completed tests</p>
+        </div>
+
+        <!-- Metric 2 -->
+        <div class="soft-card p-5 rounded-2xl flex flex-col gap-2">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-bold uppercase tracking-wider">Avg Accuracy</span>
+            <span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-[20px]">verified</span>
+          </div>
+          <h3 id="statAvgAccuracy" class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">0%</h3>
+          <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">Across all attempts</p>
+        </div>
+
+        <!-- Metric 3: real computed streak -->
+        <div class="soft-card p-5 rounded-2xl flex flex-col gap-2">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-bold uppercase tracking-wider">Learning Streak</span>
+            <span class="material-symbols-outlined text-amber-500 text-[20px]">local_fire_department</span>
+          </div>
+          <h3 id="statStreak" class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">0 Days</h3>
+          <p class="text-[11px] text-amber-600 dark:text-amber-400 font-semibold">Consecutive active days</p>
+        </div>
+
+        <!-- Metric 4: replaced fake "Mastery Tier" with a real, derivable stat -->
+        <div class="soft-card p-5 rounded-2xl flex flex-col gap-2">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-bold uppercase tracking-wider">Best Score</span>
+            <span class="material-symbols-outlined text-indigo-600 dark:text-indigo-400 text-[20px]">workspace_premium</span>
+          </div>
+          <h3 id="statBestScore" class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">—</h3>
+          <p class="text-[11px] text-indigo-600 dark:text-indigo-400 font-semibold">Personal best</p>
+        </div>
+
+      </div>
+
+      <!-- Performance Visual Analytics -->
+      <div class="grid grid-cols-1 gap-6">
+
+        <!-- Accuracy Breakdown by Difficulty — now full width since the fake goal card is removed -->
+        <div class="soft-card p-6 rounded-2xl flex flex-col gap-5">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Accuracy by Difficulty Level</h4>
+            <span class="text-xs text-slate-400">Past performance</span>
+          </div>
+
+          <div class="flex flex-col gap-4">
+
+            <div>
+              <div class="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                <span class="flex items-center gap-1.5">🟢 Easy Level</span>
+                <span id="accEasy">No data</span>
+              </div>
+              <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div id="barEasy" class="h-full bg-emerald-500 rounded-full" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                <span class="flex items-center gap-1.5">🟡 Medium Level</span>
+                <span id="accMedium">No data</span>
+              </div>
+              <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div id="barMedium" class="h-full bg-blue-500 rounded-full" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                <span class="flex items-center gap-1.5">🔴 Hard Level</span>
+                <span id="accHard">No data</span>
+              </div>
+              <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div id="barHard" class="h-full bg-rose-500 rounded-full" style="width: 0%"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Recent Quiz Activity Log Table -->
+      <div class="soft-card p-6 rounded-2xl flex flex-col gap-4">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+          <h4 class="font-bold text-slate-900 dark:text-white text-sm">Recent Assessment History</h4>
+          <span class="text-xs text-slate-400">Latest quiz submissions</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="text-slate-400 border-b border-slate-100 dark:border-slate-800">
+                <th class="pb-3 font-semibold">Video / Topic</th>
+                <th class="pb-3 font-semibold">Date</th>
+                <th class="pb-3 font-semibold">Difficulty</th>
+                <th class="pb-3 font-semibold">Score</th>
+                <th class="pb-3 font-semibold text-right">Status</th>
+              </tr>
+            </thead>
+            <tbody id="recentAttemptsTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- SUMMARY READER MODAL -->
+  <div id="summaryModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="soft-card bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[85vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden animate-slideUp">
+      
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/40">
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-[18px]">article</span>
+          </span>
+          <h3 id="modalTitle" class="font-bold text-slate-900 dark:text-white text-base line-clamp-1">Saved Video Summary</h3>
+        </div>
+        <button id="closeModalBtn" class="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-lg">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 overflow-y-auto flex-1 text-slate-700 dark:text-slate-200 text-sm leading-relaxed whitespace-pre-line" id="modalSummaryContent">
+        Loading summary...
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/40">
+        <span id="modalDate" class="text-xs text-slate-400">Created on --</span>
+        <div class="flex items-center gap-2">
+          <button id="modalCopyBtn" class="px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50">
+            Copy Text
+          </button>
+          <button id="modalCloseBtn2" class="px-4 py-1.5 text-xs font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+            Close
+          </button>
+        </div>
+      </div>
+
+    </div>
   </div>
-</main>
 
-<script src="js/dashboard.js"></script>
+  <!-- Toast Notification Container -->
+  <div id="toastContainer"></div>
+
+  <!-- Script -->
+  <script src="js/dashboard.js"></script>
 </body>
 </html>
