@@ -4,6 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Synapse — Turn Any Video into Summaries & Interactive Quizzes</title>
+  <link rel="icon" type="image/png" href="img/logo.png"/>
   <meta name="description" content="AI video intelligence platform that transcribes videos, generates structured key summaries, and creates adaptive quizzes to test your knowledge."/>
 
   <!-- Tailwind CSS -->
@@ -19,31 +20,31 @@
 
   <style>
     /* =========================================================
-       CUSTOM DISTINCT BACKGROUNDS FOR LIGHT & DARK THEMES
+       PRISMATIC CRYSTAL SHARDS BACKGROUND SYSTEM (LIGHT & DARK)
        ========================================================= */
 
-    /* 1. LIGHT MODE: Aurora AI Studio with Geometric Dot Grid */
-    .light-theme-bg {
+    /* 1. LIGHT THEME: Frosted Glass Prismatic Studio */
+    body {
       background-color: #f8fafc;
+      color: #0f172a;
       background-image: 
-        radial-gradient(circle, rgba(99, 102, 241, 0.12) 1.2px, transparent 1.2px),
-        radial-gradient(at 0% 0%, rgba(224, 242, 254, 0.7) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(237, 233, 254, 0.7) 0px, transparent 50%),
-        radial-gradient(at 50% 50%, rgba(240, 253, 250, 0.5) 0px, transparent 50%);
-      background-size: 28px 28px, 100% 100%, 100% 100%, 100% 100%;
+        radial-gradient(circle, rgba(99, 102, 241, 0.08) 1px, transparent 1px),
+        radial-gradient(900px 450px at 50% 10%, rgba(224, 242, 254, 0.75) 0%, transparent 100%),
+        radial-gradient(800px 400px at 85% 75%, rgba(243, 232, 255, 0.65) 0%, transparent 100%);
+      background-size: 28px 28px, 100% 100%, 100% 100%;
       background-attachment: fixed;
     }
 
-    /* 2. DARK MODE: Deep Cosmic Cyber Matrix */
-    .dark .dark-theme-bg {
-      background-color: #030712;
+    /* 2. DARK THEME: Deep Obsidian & Glowing Prismatic Crystals */
+    html.dark body {
+      background-color: #030712 !important;
+      color: #f8fafc !important;
       background-image: 
-        linear-gradient(to right, rgba(56, 189, 248, 0.06) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(56, 189, 248, 0.06) 1px, transparent 1px),
-        radial-gradient(at 20% 15%, rgba(30, 58, 138, 0.35) 0px, transparent 55%),
-        radial-gradient(at 80% 25%, rgba(88, 28, 135, 0.3) 0px, transparent 55%),
-        radial-gradient(at 50% 85%, rgba(15, 23, 42, 0.9) 0px, transparent 65%);
-      background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%, 100% 100%;
+        radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        radial-gradient(1000px 500px at 50% 15%, rgba(30, 58, 138, 0.35) 0%, transparent 100%),
+        radial-gradient(800px 400px at 80% 70%, rgba(88, 28, 135, 0.28) 0%, transparent 100%),
+        radial-gradient(600px 300px at 15% 85%, rgba(14, 116, 144, 0.20) 0%, transparent 100%) !important;
+      background-size: 32px 32px, 100% 100%, 100% 100%, 100% 100% !important;
       background-attachment: fixed;
     }
   </style>
@@ -74,13 +75,13 @@
     }
   </script>
 </head>
-<body id="pageBody" class="light-theme-bg dark:dark-theme-bg text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-blue-500 selection:text-white transition-colors duration-300 relative overflow-x-hidden min-h-screen">
+<body id="pageBody" class="font-sans antialiased selection:bg-blue-500 selection:text-white transition-colors duration-300 relative overflow-x-hidden min-h-screen">
 
-  <!-- Interactive Dynamic Canvas Background -->
-  <canvas id="synapseBgCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-85 dark:opacity-95"></canvas>
+  <!-- Interactive Synapse Particles & Neural Web Canvas -->
+  <canvas id="particlesCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-80 dark:opacity-95"></canvas>
 
   <!-- Mouse Spotlight Glow Overlay -->
-  <div id="ambientSpotlight" class="fixed inset-0 pointer-events-none z-0 transition-opacity duration-300 opacity-70 dark:opacity-85"></div>
+  <div id="ambientSpotlight" class="fixed inset-0 pointer-events-none z-0 transition-opacity duration-300 opacity-60 dark:opacity-85"></div>
 
   <!-- Top Sticky Navigation -->
   <header class="fixed top-0 inset-x-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-all duration-200">
@@ -88,12 +89,7 @@
       
       <!-- Brand Logo -->
       <a href="landing.html" class="flex items-center gap-3 group">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-800 flex items-center justify-center text-white shadow-lg shadow-blue-600/25 group-hover:scale-105 transition-transform duration-200">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="6 3 20 12 6 21 6 3"></polygon>
-            <line x1="19" y1="5" x2="19" y2="19"></line>
-          </svg>
-        </div>
+        <img src="img/logo.png" alt="Synapse AI Logo" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-blue-600/25 group-hover:scale-105 transition-transform duration-200 border border-blue-500/20"/>
         <div class="flex items-center gap-1.5">
           <span class="font-extrabold text-slate-900 dark:text-white tracking-tight text-xl">Synapse</span>
           <span class="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 rounded border border-blue-200 dark:border-blue-800">AI</span>
@@ -132,9 +128,6 @@
   <!-- Hero Section -->
   <section class="pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden relative z-10">
     
-    <!-- Background Gradient Glows -->
-    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-gradient-to-tr from-blue-300/40 via-indigo-300/30 to-purple-300/30 dark:from-blue-600/20 dark:via-indigo-600/15 dark:to-purple-600/20 rounded-full blur-3xl -z-10 pointer-events-none"></div>
-
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
       
       <!-- Feature Pill -->
@@ -532,12 +525,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
       
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-xs">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="6 3 20 12 6 21 6 3"></polygon>
-            <line x1="19" y1="5" x2="19" y2="19"></line>
-          </svg>
-        </div>
+        <img src="img/logo.png" alt="Synapse AI Logo" class="w-8 h-8 rounded-lg object-cover shadow-sm"/>
         <span class="font-bold text-slate-900 dark:text-white text-base">Synapse Video Intelligence</span>
       </div>
 
@@ -554,24 +542,26 @@
     </div>
   </footer>
 
-  <!-- Interactive Background Canvas & Page Scripts -->
+  <!-- Interactive Synapse Particles Canvas & Page Scripts -->
   <script>
-    // 1. Interactive Dual-Theme Canvas Background (Aurora Light vs Cyber Dark)
-    const canvas = document.getElementById('synapseBgCanvas');
+    // =========================================================
+    // 1. INTERACTIVE SYNAPSE PARTICLES & NEURAL WEB CANVAS
+    // =========================================================
+    const canvas = document.getElementById('particlesCanvas');
     const ctx = canvas.getContext('2d');
     const spotlight = document.getElementById('ambientSpotlight');
 
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    let mouse = { x: width / 2, y: height / 2, isActive: false };
+    let mouse = { x: width / 2, y: height / 2, targetX: width / 2, targetY: height / 2, isActive: false, radius: 170 };
 
     function updateSpotlight(isDark) {
       if (!spotlight) return;
       if (isDark) {
-        spotlight.style.background = `radial-gradient(650px circle at ${mouse.x}px ${mouse.y}px, rgba(56, 189, 248, 0.18), rgba(168, 85, 247, 0.10), transparent 75%)`;
+        spotlight.style.background = `radial-gradient(650px circle at ${mouse.x}px ${mouse.y}px, rgba(56, 189, 248, 0.14), rgba(99, 102, 241, 0.08), transparent 75%)`;
       } else {
-        spotlight.style.background = `radial-gradient(700px circle at ${mouse.x}px ${mouse.y}px, rgba(99, 102, 241, 0.12), rgba(56, 189, 248, 0.07), transparent 75%)`;
+        spotlight.style.background = `radial-gradient(650px circle at ${mouse.x}px ${mouse.y}px, rgba(99, 102, 241, 0.09), rgba(56, 189, 248, 0.05), transparent 75%)`;
       }
     }
 
@@ -582,8 +572,8 @@
     });
 
     window.addEventListener('mousemove', (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
       mouse.isActive = true;
       const isDark = document.documentElement.classList.contains('dark');
       updateSpotlight(isDark);
@@ -593,6 +583,25 @@
       mouse.isActive = false;
     });
 
+    // Multi-color palette definitions
+    const darkPalette = [
+      { r: 56, g: 189, b: 248 },   // Electric Cyan
+      { r: 168, g: 85, b: 247 },   // Neon Violet
+      { r: 96, g: 165, b: 250 },   // Sapphire Blue
+      { r: 52, g: 211, b: 153 },   // Mint Emerald
+      { r: 251, g: 113, b: 133 },  // Neon Rose
+      { r: 251, g: 191, b: 36 }    // Amber Gold
+    ];
+
+    const lightPalette = [
+      { r: 37, g: 99, b: 235 },    // Royal Blue
+      { r: 124, g: 58, b: 237 },   // Deep Violet
+      { r: 14, g: 165, b: 233 },   // Sky Azure
+      { r: 5, g: 150, b: 105 },    // Emerald Green
+      { r: 225, g: 29, b: 72 },    // Ruby Rose
+      { r: 217, g: 119, b: 6 }     // Warm Amber
+    ];
+
     class Particle {
       constructor() {
         this.reset();
@@ -601,134 +610,155 @@
       reset() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
+        this.radius = Math.random() * 2.4 + 1.4;
         this.vx = (Math.random() - 0.5) * 0.75;
         this.vy = (Math.random() - 0.5) * 0.75;
-        this.radius = Math.random() * 2 + 1.2;
-        this.colorIndex = Math.floor(Math.random() * 3);
-        this.pulseAngle = Math.random() * Math.PI * 2;
+        this.baseAlpha = Math.random() * 0.4 + 0.45;
+        this.pulse = Math.random() * Math.PI * 2;
+        this.pulseSpeed = Math.random() * 0.03 + 0.01;
+        this.colorIdx = Math.floor(Math.random() * darkPalette.length);
+      }
+
+      getColor(isDark, alphaMultiplier = 1) {
+        const c = isDark ? darkPalette[this.colorIdx] : lightPalette[this.colorIdx];
+        const alpha = Math.min(1, Math.max(0.15, this.baseAlpha * alphaMultiplier));
+        return {
+          rgb: `${c.r}, ${c.g}, ${c.b}`,
+          rgba: `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha})`
+        };
       }
 
       update() {
         this.x += this.vx;
         this.y += this.vy;
-        this.pulseAngle += 0.03;
+        this.pulse += this.pulseSpeed;
 
-        if (this.x < 0 || this.x > width) this.vx *= -1;
-        if (this.y < 0 || this.y > height) this.vy *= -1;
+        // Wrap around screen borders smoothly
+        if (this.x < -20) this.x = width + 20;
+        if (this.x > width + 20) this.x = -20;
+        if (this.y < -20) this.y = height + 20;
+        if (this.y > height + 20) this.y = -20;
 
-        // Interactive mouse attraction
+        // Interactive mouse gravity / gentle repulsion
         if (mouse.isActive) {
           const dx = mouse.x - this.x;
           const dy = mouse.y - this.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) {
-            this.x += dx * 0.018;
-            this.y += dy * 0.018;
+          if (dist < mouse.radius) {
+            const force = (1 - dist / mouse.radius) * 0.045;
+            this.x -= dx * force;
+            this.y -= dy * force;
           }
         }
       }
 
       draw(isDark) {
-        const pulse = Math.sin(this.pulseAngle) * 0.4 + 1;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius * pulse, 0, Math.PI * 2);
+        const currentAlpha = this.baseAlpha + Math.sin(this.pulse) * 0.18;
+        const color = this.getColor(isDark, currentAlpha);
 
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        
+        ctx.fillStyle = color.rgba;
         if (isDark) {
-          // Cyber Dark Mode Palette: Electric Cyan, Violet, Laser Blue
-          const darkColors = [
-            'rgba(56, 189, 248, 0.85)',  // Cyan
-            'rgba(192, 132, 252, 0.85)', // Violet
-            'rgba(96, 165, 250, 0.85)'   // Blue
-          ];
-          ctx.fillStyle = darkColors[this.colorIndex];
           ctx.shadowBlur = 10;
-          ctx.shadowColor = darkColors[this.colorIndex];
+          ctx.shadowColor = `rgba(${color.rgb}, 0.7)`;
         } else {
-          // Daylight Aurora Palette: Indigo, Azure, Soft Emerald
-          const lightColors = [
-            'rgba(79, 70, 229, 0.55)',   // Indigo
-            'rgba(2, 132, 199, 0.55)',   // Sky Azure
-            'rgba(16, 185, 129, 0.45)'   // Mint
-          ];
-          ctx.fillStyle = lightColors[this.colorIndex];
-          ctx.shadowBlur = 0;
+          ctx.shadowBlur = 5;
+          ctx.shadowColor = `rgba(${color.rgb}, 0.35)`;
         }
         ctx.fill();
+        ctx.shadowBlur = 0; // Reset
       }
     }
 
     let particles = [];
+    const maxConnectionDist = 140;
+
     function initParticles() {
       particles = [];
-      const particleCount = Math.floor((width * height) / 16000);
-      for (let i = 0; i < Math.min(particleCount, 80); i++) {
+      const particleDensity = Math.floor((width * height) / 15000);
+      const count = Math.min(Math.max(particleDensity, 45), 100);
+      for (let i = 0; i < count; i++) {
         particles.push(new Particle());
       }
     }
     initParticles();
 
-    function animateCanvas() {
+    function animateParticles() {
       ctx.clearRect(0, 0, width, height);
+      mouse.x += (mouse.targetX - mouse.x) * 0.08;
+      mouse.y += (mouse.targetY - mouse.y) * 0.08;
+
       const isDark = document.documentElement.classList.contains('dark');
 
-      // Draw particle connection synapses
+      // 1. Draw connecting multi-color gradient neural synapse lines
       for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw(isDark);
-
+        const p1 = particles[i];
         for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
+          const p2 = particles[j];
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 125) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            
-            if (isDark) {
-              const alpha = (1 - dist / 125) * 0.45;
-              ctx.strokeStyle = `rgba(56, 189, 248, ${alpha})`;
-              ctx.lineWidth = 1.0;
-            } else {
-              const alpha = (1 - dist / 125) * 0.28;
-              ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
-              ctx.lineWidth = 0.85;
-            }
-            ctx.stroke();
-          }
-        }
+          if (dist < maxConnectionDist) {
+            const lineAlpha = (1 - dist / maxConnectionDist) * (isDark ? 0.38 : 0.22);
+            const c1 = isDark ? darkPalette[p1.colorIdx] : lightPalette[p1.colorIdx];
+            const c2 = isDark ? darkPalette[p2.colorIdx] : lightPalette[p2.colorIdx];
 
-        // Draw connections to mouse cursor
-        if (mouse.isActive) {
-          const mdx = particles[i].x - mouse.x;
-          const mdy = particles[i].y - mouse.y;
-          const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+            const grad = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+            grad.addColorStop(0, `rgba(${c1.r}, ${c1.g}, ${c1.b}, ${lineAlpha})`);
+            grad.addColorStop(1, `rgba(${c2.r}, ${c2.g}, ${c2.b}, ${lineAlpha})`);
 
-          if (mdist < 150) {
             ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(mouse.x, mouse.y);
-            
-            if (isDark) {
-              const mAlpha = (1 - mdist / 150) * 0.75;
-              ctx.strokeStyle = `rgba(168, 85, 247, ${mAlpha})`;
-              ctx.lineWidth = 1.4;
-            } else {
-              const mAlpha = (1 - mdist / 150) * 0.42;
-              ctx.strokeStyle = `rgba(37, 99, 235, ${mAlpha})`;
-              ctx.lineWidth = 1.1;
-            }
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = isDark ? 1.0 : 0.85;
             ctx.stroke();
           }
         }
       }
 
-      requestAnimationFrame(animateCanvas);
-    }
-    animateCanvas();
+      // 2. Draw active multi-color connections to mouse cursor
+      if (mouse.isActive) {
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
 
+          if (dist < mouse.radius) {
+            const lineAlpha = (1 - dist / mouse.radius) * (isDark ? 0.60 : 0.40);
+            const c = isDark ? darkPalette[p.colorIdx] : lightPalette[p.colorIdx];
+
+            const grad = ctx.createLinearGradient(p.x, p.y, mouse.x, mouse.y);
+            grad.addColorStop(0, `rgba(${c.r}, ${c.g}, ${c.b}, ${lineAlpha})`);
+            grad.addColorStop(1, isDark ? `rgba(255, 255, 255, ${lineAlpha * 0.7})` : `rgba(37, 99, 235, ${lineAlpha * 0.7})`);
+
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(mouse.x, mouse.y);
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = isDark ? 1.3 : 1.1;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // 3. Update & draw particle nodes
+      particles.forEach(p => {
+        p.update();
+        p.draw(isDark);
+      });
+
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // =========================================================
     // 2. Dark Mode Toggle
+    // =========================================================
     const htmlEl = document.documentElement;
     const themeToggleBtn = document.getElementById('themeToggleBtn');
     const themeIcon = document.getElementById('themeIcon');
@@ -757,7 +787,9 @@
       applyTheme(!htmlEl.classList.contains('dark'));
     });
 
+    // =========================================================
     // 3. Interactive Demo Data & Logic
+    // =========================================================
     const demoTopics = {
       cs: {
         title: "MIT 6.0001: Introduction to Algorithms & Computational Complexity",
@@ -897,7 +929,9 @@
     // Initialize demo on page load
     renderDemo('cs');
 
+    // =========================================================
     // 4. Interactive ROI Calculator Logic
+    // =========================================================
     const hoursSlider = document.getElementById('hoursSlider');
     const hoursDisplay = document.getElementById('hoursDisplay');
     const calcHoursSaved = document.getElementById('calcHoursSaved');
@@ -922,7 +956,9 @@
     });
     updateCalculator(6);
 
+    // =========================================================
     // 5. Interactive FAQ Accordion Logic
+    // =========================================================
     document.querySelectorAll('.faq-toggle').forEach(btn => {
       btn.addEventListener('click', () => {
         const item = btn.closest('.faq-item');
