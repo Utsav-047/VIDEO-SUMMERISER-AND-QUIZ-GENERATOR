@@ -77,13 +77,19 @@ def ensure_password_resets_table():
                     user_id INT NOT NULL,
                     otp_code VARCHAR(6) NOT NULL,
                     expires_at DATETIME NOT NULL,
+                    attempts_count INT DEFAULT 0,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     INDEX idx_user_id (user_id),
                     INDEX idx_otp_code (otp_code)
                 )
             """)
+            # If the table already existed without attempts_count, add it safely
+            try:
+                cur.execute("ALTER TABLE password_resets ADD COLUMN attempts_count INT DEFAULT 0")
+            except Exception:
+                pass  # column already exists
     except Exception as e:
-        print(f"[DB] Error creating password_resets table: {e}")
+        print(f"[DB] Error ensuring password_resets table: {e}")
     finally:
         conn.close()
 
@@ -95,7 +101,7 @@ def create_password_reset_otp(user_id, otp_code, expires_at):
         with conn.cursor() as cur:
             cur.execute("DELETE FROM password_resets WHERE user_id = %s", (user_id,))
             cur.execute(
-                "INSERT INTO password_resets (user_id, otp_code, expires_at) VALUES (%s, %s, %s)",
+                "INSERT INTO password_resets (user_id, otp_code, expires_at, attempts_count) VALUES (%s, %s, %s, 0)",
                 (user_id, otp_code, expires_at),
             )
             return cur.lastrowid
@@ -103,7 +109,13 @@ def create_password_reset_otp(user_id, otp_code, expires_at):
         conn.close()
 
 
-def get_valid_password_reset_otp(email, otp_code):
+def verify_and_consume_otp(email, input_otp):
+    """
+    Checks the latest unexpired OTP for the given user email.
+    Increments failed attempts on incorrect guesses.
+    If failed attempts reach 5, deletes the OTP and locks out the request.
+    Returns (reset_row, error_message). If valid, error_message is None.
+    """
     ensure_password_resets_table()
     conn = get_connection()
     try:
@@ -112,12 +124,47 @@ def get_valid_password_reset_otp(email, otp_code):
                 SELECT pr.*, u.id AS user_id, u.email 
                 FROM password_resets pr
                 JOIN users u ON pr.user_id = u.id
-                WHERE u.email = %s AND pr.otp_code = %s AND pr.expires_at > NOW()
+                WHERE u.email = %s
                 ORDER BY pr.id DESC LIMIT 1
-            """, (email, otp_code))
-            return cur.fetchone()
+            """, (email,))
+            row = cur.fetchone()
+
+            if not row:
+                return None, "No active password reset request found. Please request a new code."
+
+            # Check expiration
+            from datetime import datetime
+            if row["expires_at"] < datetime.now():
+                cur.execute("DELETE FROM password_resets WHERE id = %s", (row["id"],))
+                return None, "Verification code has expired. Please request a new one."
+
+            # Check if locked out (5 or more attempts)
+            attempts = row.get("attempts_count") or 0
+            if attempts >= 5:
+                cur.execute("DELETE FROM password_resets WHERE id = %s", (row["id"],))
+                return None, "Maximum verification attempts exceeded (5/5). This code has been invalidated for security. Please request a new one."
+
+            # Verify the OTP code
+            if row["otp_code"] != input_otp:
+                new_attempts = attempts + 1
+                if new_attempts >= 5:
+                    cur.execute("DELETE FROM password_resets WHERE id = %s", (row["id"],))
+                    return None, "Maximum verification attempts exceeded (5/5). This code has been invalidated for security. Please request a new one."
+                else:
+                    cur.execute("UPDATE password_resets SET attempts_count = %s WHERE id = %s", (new_attempts, row["id"]))
+                    remaining = 5 - new_attempts
+                    return None, f"Invalid verification code. {remaining} attempt{'s' if remaining != 1 else ''} remaining."
+
+            # Code matches and is valid!
+            return row, None
     finally:
         conn.close()
+
+
+def get_valid_password_reset_otp(email, otp_code):
+    """Legacy helper for backward compatibility."""
+    row, _ = verify_and_consume_otp(email, otp_code)
+    return row
 
 
 def delete_password_resets(user_id):

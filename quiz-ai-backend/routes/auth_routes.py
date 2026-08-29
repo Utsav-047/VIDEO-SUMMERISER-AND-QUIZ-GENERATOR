@@ -3,12 +3,13 @@ from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from extensions import limiter
 from models.db import (
     insert_user,
     get_user_by_email,
     get_user_by_id,
     create_password_reset_otp,
-    get_valid_password_reset_otp,
+    verify_and_consume_otp,
     update_user_password,
     delete_password_resets,
 )
@@ -18,6 +19,7 @@ auth_bp = Blueprint("auth_bp", __name__)
 
 
 @auth_bp.route("/api/register", methods=["POST"])
+@limiter.limit("5 per minute")
 def register():
     data = request.get_json(silent=True) or {}
     full_name = data.get("full_name")
@@ -43,6 +45,7 @@ def register():
 
 
 @auth_bp.route("/api/login", methods=["POST"])
+@limiter.limit("5 per minute")
 def login():
     data = request.get_json(silent=True) or {}
     email = data.get("email")
@@ -83,6 +86,7 @@ def me():
 
 
 @auth_bp.route("/api/forgot-password", methods=["POST"])
+@limiter.limit("3 per minute")
 def forgot_password():
     """Generates a 6-digit OTP valid for 10 minutes to reset password."""
     data = request.get_json(silent=True) or {}
@@ -120,8 +124,9 @@ def forgot_password():
 
 
 @auth_bp.route("/api/reset-password", methods=["POST"])
+@limiter.limit("5 per minute")
 def reset_password():
-    """Validates 6-digit OTP and updates user's password."""
+    """Validates 6-digit OTP (up to 5 attempts) and updates user's password."""
     data = request.get_json(silent=True) or {}
     email = (data.get("email") or "").strip()
     otp_code = str(data.get("otp") or "").strip()
@@ -133,9 +138,9 @@ def reset_password():
     if len(new_password) < 8:
         return jsonify({"error": "New password must be at least 8 characters long"}), 400
 
-    reset_entry = get_valid_password_reset_otp(email, otp_code)
-    if not reset_entry:
-        return jsonify({"error": "Invalid or expired verification code"}), 400
+    reset_entry, error_msg = verify_and_consume_otp(email, otp_code)
+    if error_msg:
+        return jsonify({"error": error_msg}), 400
 
     new_hash = generate_password_hash(new_password)
     update_user_password(reset_entry["user_id"], new_hash)
@@ -144,4 +149,5 @@ def reset_password():
     return jsonify({
         "status": "success",
         "message": "Your password has been successfully reset. You can now log in.",
-    })
+    })
+
