@@ -17,6 +17,21 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/style.css"/>
 
+  <style>
+    /* Tech grid background pattern */
+    .tech-grid-bg {
+      background-size: 36px 36px;
+      background-image: 
+        linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+    }
+    .dark .tech-grid-bg {
+      background-image: 
+        linear-gradient(to right, rgba(99, 102, 241, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+    }
+  </style>
+
   <script>
     tailwind.config = {
       darkMode: "class",
@@ -43,10 +58,16 @@
     }
   </script>
 </head>
-<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-blue-500 selection:text-white transition-colors duration-200">
+<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-blue-500 selection:text-white transition-colors duration-200 relative overflow-x-hidden tech-grid-bg">
+
+  <!-- Interactive Neural Synapse Canvas Background -->
+  <canvas id="synapseBgCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-80 dark:opacity-90"></canvas>
+
+  <!-- Mouse Spotlight Glow Overlay -->
+  <div id="ambientSpotlight" class="fixed inset-0 pointer-events-none z-0 transition-opacity duration-300 opacity-60 dark:opacity-80" style="background: radial-gradient(650px circle at 50% 30%, rgba(59, 130, 246, 0.08), transparent 80%);"></div>
 
   <!-- Top Sticky Navigation -->
-  <header class="fixed top-0 inset-x-0 z-50 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-all duration-200">
+  <header class="fixed top-0 inset-x-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-all duration-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
       
       <!-- Brand Logo -->
@@ -93,7 +114,7 @@
   </header>
 
   <!-- Hero Section -->
-  <section class="pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden relative">
+  <section class="pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden relative z-10">
     
     <!-- Background Gradient Blobs -->
     <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-blue-200/50 via-indigo-200/30 to-purple-200/40 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-purple-900/20 rounded-full blur-3xl -z-10 pointer-events-none"></div>
@@ -122,7 +143,7 @@
           <span>Start Learning Free</span>
           <span class="material-symbols-outlined text-[18px]">bolt</span>
         </a>
-        <a href="#interactive-demo" class="w-full sm:w-auto px-8 py-4 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-base rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all flex items-center justify-center gap-2">
+        <a href="#interactive-demo" class="w-full sm:w-auto px-8 py-4 bg-white/90 dark:bg-slate-900/90 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-base rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all flex items-center justify-center gap-2">
           <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[20px]">play_circle</span>
           <span>Try Interactive Demo</span>
         </a>
@@ -149,8 +170,8 @@
       </div>
 
       <!-- INTERACTIVE DEMO PLAYGROUND -->
-      <div id="interactive-demo" class="mt-16 w-full max-w-5xl rounded-3xl p-3 sm:p-4 bg-slate-900/5 dark:bg-slate-800/30 ring-1 ring-slate-900/10 dark:ring-white/10 shadow-2xl">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-inner overflow-hidden text-left p-6 sm:p-8">
+      <div id="interactive-demo" class="mt-16 w-full max-w-5xl rounded-3xl p-3 sm:p-4 bg-slate-900/5 dark:bg-slate-800/30 ring-1 ring-slate-900/10 dark:ring-white/10 shadow-2xl backdrop-blur-sm">
+        <div class="bg-white/95 dark:bg-slate-900/95 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-inner overflow-hidden text-left p-6 sm:p-8">
           
           <!-- Interactive Topic Selector Tabs -->
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5 mb-6">
@@ -245,7 +266,7 @@
   </section>
 
   <!-- Interactive ROI & Time Saved Calculator Section -->
-  <section id="calculator" class="py-24 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 transition-colors">
+  <section id="calculator" class="py-24 bg-white/70 dark:bg-slate-900/70 border-t border-slate-200/80 dark:border-slate-800 transition-colors relative z-10 backdrop-blur-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="text-center max-w-3xl mx-auto">
@@ -254,7 +275,7 @@
         <p class="mt-3 text-slate-600 dark:text-slate-400 text-sm sm:text-base">Move the slider below to see how many study hours you recover each month.</p>
       </div>
 
-      <div class="mt-14 max-w-4xl mx-auto bg-slate-50 dark:bg-slate-800/50 p-6 sm:p-10 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+      <div class="mt-14 max-w-4xl mx-auto bg-slate-50/90 dark:bg-slate-800/60 p-6 sm:p-10 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm backdrop-blur-md">
         
         <!-- Slider Controls -->
         <div class="flex flex-col gap-4">
@@ -305,7 +326,7 @@
   </section>
 
   <!-- Feature Grid Section -->
-  <section id="features" class="py-24 bg-[#f8fafc] dark:bg-slate-950 border-t border-slate-200/80 dark:border-slate-800 transition-colors">
+  <section id="features" class="py-24 bg-[#f8fafc]/80 dark:bg-slate-950/80 border-t border-slate-200/80 dark:border-slate-800 transition-colors relative z-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="text-center max-w-3xl mx-auto">
@@ -317,7 +338,7 @@
       <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
         
         <!-- Feature 1 -->
-        <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between gap-6 hover:-translate-y-1 transition-all">
+        <div class="bg-white/90 dark:bg-slate-900/90 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between gap-6 hover:-translate-y-1 transition-all backdrop-blur-sm">
           <div class="flex flex-col gap-4">
             <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center">
               <span class="material-symbols-outlined text-[24px]">psychology</span>
@@ -331,7 +352,7 @@
         </div>
 
         <!-- Feature 2 -->
-        <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between gap-6 hover:-translate-y-1 transition-all">
+        <div class="bg-white/90 dark:bg-slate-900/90 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between gap-6 hover:-translate-y-1 transition-all backdrop-blur-sm">
           <div class="flex flex-col gap-4">
             <div class="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
               <span class="material-symbols-outlined text-[24px]">summarize</span>
@@ -345,7 +366,7 @@
         </div>
 
         <!-- Feature 3 -->
-        <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between gap-6 hover:-translate-y-1 transition-all">
+        <div class="bg-white/90 dark:bg-slate-900/90 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between gap-6 hover:-translate-y-1 transition-all backdrop-blur-sm">
           <div class="flex flex-col gap-4">
             <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <span class="material-symbols-outlined text-[24px]">insights</span>
@@ -364,7 +385,7 @@
   </section>
 
   <!-- How It Works Section -->
-  <section id="how-it-works" class="py-24 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 transition-colors">
+  <section id="how-it-works" class="py-24 bg-white/80 dark:bg-slate-900/80 border-t border-slate-200/80 dark:border-slate-800 transition-colors relative z-10 backdrop-blur-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="text-center max-w-3xl mx-auto">
@@ -375,7 +396,7 @@
       <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 relative">
         
         <!-- Step 1 -->
-        <div class="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col gap-4 relative">
+        <div class="bg-slate-50/90 dark:bg-slate-800/60 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col gap-4 relative backdrop-blur-sm">
           <span class="w-10 h-10 rounded-xl bg-blue-600 text-white font-extrabold text-sm flex items-center justify-center shadow-md shadow-blue-500/20">1</span>
           <h3 class="text-lg font-bold text-slate-900 dark:text-white">Input Your Video</h3>
           <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -384,7 +405,7 @@
         </div>
 
         <!-- Step 2 -->
-        <div class="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col gap-4 relative">
+        <div class="bg-slate-50/90 dark:bg-slate-800/60 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col gap-4 relative backdrop-blur-sm">
           <span class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-extrabold text-sm flex items-center justify-center shadow-md shadow-indigo-500/20">2</span>
           <h3 class="text-lg font-bold text-slate-900 dark:text-white">Synthesize & Review</h3>
           <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -393,7 +414,7 @@
         </div>
 
         <!-- Step 3 -->
-        <div class="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col gap-4 relative">
+        <div class="bg-slate-50/90 dark:bg-slate-800/60 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col gap-4 relative backdrop-blur-sm">
           <span class="w-10 h-10 rounded-xl bg-emerald-600 text-white font-extrabold text-sm flex items-center justify-center shadow-md shadow-emerald-500/20">3</span>
           <h3 class="text-lg font-bold text-slate-900 dark:text-white">Master via Interactive Quiz</h3>
           <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -407,7 +428,7 @@
   </section>
 
   <!-- Interactive FAQ Accordion Section -->
-  <section id="faq" class="py-24 bg-[#f8fafc] dark:bg-slate-950 border-t border-slate-200/80 dark:border-slate-800 transition-colors">
+  <section id="faq" class="py-24 bg-[#f8fafc]/90 dark:bg-slate-950/90 border-t border-slate-200/80 dark:border-slate-800 transition-colors relative z-10">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="text-center max-w-2xl mx-auto mb-14">
@@ -418,7 +439,7 @@
       <div class="flex flex-col gap-4">
         
         <!-- FAQ 1 -->
-        <div class="faq-item bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm transition-all">
+        <div class="faq-item bg-white/90 dark:bg-slate-900/90 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm transition-all backdrop-blur-sm">
           <button type="button" class="faq-toggle w-full p-6 text-left flex items-center justify-between gap-4 font-bold text-slate-900 dark:text-white text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             <span>Which video formats and sources are supported?</span>
             <span class="faq-icon material-symbols-outlined text-slate-400 transition-transform duration-200">expand_more</span>
@@ -429,7 +450,7 @@
         </div>
 
         <!-- FAQ 2 -->
-        <div class="faq-item bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm transition-all">
+        <div class="faq-item bg-white/90 dark:bg-slate-900/90 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm transition-all backdrop-blur-sm">
           <button type="button" class="faq-toggle w-full p-6 text-left flex items-center justify-between gap-4 font-bold text-slate-900 dark:text-white text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             <span>How does the AI generate quizzes from transcripts?</span>
             <span class="faq-icon material-symbols-outlined text-slate-400 transition-transform duration-200">expand_more</span>
@@ -440,7 +461,7 @@
         </div>
 
         <!-- FAQ 3 -->
-        <div class="faq-item bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm transition-all">
+        <div class="faq-item bg-white/90 dark:bg-slate-900/90 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm transition-all backdrop-blur-sm">
           <button type="button" class="faq-toggle w-full p-6 text-left flex items-center justify-between gap-4 font-bold text-slate-900 dark:text-white text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             <span>Are my quiz scores and study history saved across devices?</span>
             <span class="faq-icon material-symbols-outlined text-slate-400 transition-transform duration-200">expand_more</span>
@@ -451,7 +472,7 @@
         </div>
 
         <!-- FAQ 4 -->
-        <div class="faq-item bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm transition-all">
+        <div class="faq-item bg-white/90 dark:bg-slate-900/90 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm transition-all backdrop-blur-sm">
           <button type="button" class="faq-toggle w-full p-6 text-left flex items-center justify-between gap-4 font-bold text-slate-900 dark:text-white text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             <span>Is Synapse free to use?</span>
             <span class="faq-icon material-symbols-outlined text-slate-400 transition-transform duration-200">expand_more</span>
@@ -467,7 +488,7 @@
   </section>
 
   <!-- CTA Banner Section -->
-  <section class="py-20 bg-slate-900 text-white overflow-hidden relative">
+  <section class="py-20 bg-slate-900 text-white overflow-hidden relative z-10">
     <div class="absolute inset-0 bg-gradient-to-r from-blue-900/40 via-indigo-900/40 to-slate-900 pointer-events-none"></div>
 
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 flex flex-col items-center">
@@ -491,7 +512,7 @@
   </section>
 
   <!-- Clean Footer -->
-  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 py-12 transition-colors">
+  <footer class="bg-white/90 dark:bg-slate-900/90 border-t border-slate-200/80 dark:border-slate-800 py-12 transition-colors relative z-10 backdrop-blur-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
       
       <div class="flex items-center gap-3">
@@ -517,9 +538,133 @@
     </div>
   </footer>
 
-  <!-- Interactive Scripts -->
+  <!-- Interactive Background Canvas & Page Scripts -->
   <script>
-    // 1. Dark Mode Toggle
+    // 1. Interactive Neural Synapse Canvas Background
+    const canvas = document.getElementById('synapseBgCanvas');
+    const ctx = canvas.getContext('2d');
+    const spotlight = document.getElementById('ambientSpotlight');
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    let mouse = { x: width / 2, y: height / 2, isActive: false };
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      initParticles();
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      mouse.isActive = true;
+
+      // Update ambient spotlight position
+      if (spotlight) {
+        spotlight.style.background = `radial-gradient(650px circle at ${e.clientX}px ${e.clientY}px, rgba(59, 130, 246, 0.12), transparent 75%)`;
+      }
+    });
+
+    window.addEventListener('mouseleave', () => {
+      mouse.isActive = false;
+    });
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.7;
+        this.vy = (Math.random() - 0.5) * 0.7;
+        this.radius = Math.random() * 1.8 + 1.2;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > width) this.vx *= -1;
+        if (this.y < 0 || this.y > height) this.vy *= -1;
+
+        // Subtle mouse attraction/synapse pull
+        if (mouse.isActive) {
+          const dx = mouse.x - this.x;
+          const dy = mouse.y - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 140) {
+            this.x += dx * 0.015;
+            this.y += dy * 0.015;
+          }
+        }
+      }
+
+      draw(isDark) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = isDark ? 'rgba(96, 165, 250, 0.7)' : 'rgba(79, 70, 229, 0.45)';
+        ctx.fill();
+      }
+    }
+
+    let particles = [];
+    function initParticles() {
+      particles = [];
+      const particleCount = Math.floor((width * height) / 18000); // responsive count
+      for (let i = 0; i < Math.min(particleCount, 85); i++) {
+        particles.push(new Particle());
+      }
+    }
+    initParticles();
+
+    function animateCanvas() {
+      ctx.clearRect(0, 0, width, height);
+      const isDark = document.documentElement.classList.contains('dark');
+
+      // Draw particle connections (Synapses)
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw(isDark);
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 115) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            const alpha = (1 - dist / 115) * (isDark ? 0.35 : 0.22);
+            ctx.strokeStyle = isDark ? `rgba(96, 165, 250, ${alpha})` : `rgba(79, 70, 229, ${alpha})`;
+            ctx.lineWidth = 0.9;
+            ctx.stroke();
+          }
+        }
+
+        // Draw connections to mouse cursor
+        if (mouse.isActive) {
+          const mdx = particles[i].x - mouse.x;
+          const mdy = particles[i].y - mouse.y;
+          const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+
+          if (mdist < 140) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(mouse.x, mouse.y);
+            const mAlpha = (1 - mdist / 140) * (isDark ? 0.6 : 0.35);
+            ctx.strokeStyle = isDark ? `rgba(56, 189, 248, ${mAlpha})` : `rgba(37, 99, 235, ${mAlpha})`;
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(animateCanvas);
+    }
+    animateCanvas();
+
+    // 2. Dark Mode Toggle
     const htmlEl = document.documentElement;
     const themeToggleBtn = document.getElementById('themeToggleBtn');
     const themeIcon = document.getElementById('themeIcon');
@@ -547,7 +692,7 @@
       applyTheme(!htmlEl.classList.contains('dark'));
     });
 
-    // 2. Interactive Demo Data & Logic
+    // 3. Interactive Demo Data & Logic
     const demoTopics = {
       cs: {
         title: "MIT 6.0001: Introduction to Algorithms & Computational Complexity",
@@ -687,7 +832,7 @@
     // Initialize demo on page load
     renderDemo('cs');
 
-    // 3. Interactive ROI Calculator Logic
+    // 4. Interactive ROI Calculator Logic
     const hoursSlider = document.getElementById('hoursSlider');
     const hoursDisplay = document.getElementById('hoursDisplay');
     const calcHoursSaved = document.getElementById('calcHoursSaved');
@@ -712,7 +857,7 @@
     });
     updateCalculator(6);
 
-    // 4. Interactive FAQ Accordion Logic
+    // 5. Interactive FAQ Accordion Logic
     document.querySelectorAll('.faq-toggle').forEach(btn => {
       btn.addEventListener('click', () => {
         const item = btn.closest('.faq-item');
