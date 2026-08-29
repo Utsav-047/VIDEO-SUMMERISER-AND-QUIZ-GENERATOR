@@ -15,3 +15,10 @@ class Config:
 
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")
     MAX_VIDEO_MINUTES = int(os.getenv("MAX_VIDEO_MINUTES", 50))
+
+    # SMTP Email Configuration
+    SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+    SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
+    SMTP_EMAIL = os.getenv("SMTP_EMAIL", "")
+    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+    SMTP_FROM_NAME = os.getenv("SMTP_FROM_NAME", "Synapse Video Intelligence")

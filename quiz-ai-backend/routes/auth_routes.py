@@ -1,7 +1,18 @@
+import secrets
+from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from models.db import insert_user, get_user_by_email, get_user_by_id
+from models.db import (
+    insert_user,
+    get_user_by_email,
+    get_user_by_id,
+    create_password_reset_otp,
+    get_valid_password_reset_otp,
+    update_user_password,
+    delete_password_resets,
+)
+from services.email_service import send_otp_email
 
 auth_bp = Blueprint("auth_bp", __name__)
 
@@ -69,3 +80,68 @@ def me():
         return jsonify({"error": "Not logged in"}), 401
 
     return jsonify(user)
+
+
+@auth_bp.route("/api/forgot-password", methods=["POST"])
+def forgot_password():
+    """Generates a 6-digit OTP valid for 10 minutes to reset password."""
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip()
+
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+
+    user = get_user_by_email(email)
+    if not user:
+        return jsonify({"error": "No account found with this email address"}), 404
+
+    # Generate 6-digit OTP code
+    otp_code = f"{secrets.randbelow(900000) + 100000:06d}"
+    expires_at = datetime.now() + timedelta(minutes=10)
+
+    create_password_reset_otp(user["id"], otp_code, expires_at)
+
+    print("\n" + "=" * 45)
+    print(f"[AUTH] Reset OTP for {email}: {otp_code} (Valid for 10 mins)")
+    print("=" * 45 + "\n")
+
+    # Send OTP via email
+    email_sent, email_msg = send_otp_email(email, otp_code)
+    if not email_sent:
+        return jsonify({
+            "error": f"Failed to send verification email: {email_msg}. Please configure SMTP_EMAIL and SMTP_PASSWORD in the backend .env file."
+        }), 500
+
+    return jsonify({
+        "status": "success",
+        "message": f"A 6-digit verification code has been sent to {email}.",
+        "email": email,
+    })
+
+
+@auth_bp.route("/api/reset-password", methods=["POST"])
+def reset_password():
+    """Validates 6-digit OTP and updates user's password."""
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip()
+    otp_code = str(data.get("otp") or "").strip()
+    new_password = (data.get("new_password") or "")
+
+    if not email or not otp_code or not new_password:
+        return jsonify({"error": "Email, verification code, and new password are required"}), 400
+
+    if len(new_password) < 8:
+        return jsonify({"error": "New password must be at least 8 characters long"}), 400
+
+    reset_entry = get_valid_password_reset_otp(email, otp_code)
+    if not reset_entry:
+        return jsonify({"error": "Invalid or expired verification code"}), 400
+
+    new_hash = generate_password_hash(new_password)
+    update_user_password(reset_entry["user_id"], new_hash)
+    delete_password_resets(reset_entry["user_id"])
+
+    return jsonify({
+        "status": "success",
+        "message": "Your password has been successfully reset. You can now log in.",
+    })
