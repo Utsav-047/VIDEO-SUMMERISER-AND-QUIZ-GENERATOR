@@ -47,6 +47,13 @@ temp/
 *.mp3
 *.wav
 
+# Node & Frontend dependencies
+node_modules/
+**/node_modules/
+dist/
+dist-ssr/
+*.local
+
 # OS & IDE files
 .DS_Store
 Thumbs.db
@@ -54,3 +61,4 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+

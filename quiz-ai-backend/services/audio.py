@@ -4,9 +4,9 @@ import os
 
 def extract_audio(video_path):
     """
-    Extracts a compressed mono MP3 audio track (16kHz, 64kbps) from the given video file using ffmpeg.
-    This reduces audio payload size by 10-20x compared to raw WAV, avoiding upload timeouts 
-    while matching Whisper's native 16kHz mono internal processing with zero quality degradation.
+    Extracts an ultra-compact mono MP3 audio track (16kHz, 32kbps) from the given video file using ffmpeg.
+    At 32kbps mono 16kHz, a 60-minute video audio track is only ~14.4 MB (well within Groq's 25MB limit),
+    matching Whisper's native 16kHz mono acoustic processing with zero speech recognition degradation.
     Returns the path to the extracted audio file.
     """
     audio_path = os.path.splitext(video_path)[0] + ".mp3"
@@ -19,7 +19,7 @@ def extract_audio(video_path):
         "-acodec", "libmp3lame",
         "-ac", "1",           # mono
         "-ar", "16000",       # 16kHz sample rate (native to Whisper)
-        "-b:a", "64k",        # 64kbps bitrate for ultra-compact payload
+        "-b:a", "32k",        # 32kbps bitrate -> ~14.4MB per 60 minutes (safely under 25MB API limit)
         audio_path,
     ]
 

@@ -39,6 +39,10 @@ limiter.init_app(app)
 CORS(app, supports_credentials=True, origins=[
     "http://127.0.0.1:5500",
     "http://localhost:5500",
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+    "http://127.0.0.1:5174",
+    "http://localhost:5174",
 ])
 
 app.register_blueprint(video_bp)

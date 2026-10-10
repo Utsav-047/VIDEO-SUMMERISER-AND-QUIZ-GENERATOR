@@ -14,7 +14,7 @@ class Config:
     DB_NAME = os.getenv("DB_NAME", "quiz_ai_db")
 
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")
-    MAX_VIDEO_MINUTES = int(os.getenv("MAX_VIDEO_MINUTES", 50))
+    MAX_VIDEO_MINUTES = int(os.getenv("MAX_VIDEO_MINUTES", 65))
 
     # SMTP Email Configuration
     SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")

@@ -5,7 +5,7 @@ from config import Config
 client = OpenAI(
     api_key=Config.GROQ_API_KEY,
     base_url="https://api.groq.com/openai/v1",
-    timeout=30.0,
+    timeout=120.0,    # Increased to 120s for long transcript (30-60 min) processing
 )
 
 MODEL = "openai/gpt-oss-120b"
@@ -25,8 +25,27 @@ SUMMARY_FORMAT_INSTRUCTIONS = {
 }
 
 
+def _prepare_transcript_for_llm(transcript_text, max_chars=60000):
+    """
+    Ensures transcript fits comfortably within single-turn generation limits.
+    60,000 characters is ~12,000 words (more than a typical 60-70 min lecture).
+    If longer, samples evenly from beginning, middle, and conclusion.
+    """
+    if len(transcript_text) <= max_chars:
+        return transcript_text
+
+    part_len = max_chars // 3
+    start = transcript_text[:part_len]
+    mid_start = len(transcript_text) // 2 - (part_len // 2)
+    middle = transcript_text[mid_start:mid_start + part_len]
+    end = transcript_text[-part_len:]
+
+    return f"{start}\n\n[...section continued...]\n\n{middle}\n\n[...conclusion section...]\n\n{end}"
+
+
 def generate_summary(transcript_text, summary_format="executive"):
     instruction = SUMMARY_FORMAT_INSTRUCTIONS.get(summary_format, SUMMARY_FORMAT_INSTRUCTIONS["executive"])
+    processed_text = _prepare_transcript_for_llm(transcript_text)
 
     response = client.chat.completions.create(
         model=MODEL,
@@ -35,7 +54,7 @@ def generate_summary(transcript_text, summary_format="executive"):
                 "role": "system",
                 "content": f"You summarize video transcripts clearly for students. {instruction} {NO_MARKDOWN_RULE}",
             },
-            {"role": "user", "content": transcript_text},
+            {"role": "user", "content": processed_text},
         ],
     )
     return response.choices[0].message.content.strip()
@@ -44,6 +63,7 @@ def generate_summary(transcript_text, summary_format="executive"):
 def generate_quiz(transcript_text, num_questions=5, difficulty="medium"):
     num_questions = max(1, min(int(num_questions), 20))
     difficulty = difficulty if difficulty in ("easy", "medium", "hard") else "medium"
+    processed_text = _prepare_transcript_for_llm(transcript_text)
 
     difficulty_instructions = {
         "easy": "Questions should test basic recall of directly stated facts.",
@@ -66,7 +86,7 @@ def generate_quiz(transcript_text, num_questions=5, difficulty="medium"):
         model=MODEL,
         messages=[
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": transcript_text},
+            {"role": "user", "content": processed_text},
         ],
         response_format={"type": "json_object"},
     )

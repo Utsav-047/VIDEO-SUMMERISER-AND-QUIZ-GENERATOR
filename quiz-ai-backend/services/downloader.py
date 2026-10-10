@@ -20,8 +20,8 @@ def download_youtube_video(youtube_url):
         "quiet": True,
         "noplaylist": True,
         "extractor_args": {"youtube": {"player_client": ["android"]}},
-        "socket_timeout": 30,     # fail loudly instead of hanging forever on a stalled connection
-        "retries": 3,
+        "socket_timeout": 60,     # Increased to 60s for 30-60 min long video streams
+        "retries": 5,
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
