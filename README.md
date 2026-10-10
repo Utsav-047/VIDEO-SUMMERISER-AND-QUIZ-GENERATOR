@@ -18,16 +18,17 @@ An intelligent full-stack AI web application that transforms long YouTube videos
 - 🔐 **Authentication & Security**:
   - Secure session-based authentication with bcrypt password hashing.
   - 6-Digit OTP verification flow for forgot password and recovery.
-- 🌓 **Modern Responsive UI**: Dark & light mode with glassmorphism and Tailwind CSS.
+- 🌓 **Modern Responsive UI**: Dark & light mode with glassmorphism, Framer Motion animations, and modern responsive design.
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **HTML5 & Vanilla JavaScript** (Modular, reactive architecture)
-- **Tailwind CSS** (Responsive UI with Dark/Light mode)
-- **Google Material Symbols & Typography**
+- **React 19 & Vite** (Component-driven architecture)
+- **React Router v7** (Declarative client routing)
+- **Framer Motion** (Smooth interactive animations)
+- **Tailwind CSS & Lucide React** (Modern responsive design with Dark/Light theme)
 
 ### Backend
 - **Python 3.10+ / Flask**
@@ -88,8 +89,18 @@ python app.py
 ```
 Backend will start on `http://localhost:5000`.
 
-### 6. Frontend Setup
-Open `quiz-ai-frontend/landing.html` or `quiz-ai-frontend/login.html` directly in your browser or serve it via Live Server / VS Code.
+### 6. Frontend Setup (React + Vite)
+In a separate terminal window:
+```bash
+cd quiz-ai-react-frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+Frontend will be available at `http://localhost:5173`.
 
 ---
 
