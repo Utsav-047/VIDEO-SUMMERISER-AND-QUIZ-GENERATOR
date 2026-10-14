@@ -309,8 +309,8 @@ export default function VideoProcessor({ initialUrl, onProcessingComplete }) {
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', marginBottom: '8px' }}>
               NUMBER OF QUESTIONS
             </label>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              {[3, 5, 10].map((count) => (
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              {[3, 5, 10, 15, 20].map((count) => (
                 <button
                   key={count}
                   type="button"
@@ -320,12 +320,14 @@ export default function VideoProcessor({ initialUrl, onProcessingComplete }) {
                   className="btn-secondary"
                   style={{
                     flex: 1,
-                    fontSize: '0.82rem',
-                    padding: '8px 0',
+                    minWidth: '42px',
+                    fontSize: '0.8rem',
+                    padding: '8px 4px',
                     borderColor: numQuestions === count ? '#0b326f' : 'var(--border-strong)',
                     background: numQuestions === count ? '#0b326f' : 'var(--bg-surface)',
                     color: numQuestions === count ? '#ffffff' : 'var(--text-secondary)',
                     fontWeight: 700,
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {count} Qs
