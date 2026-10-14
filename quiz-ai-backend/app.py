@@ -28,6 +28,7 @@ from config import Config
 from extensions import limiter
 from routes.video_routes import video_bp
 from routes.auth_routes import auth_bp
+from routes.admin_routes import admin_bp
 
 app = Flask(__name__)
 app.secret_key = Config.SECRET_KEY
@@ -47,6 +48,7 @@ CORS(app, supports_credentials=True, origins=[
 
 app.register_blueprint(video_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(admin_bp)
 
 
 @app.errorhandler(429)

@@ -41,7 +41,7 @@ def register():
     # Log the user in immediately after registering
     session["user_id"] = user_id
 
-    return jsonify({"id": user_id, "full_name": full_name, "email": email}), 201
+    return jsonify({"id": user_id, "full_name": full_name, "email": email, "role": "user"}), 201
 
 
 @auth_bp.route("/api/login", methods=["POST"])
@@ -61,7 +61,12 @@ def login():
 
     session["user_id"] = user["id"]
 
-    return jsonify({"id": user["id"], "full_name": user["full_name"], "email": user["email"]})
+    return jsonify({
+        "id": user["id"],
+        "full_name": user["full_name"],
+        "email": user["email"],
+        "role": user.get("role", "user")
+    })
 
 
 @auth_bp.route("/api/logout", methods=["POST"])
