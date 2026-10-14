@@ -8,9 +8,11 @@ import SummaryViewer from './components/SummaryViewer';
 import QuizPlayer from './components/QuizPlayer';
 import HistoryFeed from './components/HistoryFeed';
 import PerformanceStats from './components/PerformanceStats';
+import AdminDashboard from './pages/AdminDashboard';
 import {
   FileText, Video, History, BarChart2, PlusCircle,
-  Home, LogOut, Sun, Moon, ArrowLeft, Layers, User
+  Home, LogOut, Sun, Moon, ArrowLeft, Layers, User,
+  ShieldCheck
 } from 'lucide-react';
 
 function AppShell({ isDark, toggleTheme }) {
@@ -47,19 +49,24 @@ function AppShell({ isDark, toggleTheme }) {
   const handleSelectFromHistory = (item) => {
     let parsedQuiz = [];
     if (item.questions_json) {
-      try {
-        parsedQuiz = typeof item.questions_json === 'string' ? JSON.parse(item.questions_json) : item.questions_json;
-      } catch {
-        parsedQuiz = [];
+      if (Array.isArray(item.questions_json)) {
+        parsedQuiz = item.questions_json;
+      } else if (typeof item.questions_json === 'string') {
+        try {
+          parsedQuiz = JSON.parse(item.questions_json);
+        } catch {
+          parsedQuiz = [];
+        }
       }
     }
+    const summaryText = item.summary || item.summary_text || 'Summary unavailable.';
     setCurrentResult({
-      videoId: item.id,
-      title: item.title || item.source_ref,
-      transcript: item.transcript || '',
-      summary: item.summary || 'Summary unavailable.',
+      videoId: item.id || item.video_id,
+      title: item.title || item.source_ref || 'Video Summary',
+      transcript: item.transcript || item.transcript_text || '',
+      summary: summaryText,
       quiz: parsedQuiz,
-      quizId: item.quiz_id || item.id,
+      quizId: item.quiz_id || item.id || item.video_id,
     });
     setActiveTab('dashboard');
     setResultSubView('summary');
@@ -141,6 +148,23 @@ function AppShell({ isDark, toggleTheme }) {
               <BarChart2 size={17} />
               <span>Analytics</span>
             </button>
+
+            {user?.role === 'admin' && (
+              <button
+                id="sidebar-tab-admin"
+                className="sidebar-item"
+                onClick={() => navigate('/admin')}
+                style={{ color: '#0b326f', fontWeight: 700 }}
+              >
+                <ShieldCheck size={17} color="#0b326f" />
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                  Admin Portal
+                  <span style={{ fontSize: '0.62rem', background: 'rgba(11, 50, 111, 0.12)', color: '#0b326f', padding: '1px 6px', borderRadius: 4, border: '1px solid #bfdbfe' }}>
+                    ADMIN
+                  </span>
+                </span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -320,6 +344,7 @@ export default function App() {
           <Route path="/register" element={<AuthPage />} />
           <Route path="/forgot-password" element={<AuthPage />} />
           <Route path="/app" element={<AppShell isDark={isDark} toggleTheme={toggleTheme} />} />
+          <Route path="/admin" element={<AdminDashboard isDark={isDark} toggleTheme={toggleTheme} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>

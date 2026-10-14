@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import {
   FileText, ArrowRight, Play, CheckCircle2,
   Upload, HelpCircle, BarChart2, Shield, Video, Layers,
-  ChevronRight, Clock, Award, Sun, Moon, Plus, Minus
+  ChevronRight, Clock, Award, Sun, Moon, Plus, Minus,
+  ShieldCheck
 } from 'lucide-react';
 
 function YoutubeIcon({ size = 18, color = '#ef4444' }) {
@@ -16,6 +18,7 @@ function YoutubeIcon({ size = 18, color = '#ef4444' }) {
 
 export default function LandingPage({ isDark, toggleTheme }) {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [openFaq, setOpenFaq] = useState(null);
 
   const samples = [
@@ -66,6 +69,16 @@ export default function LandingPage({ isDark, toggleTheme }) {
             <button className="nav-link" onClick={() => navigate('/app')}>Studio</button>
             <button className="nav-link" onClick={() => navigate('/app?tab=history')}>Library</button>
             <button className="nav-link" onClick={() => navigate('/app?tab=analytics')}>Analytics</button>
+            {user?.role === 'admin' && (
+              <button
+                className="nav-link"
+                onClick={() => navigate('/admin')}
+                style={{ color: 'var(--primary)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 4 }}
+              >
+                <ShieldCheck size={14} />
+                Admin
+              </button>
+            )}
           </nav>
 
           {/* Right Controls: Theme Switcher & Auth */}
@@ -90,12 +103,25 @@ export default function LandingPage({ isDark, toggleTheme }) {
               {isDark ? <Sun size={17} color="#f59e0b" /> : <Moon size={17} color="#0b326f" />}
             </button>
 
-            <button id="nav-login-btn" className="btn-secondary" onClick={() => navigate('/login')} style={{ fontSize: '0.85rem', padding: '8px 16px' }}>
-              Sign In
-            </button>
-            <button id="nav-register-btn" className="btn-primary" onClick={() => navigate('/register')} style={{ fontSize: '0.85rem', padding: '8px 18px' }}>
-              Get Started
-            </button>
+            {user ? (
+              <button
+                id="nav-app-btn"
+                className="btn-primary"
+                onClick={() => navigate('/app')}
+                style={{ fontSize: '0.85rem', padding: '8px 18px' }}
+              >
+                Go to Studio
+              </button>
+            ) : (
+              <>
+                <button id="nav-login-btn" className="btn-secondary" onClick={() => navigate('/login')} style={{ fontSize: '0.85rem', padding: '8px 16px' }}>
+                  Sign In
+                </button>
+                <button id="nav-register-btn" className="btn-primary" onClick={() => navigate('/register')} style={{ fontSize: '0.85rem', padding: '8px 18px' }}>
+                  Get Started
+                </button>
+              </>
+            )}
           </div>
         </div>
       </header>

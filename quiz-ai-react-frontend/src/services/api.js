@@ -114,4 +114,24 @@ export const api = {
   async getPerformance() {
     return request('/api/performance');
   },
+
+  // Admin Dashboard endpoints
+  async getAdminOverview() {
+    return request('/api/admin/overview');
+  },
+
+  async getAdminRankings() {
+    return request('/api/admin/rankings');
+  },
+
+  async getAdminUserDetail(userId) {
+    return request(`/api/admin/user/${userId}`);
+  },
+
+  async updateUserRole(userId, role) {
+    return request(`/api/admin/user/${userId}/role`, {
+      method: 'POST',
+      body: JSON.stringify({ role }),
+    });
+  },
 };
