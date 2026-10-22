@@ -427,19 +427,37 @@ def get_performance_stats(user_id):
                 default=0
             )
 
-            # Accuracy by difficulty
-            diff_map = {"easy": [], "medium": [], "hard": []}
+            # Real breakdown by difficulty
+            diff_map = {
+                "easy": {"scores": [], "total_score": 0, "total_questions": 0, "attempts": 0},
+                "medium": {"scores": [], "total_score": 0, "total_questions": 0, "attempts": 0},
+                "hard": {"scores": [], "total_score": 0, "total_questions": 0, "attempts": 0}
+            }
             for r in rows:
                 diff = (r.get("difficulty") or "medium").lower()
                 if diff not in diff_map:
-                    diff_map[diff] = []
-                if r["total_questions"] > 0:
-                    diff_map[diff].append(round((r["score"] / r["total_questions"]) * 100))
+                    diff_map[diff] = {"scores": [], "total_score": 0, "total_questions": 0, "attempts": 0}
+                tq = r.get("total_questions") or 0
+                sc = r.get("score") or 0
+                diff_map[diff]["attempts"] += 1
+                diff_map[diff]["total_score"] += sc
+                diff_map[diff]["total_questions"] += tq
+                if tq > 0:
+                    diff_map[diff]["scores"].append(round((sc / tq) * 100))
 
             accuracy_by_difficulty = {}
+            difficulty_details = {}
             for level in ("easy", "medium", "hard"):
-                scores = diff_map.get(level, [])
-                accuracy_by_difficulty[level] = round(sum(scores) / len(scores)) if scores else None
+                info = diff_map.get(level, {"scores": [], "total_score": 0, "total_questions": 0, "attempts": 0})
+                scores = info["scores"]
+                acc = round((info["total_score"] / info["total_questions"]) * 100) if info["total_questions"] > 0 else (round(sum(scores) / len(scores)) if scores else None)
+                accuracy_by_difficulty[level] = acc
+                difficulty_details[level] = {
+                    "accuracy": acc,
+                    "attempts": info["attempts"],
+                    "correct": info["total_score"],
+                    "total": info["total_questions"]
+                }
 
             # Real consecutive calendar day streak
             attempt_dates = sorted(
@@ -477,6 +495,7 @@ def get_performance_stats(user_id):
                 "best_score": best_score,
                 "streak_days": streak_days,
                 "accuracy_by_difficulty": accuracy_by_difficulty,
+                "difficulty_details": difficulty_details,
                 "recent_attempts": recent_attempts
             }
     finally:
