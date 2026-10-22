@@ -5,7 +5,7 @@ import { api } from '../services/api';
 import {
   FileText, Mail, Lock, User, Eye, EyeOff, ArrowRight,
   CheckCircle2, AlertCircle, Loader2, ArrowLeft, Upload,
-  HelpCircle, KeyRound
+  HelpCircle, KeyRound, Clock, RotateCcw
 } from 'lucide-react';
 
 export default function AuthPage() {
@@ -28,11 +28,14 @@ export default function AuthPage() {
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [forgotStep, setForgotStep] = useState(1);
+  const [timerSeconds, setTimerSeconds] = useState(600); // 10 minutes = 600s
+  const [resending, setResending] = useState(false);
 
   // UI status
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
 
   // Redirect if logged in
   useEffect(() => {
@@ -92,6 +95,25 @@ export default function AuthPage() {
     }
   };
 
+  // Countdown timer effect for OTP expiration (10:00 -> 00:00)
+  useEffect(() => {
+    let interval = null;
+    if (isForgot && forgotStep === 2 && timerSeconds > 0) {
+      interval = setInterval(() => {
+        setTimerSeconds((prev) => Math.max(0, prev - 1));
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isForgot, forgotStep, timerSeconds]);
+
+  const formatTimer = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
+
   // Handle Forgot Password - Request OTP
   const handleRequestOtp = async (e) => {
     e.preventDefault();
@@ -100,6 +122,7 @@ export default function AuthPage() {
     try {
       const res = await api.forgotPassword(email);
       setSuccess(res.message || `A 6-digit verification code has been sent to ${email}`);
+      setTimerSeconds(600); // Reset timer to 10 minutes
       setForgotStep(2);
     } catch (err) {
       setError(err.message || 'This email is not registered in our app. Please check your email or sign up.');
@@ -108,10 +131,30 @@ export default function AuthPage() {
     }
   };
 
+  // Handle Resend OTP
+  const handleResendOtp = async () => {
+    setError('');
+    setResending(true);
+    try {
+      const res = await api.forgotPassword(email);
+      setSuccess(res.message || `A new 6-digit verification code has been sent to ${email}`);
+      setTimerSeconds(600); // Reset timer to 10 minutes
+      setOtp('');
+    } catch (err) {
+      setError(err.message || 'Failed to resend verification code. Please try again.');
+    } finally {
+      setResending(false);
+    }
+  };
+
   // Handle Forgot Password - Reset
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setError('');
+    if (timerSeconds === 0) {
+      setError('Verification code has expired. Please request a new code.');
+      return;
+    }
     const pwdErr = validatePasswordStrength(newPassword);
     if (pwdErr) {
       setError(pwdErr);
@@ -128,6 +171,7 @@ export default function AuthPage() {
       setLoading(false);
     }
   };
+
 
 
   return (
@@ -558,6 +602,45 @@ export default function AuthPage() {
                 </form>
               ) : (
                 <form onSubmit={handleResetPassword} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                  
+                  {/* Live 10-Minute Expiration Countdown Badge */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      background: timerSeconds === 0 ? '#fef2f2' : timerSeconds <= 120 ? '#fffbeb' : '#f0fdf4',
+                      border: `1px solid ${timerSeconds === 0 ? '#fecaca' : timerSeconds <= 120 ? '#fde68a' : '#bbf7d0'}`,
+                      borderRadius: '8px',
+                      padding: '10px 14px',
+                      marginBottom: '2px',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Clock size={16} color={timerSeconds === 0 ? '#dc2626' : timerSeconds <= 120 ? '#d97706' : '#16a34a'} />
+                      <span
+                        style={{
+                          fontSize: '0.82rem',
+                          fontWeight: 700,
+                          color: timerSeconds === 0 ? '#b91c1c' : timerSeconds <= 120 ? '#b45309' : '#15803d',
+                        }}
+                      >
+                        {timerSeconds === 0 ? 'Verification code expired' : 'Code valid for'}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: 'SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace',
+                        fontSize: '0.95rem',
+                        fontWeight: 800,
+                        letterSpacing: '0.05em',
+                        color: timerSeconds === 0 ? '#dc2626' : timerSeconds <= 120 ? '#d97706' : '#16a34a',
+                      }}
+                    >
+                      {formatTimer(timerSeconds)}
+                    </div>
+                  </div>
+
                   <div className="form-group">
                     <label className="form-label">ENTER 6-DIGIT OTP</label>
                     <div className="input-wrapper">
@@ -567,6 +650,7 @@ export default function AuthPage() {
                         type="text"
                         required
                         maxLength={6}
+                        disabled={timerSeconds === 0}
                         placeholder="123456"
                         value={otp}
                         onChange={(e) => setOtp(e.target.value)}
@@ -584,7 +668,8 @@ export default function AuthPage() {
                         id="new-password-input"
                         type="password"
                         required
-                        placeholder="Enter new password"
+                        disabled={timerSeconds === 0}
+                        placeholder="Enter new password (min 8 chars, letters & numbers)"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         className="clean-input"
@@ -596,14 +681,59 @@ export default function AuthPage() {
                   <button
                     id="reset-pass-btn"
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || timerSeconds === 0}
                     className="btn-primary"
-                    style={{ width: '100%', height: 46, fontSize: '0.95rem' }}
+                    style={{
+                      width: '100%',
+                      height: 46,
+                      fontSize: '0.95rem',
+                      opacity: timerSeconds === 0 ? 0.6 : 1,
+                      cursor: timerSeconds === 0 ? 'not-allowed' : 'pointer',
+                    }}
                   >
-                    {loading ? <Loader2 size={18} className="animate-spin" /> : <span>Update Password</span>}
+                    {loading ? (
+                      <Loader2 size={18} className="animate-spin" />
+                    ) : (
+                      <span>{timerSeconds === 0 ? 'Code Expired (00:00)' : 'Update Password'}</span>
+                    )}
                   </button>
+
+                  {/* Resend Code Section */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      fontSize: '0.84rem',
+                      color: 'var(--text-muted)',
+                      marginTop: '4px',
+                    }}
+                  >
+                    <span>Didn't receive or code expired?</span>
+                    <button
+                      type="button"
+                      onClick={handleResendOtp}
+                      disabled={resending || loading}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--primary)',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '4px 6px',
+                      }}
+                    >
+                      {resending ? <Loader2 size={13} className="animate-spin" /> : <RotateCcw size={13} />}
+                      <span>Resend Code</span>
+                    </button>
+                  </div>
                 </form>
               )}
+
 
               <div style={{ textAlign: 'center', marginTop: 24 }}>
                 <button
