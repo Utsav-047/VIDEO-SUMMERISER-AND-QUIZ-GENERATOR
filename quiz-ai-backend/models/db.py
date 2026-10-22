@@ -455,13 +455,17 @@ def get_performance_stats(user_id):
                 else:
                     break
 
-            # Recent attempts (up to 10)
+            # Recent attempts (up to 15)
             recent_attempts = []
-            for r in rows[:10]:
+            for r in rows[:15]:
                 date_val = r.get("created_at")
+                date_iso = date_val.isoformat() if date_val and hasattr(date_val, "isoformat") else (str(date_val) if date_val else None)
                 recent_attempts.append({
+                    "attempt_id": r.get("attempt_id"),
+                    "quiz_id": r.get("quiz_id"),
                     "video_title": r.get("video_title") or "Video Quiz",
-                    "date": date_val.isoformat() if date_val and hasattr(date_val, "isoformat") else "Today",
+                    "created_at": date_iso,
+                    "date": date_iso or "Today",
                     "difficulty": (r.get("difficulty") or "medium").lower(),
                     "score": r["score"],
                     "total_questions": r["total_questions"]
