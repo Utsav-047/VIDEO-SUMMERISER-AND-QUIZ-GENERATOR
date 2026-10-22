@@ -126,82 +126,181 @@ export default function LandingPage({ isDark, toggleTheme }) {
         </div>
       </header>
 
-      {/* ── HERO SECTION (Matches Screenshot 1 Exactly) ── */}
-      <section style={{ padding: '70px 24px 80px', maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 48, alignItems: 'center' }}>
-          
-          {/* Left Column */}
-          <div>
-            <div style={{ marginBottom: 20 }}>
-              <span className="tag-badge">
-                AI-POWERED VIDEO INTELLIGENCE
-              </span>
-            </div>
-
-            <h1 style={{ fontSize: 'clamp(2.3rem, 4vw, 3.2rem)', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.15, marginBottom: 20, letterSpacing: '-0.03em' }}>
-              Instant Answers to <span style={{ color: 'var(--primary)' }}>Video Lectures</span>
-            </h1>
-
-            <p style={{ fontSize: '1.02rem', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: 32, maxWidth: 520 }}>
-              Navigate complex video content with precision. Our AI engine parses audio, extracts verified reference-backed summaries, and generates adaptive quizzes in seconds.
-            </p>
-
-            {/* Stats Row */}
-            <div style={{ display: 'flex', gap: 32, marginBottom: 36, paddingBottom: 24, borderBottom: '1px solid var(--border)' }}>
-              <div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--primary)' }}>100%</div>
-                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Whisper Coverage</div>
-              </div>
-              <div style={{ borderLeft: '1px solid var(--border)', paddingLeft: 32 }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--primary)' }}>AI</div>
-                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Powered Precision</div>
-              </div>
-              <div style={{ borderLeft: '1px solid var(--border)', paddingLeft: 32 }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--primary)' }}>3+</div>
-                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Summary Formats</div>
-              </div>
-            </div>
-
-            {/* CTA Buttons */}
-            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-              <button id="hero-start-btn" className="btn-primary" onClick={() => navigate('/app')} style={{ padding: '13px 28px', fontSize: '0.95rem' }}>
-                <span>Start Synthesizing</span>
-                <ArrowRight size={17} />
-              </button>
-              <button id="hero-upload-btn" className="btn-secondary" onClick={() => navigate('/app')} style={{ padding: '13px 24px', fontSize: '0.95rem' }}>
-                <Upload size={17} />
-                <span>Upload Video</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Right Column: Hero Visual Card (Reference Style) */}
-          <div>
-            <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 12, padding: 24, boxShadow: 'var(--shadow-md)' }}>
-              <div style={{ background: 'var(--bg-subtle)', border: '1px solid var(--border)', borderRadius: 8, padding: '36px 24px', textAlign: 'center', marginBottom: 20 }}>
-                <div style={{ width: 64, height: 64, borderRadius: 12, background: 'var(--primary-light)', border: '1px solid var(--primary-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                  <FileText size={32} color="var(--primary)" />
-                </div>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>
-                  Executive Video Synthesis
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', maxWidth: 360, margin: '0 auto' }}>
-                  Audio isolation &bull; Whisper transcription &bull; Key takeaway synthesis &bull; MCQ quiz generation
-                </p>
+      {/* ── HERO SECTION WITH 3D AI VIDEO INTELLIGENCE BACKGROUND ── */}
+      <section
+        style={{
+          position: 'relative',
+          overflow: 'hidden',
+          borderBottom: '1px solid var(--border)',
+          backgroundImage: isDark
+            ? 'linear-gradient(to right, rgba(11, 20, 38, 0.95) 0%, rgba(11, 20, 38, 0.90) 38%, rgba(11, 20, 38, 0.50) 65%, rgba(11, 20, 38, 0.25) 100%), url("/landing-hero-bg.png")'
+            : 'linear-gradient(to right, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.90) 38%, rgba(255, 255, 255, 0.45) 65%, rgba(255, 255, 255, 0.15) 100%), url("/landing-hero-bg.png")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'right center',
+          backgroundRepeat: 'no-repeat',
+          padding: '80px 24px 90px',
+        }}
+      >
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 48, alignItems: 'center' }}>
+            
+            {/* Left Column: Headlines, Highlights, and CTAs */}
+            <div>
+              <div style={{ marginBottom: 20 }}>
+                <span
+                  className="tag-badge"
+                  style={{
+                    backdropFilter: 'blur(8px)',
+                    background: isDark ? 'rgba(30, 58, 138, 0.4)' : 'rgba(239, 246, 255, 0.9)',
+                  }}
+                >
+                  AI-POWERED VIDEO INTELLIGENCE
+                </span>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '12px 16px' }}>
-                <div style={{ width: 34, height: 34, borderRadius: 6, background: '#0b326f', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Layers size={18} color="#ffffff" />
-                </div>
+              <h1 style={{ fontSize: 'clamp(2.3rem, 4vw, 3.2rem)', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.15, marginBottom: 20, letterSpacing: '-0.03em' }}>
+                Instant Answers to <span style={{ color: 'var(--primary)' }}>Video Lectures</span>
+              </h1>
+
+              <p style={{ fontSize: '1.02rem', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: 32, maxWidth: 520 }}>
+                Navigate complex video content with precision. Our AI engine parses audio, extracts verified reference-backed summaries, and generates adaptive quizzes in seconds.
+              </p>
+
+              {/* Stats Row with glassmorphic backdrop */}
+              <div
+                style={{
+                  display: 'flex',
+                  gap: 28,
+                  marginBottom: 36,
+                  padding: '16px 20px',
+                  borderRadius: 10,
+                  background: isDark ? 'rgba(15, 23, 42, 0.6)' : 'rgba(255, 255, 255, 0.75)',
+                  backdropFilter: 'blur(8px)',
+                  border: '1px solid var(--border)',
+                  width: 'fit-content',
+                }}
+              >
                 <div>
-                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Current Version</div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>Synapse Engine v1.0</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--primary)' }}>100%</div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Whisper Coverage</div>
+                </div>
+                <div style={{ borderLeft: '1px solid var(--border)', paddingLeft: 24 }}>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--primary)' }}>AI</div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Powered Precision</div>
+                </div>
+                <div style={{ borderLeft: '1px solid var(--border)', paddingLeft: 24 }}>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--primary)' }}>3+</div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Summary Formats</div>
                 </div>
               </div>
-            </div>
-          </div>
 
+              {/* CTA Buttons */}
+              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+                <button
+                  id="hero-start-btn"
+                  className="btn-primary"
+                  onClick={() => navigate('/app')}
+                  style={{
+                    padding: '13px 28px',
+                    fontSize: '0.95rem',
+                    boxShadow: '0 8px 20px -4px rgba(37, 99, 235, 0.4)',
+                  }}
+                >
+                  <span>Start Synthesizing</span>
+                  <ArrowRight size={17} />
+                </button>
+                <button
+                  id="hero-upload-btn"
+                  className="btn-secondary"
+                  onClick={() => navigate('/app')}
+                  style={{
+                    padding: '13px 24px',
+                    fontSize: '0.95rem',
+                    backdropFilter: 'blur(8px)',
+                    background: isDark ? 'rgba(30, 41, 59, 0.65)' : 'rgba(255, 255, 255, 0.85)',
+                  }}
+                >
+                  <Upload size={17} />
+                  <span>Upload Video</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Right Column: Floating Frosted-Glass Accent Cards that showcase features alongside the 3D artwork */}
+            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-end', justifyContent: 'center' }}>
+              
+              {/* Floating Pill 1: Key Takeaways */}
+              <div
+                style={{
+                  background: isDark ? 'rgba(15, 23, 42, 0.75)' : 'rgba(255, 255, 255, 0.85)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 12,
+                  padding: '16px 20px',
+                  boxShadow: '0 12px 32px -8px rgba(0, 0, 0, 0.15)',
+                  maxWidth: 340,
+                  transform: 'translateY(-10px)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg, #3b82f6, #6366f1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <FileText size={20} color="#ffffff" />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-primary)' }}>Executive Synthesis</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Automated chapter breakdowns &amp; takeaways</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Pill 2: Adaptive Quiz */}
+              <div
+                style={{
+                  background: isDark ? 'rgba(15, 23, 42, 0.75)' : 'rgba(255, 255, 255, 0.85)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 12,
+                  padding: '16px 20px',
+                  boxShadow: '0 12px 32px -8px rgba(0, 0, 0, 0.15)',
+                  maxWidth: 340,
+                  marginRight: '20px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <HelpCircle size={20} color="#ffffff" />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-primary)' }}>Adaptive MCQ Quizzes</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Instant scoring, explanations &amp; analytics</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Pill 3: Whisper Precision */}
+              <div
+                style={{
+                  background: isDark ? 'rgba(15, 23, 42, 0.75)' : 'rgba(255, 255, 255, 0.85)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 12,
+                  padding: '12px 18px',
+                  boxShadow: '0 12px 32px -8px rgba(0, 0, 0, 0.15)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  transform: 'translateY(10px)',
+                }}
+              >
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 10px #10b981' }} />
+                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  Synapse Engine v1.0 &bull; Whisper Isolated
+                </span>
+              </div>
+
+            </div>
+
+          </div>
         </div>
       </section>
 
