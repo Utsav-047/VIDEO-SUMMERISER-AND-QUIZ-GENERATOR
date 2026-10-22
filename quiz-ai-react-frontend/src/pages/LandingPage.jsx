@@ -363,56 +363,206 @@ export default function LandingPage({ isDark, toggleTheme }) {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
             
             {/* Card 1: Upload Any Video */}
-            <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ background: 'var(--primary-light)', borderBottom: '1px solid var(--border)', height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 10 }}>
-                <div style={{ width: 48, height: 48, borderRadius: 8, background: 'var(--bg-surface)', border: '1px solid var(--primary-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Upload size={24} color="var(--primary)" />
+            <div
+              style={{
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border)',
+                borderRadius: 12,
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                boxShadow: 'var(--shadow-sm)',
+                transition: 'all 0.25s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 14px 30px -10px rgba(0, 0, 0, 0.12)';
+                e.currentTarget.style.borderColor = 'var(--primary)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+                e.currentTarget.style.borderColor = 'var(--border)';
+              }}
+            >
+              <div style={{ position: 'relative', height: 190, overflow: 'hidden', background: '#f8fafc', borderBottom: '1px solid var(--border)' }}>
+                <img
+                  src="/feature-upload.svg"
+                  alt="Upload Any Video Interface"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.03)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 12,
+                    left: 12,
+                    background: 'rgba(255, 255, 255, 0.94)',
+                    backdropFilter: 'blur(8px)',
+                    padding: '4px 10px',
+                    borderRadius: 6,
+                    border: '1px solid rgba(226, 232, 240, 0.9)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                  }}
+                >
+                  <Upload size={13} color="var(--primary)" />
+                  <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--primary)', letterSpacing: '0.04em' }}>YOUTUBE &amp; LOCAL FILES</span>
                 </div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary)', letterSpacing: '0.05em' }}>YOUTUBE &amp; LOCAL FILES</span>
               </div>
-              <div style={{ padding: '24px', flex: 1 }}>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>
-                  Upload Any Video
-                </h3>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                  Upload any MP4/MKV video recording or paste YouTube links. The engine adapts instantly to process speeches, lectures, and podcasts.
-                </p>
+              <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>
+                    Upload Any Video
+                  </h3>
+                  <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                    Upload any MP4/MKV video recording or paste YouTube links. The engine adapts instantly to process speeches, lectures, and podcasts.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 700, padding: '3px 8px', borderRadius: 4, background: 'var(--bg-subtle)', color: 'var(--text-muted)' }}>MP4 &bull; MKV</span>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 700, padding: '3px 8px', borderRadius: 4, background: 'var(--bg-subtle)', color: 'var(--text-muted)' }}>YouTube URL</span>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 700, padding: '3px 8px', borderRadius: 4, background: 'var(--bg-subtle)', color: 'var(--text-muted)' }}>Up to 500 MB</span>
+                </div>
               </div>
             </div>
 
             {/* Card 2: AI Summaries */}
-            <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', display: 'flex', flexDirection: 'column', borderTop: '3px solid var(--primary)' }}>
-              <div style={{ background: 'var(--primary-light)', borderBottom: '1px solid var(--border)', height: 160, padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
-                <div style={{ width: '80%', height: 6, background: 'var(--border-strong)', borderRadius: 3 }} />
-                <div style={{ width: '100%', height: 6, background: 'var(--border-strong)', borderRadius: 3 }} />
-                <div style={{ width: '60%', height: 6, background: 'var(--border-strong)', borderRadius: 3 }} />
-                <div style={{ width: '40%', height: 8, background: 'var(--primary)', borderRadius: 4, marginTop: 6 }} />
+            <div
+              style={{
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border)',
+                borderRadius: 12,
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                boxShadow: 'var(--shadow-sm)',
+                transition: 'all 0.25s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 14px 30px -10px rgba(0, 0, 0, 0.12)';
+                e.currentTarget.style.borderColor = 'var(--primary)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+                e.currentTarget.style.borderColor = 'var(--border)';
+              }}
+            >
+              <div style={{ position: 'relative', height: 190, overflow: 'hidden', background: '#f8fafc', borderBottom: '1px solid var(--border)' }}>
+                <img
+                  src="/feature-summary.svg"
+                  alt="Executive Briefs & Study Notes"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.03)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 12,
+                    left: 12,
+                    background: 'rgba(255, 255, 255, 0.94)',
+                    backdropFilter: 'blur(8px)',
+                    padding: '4px 10px',
+                    borderRadius: 6,
+                    border: '1px solid rgba(226, 232, 240, 0.9)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                  }}
+                >
+                  <FileText size={13} color="var(--primary)" />
+                  <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--primary)', letterSpacing: '0.04em' }}>STRUCTURED AI NOTES</span>
+                </div>
               </div>
-              <div style={{ padding: '24px', flex: 1 }}>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>
-                  Executive Briefs &amp; Notes
-                </h3>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                  No more scrubbing through hours of video timelines. Receive structured executive takeaways, bullet lists, or deep-dive study summaries.
-                </p>
+              <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>
+                    Executive Briefs &amp; Notes
+                  </h3>
+                  <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                    No more scrubbing through hours of video timelines. Receive structured executive takeaways, bullet lists, or deep-dive study summaries.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 700, padding: '3px 8px', borderRadius: 4, background: 'var(--bg-subtle)', color: 'var(--text-muted)' }}>Executive Brief</span>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 700, padding: '3px 8px', borderRadius: 4, background: 'var(--bg-subtle)', color: 'var(--text-muted)' }}>Bullet Points</span>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 700, padding: '3px 8px', borderRadius: 4, background: 'var(--bg-subtle)', color: 'var(--text-muted)' }}>Deep Dive</span>
+                </div>
               </div>
             </div>
 
             {/* Card 3: Interactive Quizzes */}
-            <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ background: 'var(--primary-light)', borderBottom: '1px solid var(--border)', height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 10 }}>
-                <div style={{ width: 48, height: 48, borderRadius: 8, background: 'var(--bg-surface)', border: '1px solid var(--primary-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <HelpCircle size={24} color="var(--primary)" />
+            <div
+              style={{
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border)',
+                borderRadius: 12,
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                boxShadow: 'var(--shadow-sm)',
+                transition: 'all 0.25s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 14px 30px -10px rgba(0, 0, 0, 0.12)';
+                e.currentTarget.style.borderColor = 'var(--primary)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+                e.currentTarget.style.borderColor = 'var(--border)';
+              }}
+            >
+              <div style={{ position: 'relative', height: 190, overflow: 'hidden', background: '#f8fafc', borderBottom: '1px solid var(--border)' }}>
+                <img
+                  src="/feature-quiz.svg"
+                  alt="Generate Interactive Quizzes"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.03)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 12,
+                    left: 12,
+                    background: 'rgba(255, 255, 255, 0.94)',
+                    backdropFilter: 'blur(8px)',
+                    padding: '4px 10px',
+                    borderRadius: 6,
+                    border: '1px solid rgba(226, 232, 240, 0.9)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                  }}
+                >
+                  <HelpCircle size={13} color="#16a34a" />
+                  <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#16a34a', letterSpacing: '0.04em' }}>COMPLIANCE &amp; MASTERY</span>
                 </div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary)', letterSpacing: '0.05em' }}>COMPLIANCE &amp; MASTERY READY</span>
               </div>
-              <div style={{ padding: '24px', flex: 1 }}>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>
-                  Generate Interactive Quizzes
-                </h3>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                  Generate custom MCQ quizzes with chosen difficulty tiers (Easy, Medium, Hard) to test recall with instant scoring and explanations.
-                </p>
+              <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>
+                    Generate Interactive Quizzes
+                  </h3>
+                  <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                    Generate custom MCQ quizzes with chosen difficulty tiers (Easy, Medium, Hard) to test recall with instant scoring and explanations.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 700, padding: '3px 8px', borderRadius: 4, background: 'var(--bg-subtle)', color: 'var(--text-muted)' }}>Easy / Med / Hard</span>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 700, padding: '3px 8px', borderRadius: 4, background: 'var(--bg-subtle)', color: 'var(--text-muted)' }}>Instant Feedback</span>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 700, padding: '3px 8px', borderRadius: 4, background: 'var(--bg-subtle)', color: 'var(--text-muted)' }}>Score Analytics</span>
+                </div>
               </div>
             </div>
 

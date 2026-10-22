@@ -1,0 +1,188 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="50%" stop-color="#eff6ff" />
+      <stop offset="100%" stop-color="#f1f5f9" />
+    </linearGradient>
+    <linearGradient id="primary-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <filter id="card-shadow" x="-10%" y="-10%" width="120%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.07" />
+    </filter>
+    <pattern id="grid-pattern-1" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#e2e8f0" stroke-width="0.75" stroke-opacity="0.6" />
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="420" fill="url(#bg-grad-1)" />
+  <rect width="800" height="420" fill="url(#grid-pattern-1)" />
+
+  <!-- Soft glow behind main card -->
+  <circle cx="400" cy="210" r="220" fill="#dbeafe" opacity="0.45" filter="blur(40px)" />
+
+  <!-- Main Floating App Card -->
+  <g filter="url(#card-shadow)">
+    <!-- Card Frame -->
+    <rect x="70" y="38" width="660" height="344" rx="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" />
+
+    <!-- Card Top Header / Browser Window Header -->
+    <rect x="70" y="38" width="660" height="46" rx="14" fill="#f8fafc" />
+    <path d="M 70 84 L 730 84" stroke="#e2e8f0" stroke-width="1" />
+    
+    <!-- Window Traffic Lights -->
+    <circle cx="96" cy="61" r="5" fill="#f87171" />
+    <circle cx="112" cy="61" r="5" fill="#fbbf24" />
+    <circle cx="128" cy="61" r="5" fill="#34d399" />
+
+    <!-- Tabs inside Header -->
+    <rect x="160" y="47" width="140" height="28" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+    <path d="M 174 61 L 180 57 L 180 65 Z" fill="#ef4444" />
+    <text x="190" y="66" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1e293b">YouTube URL</text>
+
+    <rect x="308" y="47" width="130" height="28" rx="6" fill="transparent" />
+    <text x="328" y="66" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#64748b">Local File (MP4)</text>
+
+    <!-- Header Right Status -->
+    <rect x="585" y="49" width="130" height="24" rx="12" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1" />
+    <circle cx="598" cy="61" r="3.5" fill="#10b981" />
+    <text x="608" y="65" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#047857">Whisper Active</text>
+
+    <!-- Card Body Content -->
+    <!-- 1. URL Input Bar -->
+    <g transform="translate(94, 102)">
+      <rect x="0" y="0" width="612" height="48" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2" />
+      
+      <!-- YouTube Icon badge -->
+      <rect x="10" y="10" width="28" height="28" rx="6" fill="#fee2e2" />
+      <path d="M 21 20 L 29 24 L 21 28 Z" fill="#dc2626" />
+
+      <text x="48" y="29" font-family="SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="600" fill="#0f172a">
+        https://www.youtube.com/watch?v=JhHMJCUmq28
+      </text>
+
+      <rect x="500" y="8" width="102" height="32" rx="6" fill="url(#primary-grad)" />
+      <text x="522" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#ffffff">Process ➔</text>
+    </g>
+
+    <!-- 2. Dual Content Previews: Left = Video Metadata & Audio Waveform, Right = Local Drop Area -->
+    <!-- Left: Video Info Card -->
+    <g transform="translate(94, 168)">
+      <rect x="0" y="0" width="360" height="186" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Video Thumbnail Mock -->
+      <rect x="14" y="14" width="115" height="74" rx="6" fill="#1e293b" />
+      <circle cx="71" cy="51" r="15" fill="rgba(255,255,255,0.25)" />
+      <path d="M 68 45 L 77 51 L 68 57 Z" fill="#ffffff" />
+      <rect x="80" y="68" width="44" height="16" rx="3" fill="rgba(0,0,0,0.75)" />
+      <text x="86" y="80" font-family="-apple-system, sans-serif" font-size="10" font-weight="700" fill="#ffffff">18:42</text>
+
+      <!-- Video Details -->
+      <text x="140" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#0f172a">
+        Quantum Computing 101
+      </text>
+      <text x="140" y="50" font-family="-apple-system, sans-serif" font-size="11" font-weight="500" fill="#64748b">
+        MIT OpenCourseWare • 1080p
+      </text>
+
+      <rect x="140" y="62" width="86" height="20" rx="4" fill="#e0f2fe" />
+      <text x="146" y="76" font-family="-apple-system, sans-serif" font-size="10" font-weight="700" fill="#0369a1">HD Video + Sub</text>
+
+      <!-- Waveform Progress Track -->
+      <line x1="14" y1="104" x2="346" y2="104" stroke="#e2e8f0" stroke-width="1" />
+
+      <text x="14" y="124" font-family="-apple-system, sans-serif" font-size="10.5" font-weight="700" fill="#475569" letter-spacing="0.5">
+        AUDIO EXTRACTION &amp; DIARIZATION
+      </text>
+
+      <!-- Waveform Bars -->
+      <g transform="translate(14, 134)" fill="#3b82f6">
+        <rect x="0" y="12" width="3" height="8" rx="1.5" />
+        <rect x="6" y="6" width="3" height="14" rx="1.5" />
+        <rect x="12" y="2" width="3" height="18" rx="1.5" />
+        <rect x="18" y="8" width="3" height="12" rx="1.5" />
+        <rect x="24" y="1" width="3" height="19" rx="1.5" fill="#2563eb" />
+        <rect x="30" y="5" width="3" height="15" rx="1.5" fill="#2563eb" />
+        <rect x="36" y="10" width="3" height="10" rx="1.5" />
+        <rect x="42" y="3" width="3" height="17" rx="1.5" fill="#2563eb" />
+        <rect x="48" y="7" width="3" height="13" rx="1.5" />
+        <rect x="54" y="12" width="3" height="8" rx="1.5" />
+        <rect x="60" y="4" width="3" height="16" rx="1.5" fill="#2563eb" />
+        <rect x="66" y="9" width="3" height="11" rx="1.5" />
+        <rect x="72" y="13" width="3" height="7" rx="1.5" />
+        <rect x="78" y="2" width="3" height="18" rx="1.5" fill="#2563eb" />
+        <rect x="84" y="6" width="3" height="14" rx="1.5" />
+        <rect x="90" y="1" width="3" height="19" rx="1.5" fill="#2563eb" />
+        <rect x="96" y="8" width="3" height="12" rx="1.5" />
+        <rect x="102" y="14" width="3" height="6" rx="1.5" />
+        <rect x="108" y="3" width="3" height="17" rx="1.5" fill="#2563eb" />
+        <rect x="114" y="7" width="3" height="13" rx="1.5" />
+        <rect x="120" y="11" width="3" height="9" rx="1.5" />
+        <rect x="126" y="2" width="3" height="18" rx="1.5" fill="#2563eb" />
+        <rect x="132" y="5" width="3" height="15" rx="1.5" fill="#2563eb" />
+        <rect x="138" y="9" width="3" height="11" rx="1.5" />
+        <rect x="144" y="12" width="3" height="8" rx="1.5" />
+        <rect x="150" y="4" width="3" height="16" rx="1.5" />
+        <rect x="156" y="7" width="3" height="13" rx="1.5" />
+        <rect x="162" y="14" width="3" height="6" rx="1.5" />
+        <rect x="168" y="1" width="3" height="19" rx="1.5" fill="#2563eb" />
+        <rect x="174" y="6" width="3" height="14" rx="1.5" />
+        <rect x="180" y="10" width="3" height="10" rx="1.5" />
+        <rect x="186" y="3" width="3" height="17" rx="1.5" fill="#2563eb" />
+        <rect x="192" y="8" width="3" height="12" rx="1.5" />
+        <rect x="198" y="13" width="3" height="7" rx="1.5" />
+        <rect x="204" y="5" width="3" height="15" rx="1.5" />
+        <rect x="210" y="9" width="3" height="11" rx="1.5" />
+        <rect x="216" y="2" width="3" height="18" rx="1.5" fill="#2563eb" />
+        <rect x="222" y="7" width="3" height="13" rx="1.5" />
+        <rect x="228" y="11" width="3" height="9" rx="1.5" />
+        <rect x="234" y="4" width="3" height="16" rx="1.5" />
+        <rect x="240" y="1" width="3" height="19" rx="1.5" fill="#2563eb" />
+        <rect x="246" y="8" width="3" height="12" rx="1.5" />
+        <rect x="252" y="13" width="3" height="7" rx="1.5" />
+        <rect x="258" y="5" width="3" height="15" rx="1.5" />
+        <rect x="264" y="9" width="3" height="11" rx="1.5" />
+        <rect x="270" y="3" width="3" height="17" rx="1.5" fill="#2563eb" />
+        <rect x="276" y="6" width="3" height="14" rx="1.5" />
+        <rect x="282" y="12" width="3" height="8" rx="1.5" />
+        <rect x="288" y="2" width="3" height="18" rx="1.5" fill="#2563eb" />
+        <rect x="294" y="7" width="3" height="13" rx="1.5" />
+        <rect x="300" y="10" width="3" height="10" rx="1.5" />
+        <rect x="306" y="4" width="3" height="16" rx="1.5" />
+        <rect x="312" y="9" width="3" height="11" rx="1.5" />
+        <rect x="318" y="14" width="3" height="6" rx="1.5" />
+        <rect x="324" y="5" width="3" height="15" rx="1.5" />
+      </g>
+      
+      <text x="14" y="172" font-family="-apple-system, sans-serif" font-size="10.5" font-weight="600" fill="#16a34a">✓ Speech Track Isolated (16kHz mono)</text>
+    </g>
+
+    <!-- Right: Dropzone Card -->
+    <g transform="translate(470, 168)">
+      <rect x="0" y="0" width="236" height="186" rx="10" fill="#f8fafc" stroke="#93c5fd" stroke-width="1.6" stroke-dasharray="5 4" />
+      
+      <!-- Upload Cloud / Folder Icon -->
+      <circle cx="118" cy="48" r="22" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.2" />
+      <path d="M 118 38 L 118 56 M 111 45 L 118 38 L 125 45" stroke="#2563eb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+
+      <text x="118" y="92" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12.5" font-weight="700" fill="#1e293b">
+        Upload Video File
+      </text>
+      <text x="118" y="110" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="10.5" font-weight="500" fill="#64748b">
+        Drag &amp; drop MP4, MKV, MOV
+      </text>
+
+      <rect x="38" y="126" width="160" height="26" rx="5" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+      <text x="118" y="143" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="10.5" font-weight="700" fill="#3b82f6">
+        Browse Files (Max 500MB)
+      </text>
+
+      <text x="118" y="172" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="9.5" font-weight="600" fill="#94a3b8">
+        100% Client-Side Privacy Check
+      </text>
+    </g>
+  </g>
+</svg>
