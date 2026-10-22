@@ -217,10 +217,31 @@ function AppShell({ isDark, toggleTheme }) {
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button
+              id="topbar-theme-toggle-btn"
+              onClick={toggleTheme}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 8,
+                border: '1px solid var(--border-strong)',
+                background: 'var(--bg-surface)',
+                color: 'var(--text-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {isDark ? <Sun size={17} color="#f59e0b" /> : <Moon size={17} color="var(--primary)" />}
+            </button>
+
             {user ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#0b326f', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 700 }}>
+                <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--primary)', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.78rem', fontWeight: 800 }}>
                   {(user.full_name || user.email || 'U')[0].toUpperCase()}
                 </div>
                 <span style={{ fontWeight: 700 }}>{user.full_name || user.email}</span>
@@ -259,7 +280,7 @@ function AppShell({ isDark, toggleTheme }) {
                           cursor: 'pointer',
                           fontSize: '0.85rem',
                           fontWeight: 700,
-                          background: resultSubView === 'summary' ? '#0b326f' : 'transparent',
+                          background: resultSubView === 'summary' ? 'var(--primary)' : 'transparent',
                           color: resultSubView === 'summary' ? '#ffffff' : 'var(--text-muted)',
                           transition: 'all 0.15s ease',
                         }}
@@ -277,7 +298,7 @@ function AppShell({ isDark, toggleTheme }) {
                             cursor: 'pointer',
                             fontSize: '0.85rem',
                             fontWeight: 700,
-                            background: resultSubView === 'quiz' ? '#0b326f' : 'transparent',
+                            background: resultSubView === 'quiz' ? 'var(--primary)' : 'transparent',
                             color: resultSubView === 'quiz' ? '#ffffff' : 'var(--text-muted)',
                             transition: 'all 0.15s ease',
                           }}
