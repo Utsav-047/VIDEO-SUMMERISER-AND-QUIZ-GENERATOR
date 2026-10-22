@@ -49,11 +49,25 @@ export default function AuthModal() {
     }
   };
 
+  const validatePasswordStrength = (pwd) => {
+    if (!pwd || pwd.length < 8) {
+      return 'Password must be at least 8 characters long.';
+    }
+    if (!/[a-zA-Z]/.test(pwd)) {
+      return 'Password must contain at least one letter.';
+    }
+    if (!/\d/.test(pwd)) {
+      return 'Password must contain at least one number.';
+    }
+    return null;
+  };
+
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+    const pwdErr = validatePasswordStrength(password);
+    if (pwdErr) {
+      setError(pwdErr);
       return;
     }
     setLoading(true);
@@ -73,10 +87,10 @@ export default function AuthModal() {
     setLoading(true);
     try {
       const res = await api.forgotPassword(resetEmail);
-      setSuccessMsg(res.message || `A 6-digit code has been dispatched to ${resetEmail}`);
+      setSuccessMsg(res.message || `A 6-digit verification code has been dispatched to ${resetEmail}`);
       setForgotStep(2);
     } catch (err) {
-      setError(err.message || 'Failed to request OTP code');
+      setError(err.message || 'This email is not registered in our app. Please check your email or sign up.');
     } finally {
       setLoading(false);
     }
@@ -85,8 +99,9 @@ export default function AuthModal() {
   const handleForgotResetPassword = async (e) => {
     e.preventDefault();
     setError('');
-    if (newPassword.length < 8) {
-      setError('New password must be at least 8 characters long');
+    const pwdErr = validatePasswordStrength(newPassword);
+    if (pwdErr) {
+      setError(pwdErr);
       return;
     }
     setLoading(true);
@@ -103,6 +118,7 @@ export default function AuthModal() {
       setLoading(false);
     }
   };
+
 
   return (
     <div

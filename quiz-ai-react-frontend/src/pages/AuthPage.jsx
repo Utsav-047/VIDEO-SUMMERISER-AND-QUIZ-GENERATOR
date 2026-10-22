@@ -54,12 +54,27 @@ export default function AuthPage() {
     }
   };
 
+  // Validate password strength consistently with backend
+  const validatePasswordStrength = (pwd) => {
+    if (!pwd || pwd.length < 8) {
+      return 'Password must be at least 8 characters long.';
+    }
+    if (!/[a-zA-Z]/.test(pwd)) {
+      return 'Password must contain at least one letter.';
+    }
+    if (!/\d/.test(pwd)) {
+      return 'Password must contain at least one number.';
+    }
+    return null;
+  };
+
   // Handle Register
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
+    const pwdErr = validatePasswordStrength(password);
+    if (pwdErr) {
+      setError(pwdErr);
       return;
     }
     if (password !== confirmPassword) {
@@ -84,10 +99,10 @@ export default function AuthPage() {
     setLoading(true);
     try {
       const res = await api.forgotPassword(email);
-      setSuccess(res.message || `Verification OTP sent to ${email}`);
+      setSuccess(res.message || `A 6-digit verification code has been sent to ${email}`);
       setForgotStep(2);
     } catch (err) {
-      setError(err.message || 'Failed to request OTP. Please check your email.');
+      setError(err.message || 'This email is not registered in our app. Please check your email or sign up.');
     } finally {
       setLoading(false);
     }
@@ -97,8 +112,9 @@ export default function AuthPage() {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setError('');
-    if (newPassword.length < 6) {
-      setError('New password must be at least 6 characters.');
+    const pwdErr = validatePasswordStrength(newPassword);
+    if (pwdErr) {
+      setError(pwdErr);
       return;
     }
     setLoading(true);
@@ -112,6 +128,7 @@ export default function AuthPage() {
       setLoading(false);
     }
   };
+
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'row', background: 'var(--bg-surface)' }}>

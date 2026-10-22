@@ -1,3 +1,4 @@
+import re
 import secrets
 from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify, session
@@ -18,6 +19,22 @@ from services.email_service import send_otp_email
 auth_bp = Blueprint("auth_bp", __name__)
 
 
+def validate_password_strength(password: str) -> tuple[bool, str]:
+    """
+    Enforces strong password rules:
+    - At least 8 characters long
+    - At least one letter (a-z, A-Z)
+    - At least one number (0-9)
+    """
+    if not password or len(password) < 8:
+        return False, "Password must be at least 8 characters long."
+    if not re.search(r"[A-Za-z]", password):
+        return False, "Password must contain at least one letter."
+    if not re.search(r"\d", password):
+        return False, "Password must contain at least one number."
+    return True, ""
+
+
 @auth_bp.route("/api/register", methods=["POST"])
 @limiter.limit("5 per minute")
 def register():
@@ -29,8 +46,9 @@ def register():
     if not full_name or not email or not password:
         return jsonify({"error": "full_name, email and password are required"}), 400
 
-    if len(password) < 8:
-        return jsonify({"error": "Password must be at least 8 characters"}), 400
+    is_valid, err_msg = validate_password_strength(password)
+    if not is_valid:
+        return jsonify({"error": err_msg}), 400
 
     if get_user_by_email(email):
         return jsonify({"error": "An account with this email already exists"}), 409
@@ -93,7 +111,10 @@ def me():
 @auth_bp.route("/api/forgot-password", methods=["POST"])
 @limiter.limit("3 per minute")
 def forgot_password():
-    """Generates a 6-digit OTP valid for 10 minutes to reset password."""
+    """
+    Generates a 6-digit OTP valid for 10 minutes to reset password.
+    Returns a uniform generic message to prevent account enumeration.
+    """
     data = request.get_json(silent=True) or {}
     email = (data.get("email") or "").strip()
 
@@ -102,19 +123,17 @@ def forgot_password():
 
     user = get_user_by_email(email)
     if not user:
-        return jsonify({"error": "No account found with this email address"}), 404
+        return jsonify({
+            "error": "This email is not registered in our app. Please check your email or create a new account."
+        }), 404
 
-    # Generate 6-digit OTP code
+    # Generate secure 6-digit OTP code
     otp_code = f"{secrets.randbelow(900000) + 100000:06d}"
     expires_at = datetime.now() + timedelta(minutes=10)
 
     create_password_reset_otp(user["id"], otp_code, expires_at)
 
-    print("\n" + "=" * 45)
-    print(f"[AUTH] Reset OTP for {email}: {otp_code} (Valid for 10 mins)")
-    print("=" * 45 + "\n")
-
-    # Send OTP via email
+    # Deliver OTP strictly via configured email service (console printing removed)
     email_sent, email_msg = send_otp_email(email, otp_code)
     if not email_sent:
         return jsonify({
@@ -125,7 +144,8 @@ def forgot_password():
         "status": "success",
         "message": f"A 6-digit verification code has been sent to {email}.",
         "email": email,
-    })
+    }), 200
+
 
 
 @auth_bp.route("/api/reset-password", methods=["POST"])
@@ -140,8 +160,9 @@ def reset_password():
     if not email or not otp_code or not new_password:
         return jsonify({"error": "Email, verification code, and new password are required"}), 400
 
-    if len(new_password) < 8:
-        return jsonify({"error": "New password must be at least 8 characters long"}), 400
+    is_valid, err_msg = validate_password_strength(new_password)
+    if not is_valid:
+        return jsonify({"error": err_msg}), 400
 
     reset_entry, error_msg = verify_and_consume_otp(email, otp_code)
     if error_msg:
@@ -155,4 +176,5 @@ def reset_password():
         "status": "success",
         "message": "Your password has been successfully reset. You can now log in.",
     })
+
 
