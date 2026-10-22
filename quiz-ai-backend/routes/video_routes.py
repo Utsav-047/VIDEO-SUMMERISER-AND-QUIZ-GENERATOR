@@ -4,10 +4,11 @@ from flask import Blueprint, request, jsonify, session
 from services.downloader import download_youtube_video, save_uploaded_file
 from services.audio import extract_audio
 from services.transcriber import transcribe_audio
-from services.ai_generator import generate_summary, generate_quiz
+from services.ai_generator import generate_summary, generate_quiz, generate_summary_and_quiz
 from models.db import (
-    insert_video, insert_transcript, insert_summary, insert_quiz,
-    insert_attempt, get_quiz, get_history, get_performance_stats,
+    insert_video, get_video_by_id, insert_transcript, get_transcript_by_video,
+    insert_summary, insert_quiz, insert_attempt, get_quiz,
+    get_history, get_performance_stats,
 )
 
 video_bp = Blueprint("video_bp", __name__)
@@ -52,22 +53,39 @@ def process_video():
 
 @video_bp.route("/api/generate/<int:video_id>", methods=["POST"])
 def generate(video_id):
-    if not session.get("user_id"):
+    user_id = session.get("user_id")
+    if not user_id:
         return jsonify({"error": "You must be logged in"}), 401
 
-    data = request.get_json(silent=True) or {}
-    transcript_text = data.get("transcript")
-    if not transcript_text:
-        return jsonify({"error": "transcript is required"}), 400
+    # Security Fix: Verify video ownership before generating summaries or quizzes
+    video = get_video_by_id(video_id, user_id=user_id)
+    if not video:
+        return jsonify({"error": "Video not found or access denied"}), 404
 
-    # New settings from the frontend — all optional with sensible defaults
+    data = request.get_json(silent=True) or {}
+
+    # Security Improvement: Use the transcript stored on the server for this authorized video
+    transcript_record = get_transcript_by_video(video_id)
+    if transcript_record and transcript_record.get("transcript_text"):
+        transcript_text = transcript_record["transcript_text"]
+    else:
+        transcript_text = data.get("transcript")
+
+    if not transcript_text:
+        return jsonify({"error": "Transcript not found for this video"}), 400
+
+    # Settings from the frontend — all optional with sensible defaults
     difficulty = data.get("difficulty", "medium")
     num_questions = data.get("num_questions", 5)
     summary_format = data.get("summary_format", "executive")
 
     try:
-        summary_text = generate_summary(transcript_text, summary_format=summary_format)
-        quiz_questions = generate_quiz(transcript_text, num_questions=num_questions, difficulty=difficulty)
+        summary_text, quiz_questions = generate_summary_and_quiz(
+            transcript_text,
+            summary_format=summary_format,
+            num_questions=num_questions,
+            difficulty=difficulty,
+        )
 
         insert_summary(video_id, summary_text)
         quiz_id = insert_quiz(video_id, quiz_questions, difficulty=difficulty)
@@ -79,7 +97,8 @@ def generate(video_id):
 
 @video_bp.route("/api/quiz/<int:quiz_id>/submit", methods=["POST"])
 def submit_quiz(quiz_id):
-    if not session.get("user_id"):
+    user_id = session.get("user_id")
+    if not user_id:
         return jsonify({"error": "You must be logged in"}), 401
 
     data = request.get_json(silent=True) or {}
@@ -87,14 +106,16 @@ def submit_quiz(quiz_id):
     if answers is None:
         return jsonify({"error": "answers is required"}), 400
 
-    quiz_row = get_quiz(quiz_id)
+    # Security Fix: Validate quiz ownership against current logged in user
+    quiz_row = get_quiz(quiz_id, user_id=user_id)
     if not quiz_row:
-        return jsonify({"error": "Quiz not found"}), 404
+        return jsonify({"error": "Quiz not found or access denied"}), 404
 
     questions = quiz_row["questions_json"]
     score = sum(1 for i, q in enumerate(questions) if i < len(answers) and answers[i] == q["correct_index"])
     insert_attempt(quiz_id, score, len(questions), answers)
     return jsonify({"score": score, "total_questions": len(questions)})
+
 
 
 @video_bp.route("/api/history", methods=["GET"])

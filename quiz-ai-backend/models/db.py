@@ -210,6 +210,22 @@ def insert_video(source_type, source_ref, title=None, user_id=None):
         conn.close()
 
 
+def get_video_by_id(video_id, user_id=None):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            if user_id is not None:
+                cur.execute(
+                    "SELECT * FROM videos WHERE id = %s AND user_id = %s",
+                    (video_id, user_id),
+                )
+            else:
+                cur.execute("SELECT * FROM videos WHERE id = %s", (video_id,))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
 # ---------- transcripts ----------
 def insert_transcript(video_id, transcript_text):
     conn = get_connection()
@@ -265,17 +281,30 @@ def insert_quiz(video_id, questions, difficulty="medium"):
         conn.close()
 
 
-def get_quiz(quiz_id):
+def get_quiz(quiz_id, user_id=None):
     conn = get_connection()
     try:
         with conn.cursor() as cur:
-            cur.execute("SELECT * FROM quizzes WHERE id = %s", (quiz_id,))
+            if user_id is not None:
+                cur.execute("""
+                    SELECT q.*, v.user_id 
+                    FROM quizzes q
+                    JOIN videos v ON q.video_id = v.id
+                    WHERE q.id = %s AND v.user_id = %s
+                """, (quiz_id, user_id))
+            else:
+                cur.execute("SELECT * FROM quizzes WHERE id = %s", (quiz_id,))
             row = cur.fetchone()
-            if row:
-                row["questions_json"] = json.loads(row["questions_json"])
+            if row and row.get("questions_json"):
+                if isinstance(row["questions_json"], str):
+                    try:
+                        row["questions_json"] = json.loads(row["questions_json"])
+                    except Exception:
+                        pass
             return row
     finally:
         conn.close()
+
 
 
 # ---------- attempts ----------
