@@ -33,6 +33,12 @@ from routes.admin_routes import admin_bp
 app = Flask(__name__)
 app.secret_key = Config.SECRET_KEY
 
+# Security & Session cookie hardening
+app.config["SESSION_COOKIE_HTTPONLY"] = Config.SESSION_COOKIE_HTTPONLY
+app.config["SESSION_COOKIE_SAMESITE"] = Config.SESSION_COOKIE_SAMESITE
+app.config["SESSION_COOKIE_SECURE"] = Config.SESSION_COOKIE_SECURE
+app.config["MAX_CONTENT_LENGTH"] = Config.MAX_CONTENT_LENGTH
+
 # Initialize Rate Limiter
 limiter.init_app(app)
 
@@ -56,6 +62,14 @@ def ratelimit_handler(e):
     return jsonify({
         "error": "Too many requests. Please slow down and wait a minute before trying again."
     }), 429
+
+
+@app.errorhandler(413)
+def request_entity_too_large(e):
+    return jsonify({
+        "error": "Uploaded file is too large. The maximum permitted size is 500 MB."
+    }), 413
+
 
 
 @app.route("/")

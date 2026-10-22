@@ -1,5 +1,6 @@
 import os
 import uuid
+from werkzeug.utils import secure_filename
 import yt_dlp
 from config import Config
 
@@ -42,12 +43,43 @@ def download_youtube_video(youtube_url):
 
 def save_uploaded_file(file_storage):
     """
-    Saves a file uploaded via Flask's request.files into the uploads folder.
+    Validates and saves an uploaded video file to the uploads folder.
+    Enforces safe filenames, allowed file extensions, and file size restrictions.
     Returns (local_file_path, original_filename).
     """
+    if not file_storage or not file_storage.filename:
+        raise ValueError("No video file selected or file is missing.")
+
+    # Sanitize original filename
+    raw_filename = file_storage.filename.strip()
+    safe_name = secure_filename(raw_filename)
+
+    # Validate file extension
+    ext = os.path.splitext(raw_filename)[1].lower()
+    allowed_exts = getattr(Config, "ALLOWED_EXTENSIONS", {".mp4", ".mkv", ".mov", ".webm", ".avi", ".mp3", ".wav"})
+    if ext not in allowed_exts:
+        raise ValueError(
+            f"Unsupported file format '{ext}'. Allowed formats: {', '.join(sorted(allowed_exts))}"
+        )
+
+    # Check file size before saving to disk
+    file_storage.seek(0, os.SEEK_END)
+    size_bytes = file_storage.tell()
+    file_storage.seek(0)
+
+    max_size = getattr(Config, "MAX_CONTENT_LENGTH", 500 * 1024 * 1024)
+    if size_bytes == 0:
+        raise ValueError("Uploaded file is empty (0 bytes).")
+    if size_bytes > max_size:
+        raise ValueError(
+            f"File exceeds maximum allowed upload size of {max_size // (1024 * 1024)} MB."
+        )
+
+    if not safe_name:
+        safe_name = f"video_{uuid.uuid4().hex[:8]}{ext}"
+
     os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)
     file_id = str(uuid.uuid4())
-    ext = os.path.splitext(file_storage.filename)[1] or ".mp4"
     local_path = os.path.join(Config.UPLOAD_FOLDER, f"{file_id}{ext}")
     file_storage.save(local_path)
-    return local_path, file_storage.filename
+    return local_path, safe_name

@@ -15,6 +15,13 @@ class Config:
 
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")
     MAX_VIDEO_MINUTES = int(os.getenv("MAX_VIDEO_MINUTES", 65))
+    MAX_CONTENT_LENGTH = int(os.getenv("MAX_CONTENT_LENGTH", 500 * 1024 * 1024))  # 500 MB max request size
+    ALLOWED_EXTENSIONS = {".mp4", ".mkv", ".mov", ".webm", ".avi", ".flv", ".wmv", ".m4v", ".mp3", ".wav", ".m4a"}
+
+    # Cookie & Session Security Settings
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = os.getenv("SESSION_COOKIE_SAMESITE", "Lax")
+    SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "False").lower() in ("true", "1")
 
     # SMTP Email Configuration
     SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")

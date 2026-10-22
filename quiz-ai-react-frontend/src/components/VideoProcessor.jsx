@@ -48,12 +48,50 @@ export default function VideoProcessor({ initialUrl, onProcessingComplete }) {
     else if (e.type === 'dragleave') setDragActive(false);
   };
 
+  const ALLOWED_EXTENSIONS = ['.mp4', '.mkv', '.mov', '.webm', '.avi', '.flv', '.wmv', '.m4v', '.mp3', '.wav', '.m4a'];
+  const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500 MB
+
+  const validateFile = (selectedFile) => {
+    if (!selectedFile) return 'Please select or drop a video file.';
+    const ext = selectedFile.name.substring(selectedFile.name.lastIndexOf('.')).toLowerCase();
+    if (!ALLOWED_EXTENSIONS.includes(ext)) {
+      return `Unsupported file format '${ext}'. Allowed formats: MP4, MKV, MOV, WEBM, AVI, MP3, WAV.`;
+    }
+    if (selectedFile.size === 0) {
+      return 'The selected file is empty (0 bytes).';
+    }
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      return `File exceeds maximum allowed upload size of 500 MB (${(selectedFile.size / (1024 * 1024)).toFixed(1)} MB).`;
+    }
+    return null;
+  };
+
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFile(e.dataTransfer.files[0]);
+      const droppedFile = e.dataTransfer.files[0];
+      const validationError = validateFile(droppedFile);
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
+      setError('');
+      setFile(droppedFile);
+    }
+  };
+
+  const handleFileSelect = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const selected = e.target.files[0];
+      const validationError = validateFile(selected);
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
+      setError('');
+      setFile(selected);
     }
   };
 
@@ -71,13 +109,17 @@ export default function VideoProcessor({ initialUrl, onProcessingComplete }) {
       return;
     }
 
-    if (mode === 'upload' && !file) {
-      setError('Please select or drop a video file');
-      return;
+    if (mode === 'upload') {
+      const validationError = validateFile(file);
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
     }
 
     setProcessing(true);
     setCurrentStep(1);
+
 
     try {
       const stepTimer1 = setTimeout(() => setCurrentStep(2), 2000);
@@ -221,8 +263,8 @@ export default function VideoProcessor({ initialUrl, onProcessingComplete }) {
               <input
                 id="video-file-picker"
                 type="file"
-                accept="video/*"
-                onChange={(e) => e.target.files && setFile(e.target.files[0])}
+                accept="video/*,audio/*"
+                onChange={handleFileSelect}
                 style={{ display: 'none' }}
               />
               {file ? (
