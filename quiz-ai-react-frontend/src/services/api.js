@@ -115,6 +115,27 @@ export const api = {
     return request('/api/performance');
   },
 
+  async chatWithVideo(videoId, message, history = [], transcript = '') {
+    return request(`/api/chat/${videoId}`, {
+      method: 'POST',
+      body: JSON.stringify({ message, history, transcript }),
+    });
+  },
+
+  async getFlashcards(videoId, transcript = '') {
+    return request(`/api/flashcards/${videoId}`, {
+      method: 'POST',
+      body: JSON.stringify({ transcript }),
+    });
+  },
+
+  async getMindmap(videoId, transcript = '', summary = '') {
+    return request(`/api/mindmap/${videoId}`, {
+      method: 'POST',
+      body: JSON.stringify({ transcript, summary }),
+    });
+  },
+
   // Admin Dashboard endpoints
   async getAdminOverview() {
     return request('/api/admin/overview');
