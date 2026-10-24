@@ -6,13 +6,16 @@ import AuthPage from './pages/AuthPage';
 import VideoProcessor from './components/VideoProcessor';
 import SummaryViewer from './components/SummaryViewer';
 import QuizPlayer from './components/QuizPlayer';
+import FlashcardPlayer from './components/FlashcardPlayer';
+import MindmapViewer from './components/MindmapViewer';
+import VideoChatDrawer from './components/VideoChatDrawer';
 import HistoryFeed from './components/HistoryFeed';
 import PerformanceStats from './components/PerformanceStats';
 import AdminDashboard from './pages/AdminDashboard';
 import {
   FileText, Video, History, BarChart2, PlusCircle,
   Home, LogOut, Sun, Moon, ArrowLeft, Layers, User,
-  ShieldCheck
+  ShieldCheck, MessageSquare, Compass, Sparkles, Award
 } from 'lucide-react';
 
 function AppShell({ isDark, toggleTheme }) {
@@ -24,6 +27,7 @@ function AppShell({ isDark, toggleTheme }) {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [currentResult, setCurrentResult] = useState(null);
   const [resultSubView, setResultSubView] = useState('summary');
+  const [chatDrawerOpen, setChatDrawerOpen] = useState(false);
   const [initialVideoUrl, setInitialVideoUrl] = useState('');
 
   // Handle URL query parameters (e.g. /app?tab=history or /app?url=...)
@@ -269,43 +273,118 @@ function AppShell({ isDark, toggleTheme }) {
                       <span>Process Another Video</span>
                     </button>
 
-                    <div style={{ display: 'flex', gap: 4, background: 'var(--bg-subtle)', padding: 3, borderRadius: 6 }}>
+                    <div style={{ display: 'flex', gap: 4, background: 'var(--bg-subtle)', padding: 3, borderRadius: 8, flexWrap: 'wrap' }}>
                       <button
                         id="view-summary-tab-btn"
                         onClick={() => setResultSubView('summary')}
                         style={{
-                          padding: '8px 16px',
-                          borderRadius: 4,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          padding: '8px 14px',
+                          borderRadius: 6,
                           border: 'none',
                           cursor: 'pointer',
-                          fontSize: '0.85rem',
+                          fontSize: '0.84rem',
                           fontWeight: 700,
                           background: resultSubView === 'summary' ? 'var(--primary)' : 'transparent',
                           color: resultSubView === 'summary' ? '#ffffff' : 'var(--text-muted)',
                           transition: 'all 0.15s ease',
                         }}
                       >
-                        Executive Summary
+                        <FileText size={14} />
+                        <span>Executive Summary</span>
                       </button>
+
                       {currentResult.quiz && currentResult.quiz.length > 0 && (
                         <button
                           id="view-quiz-tab-btn"
                           onClick={() => setResultSubView('quiz')}
                           style={{
-                            padding: '8px 16px',
-                            borderRadius: 4,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            padding: '8px 14px',
+                            borderRadius: 6,
                             border: 'none',
                             cursor: 'pointer',
-                            fontSize: '0.85rem',
+                            fontSize: '0.84rem',
                             fontWeight: 700,
                             background: resultSubView === 'quiz' ? 'var(--primary)' : 'transparent',
                             color: resultSubView === 'quiz' ? '#ffffff' : 'var(--text-muted)',
                             transition: 'all 0.15s ease',
                           }}
                         >
-                          Interactive Quiz ({currentResult.quiz.length}Q)
+                          <Award size={14} />
+                          <span>Quiz &amp; Timer ({currentResult.quiz.length}Q)</span>
                         </button>
                       )}
+
+                      <button
+                        id="view-flashcards-tab-btn"
+                        onClick={() => setResultSubView('flashcards')}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          padding: '8px 14px',
+                          borderRadius: 6,
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '0.84rem',
+                          fontWeight: 700,
+                          background: resultSubView === 'flashcards' ? 'var(--primary)' : 'transparent',
+                          color: resultSubView === 'flashcards' ? '#ffffff' : 'var(--text-muted)',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <Layers size={14} />
+                        <span>3D Flashcards</span>
+                      </button>
+
+                      <button
+                        id="view-mindmap-tab-btn"
+                        onClick={() => setResultSubView('mindmap')}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          padding: '8px 14px',
+                          borderRadius: 6,
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '0.84rem',
+                          fontWeight: 700,
+                          background: resultSubView === 'mindmap' ? 'var(--primary)' : 'transparent',
+                          color: resultSubView === 'mindmap' ? '#ffffff' : 'var(--text-muted)',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <Compass size={14} />
+                        <span>Concept Mindmap</span>
+                      </button>
+
+                      <button
+                        id="view-chat-tab-btn"
+                        onClick={() => setResultSubView('chat')}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          padding: '8px 14px',
+                          borderRadius: 6,
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '0.84rem',
+                          fontWeight: 700,
+                          background: resultSubView === 'chat' ? 'var(--primary)' : 'transparent',
+                          color: resultSubView === 'chat' ? '#ffffff' : 'var(--text-muted)',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <MessageSquare size={14} />
+                        <span>Ask Video AI</span>
+                      </button>
                     </div>
                   </div>
 
@@ -326,6 +405,30 @@ function AppShell({ isDark, toggleTheme }) {
                       onNewVideo={() => setCurrentResult(null)}
                     />
                   )}
+
+                  {resultSubView === 'flashcards' && (
+                    <FlashcardPlayer
+                      videoId={currentResult.videoId}
+                      transcript={currentResult.transcript}
+                      summary={currentResult.summary}
+                    />
+                  )}
+
+                  {resultSubView === 'mindmap' && (
+                    <MindmapViewer
+                      videoId={currentResult.videoId}
+                      transcript={currentResult.transcript}
+                      summary={currentResult.summary}
+                    />
+                  )}
+
+                  {resultSubView === 'chat' && (
+                    <VideoChatDrawer
+                      videoId={currentResult.videoId}
+                      transcript={currentResult.transcript}
+                      title={currentResult.title}
+                    />
+                  )}
                 </div>
               )}
             </div>
@@ -334,6 +437,50 @@ function AppShell({ isDark, toggleTheme }) {
           {activeTab === 'history' && <HistoryFeed onSelectVideo={handleSelectFromHistory} />}
           {activeTab === 'analytics' && <PerformanceStats />}
         </div>
+
+        {/* Floating "Ask Video AI" drawer launcher button */}
+        {currentResult && resultSubView !== 'chat' && (
+          <button
+            id="floating-ask-ai-btn"
+            onClick={() => setChatDrawerOpen(true)}
+            style={{
+              position: 'fixed',
+              bottom: 28,
+              right: 28,
+              background: 'linear-gradient(135deg, #0b326f, #2563eb)',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: 30,
+              padding: '12px 22px',
+              boxShadow: '0 8px 24px rgba(37, 99, 235, 0.45)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              cursor: 'pointer',
+              zIndex: 900,
+              fontWeight: 700,
+              fontSize: '0.92rem',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)')}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'none')}
+          >
+            <MessageSquare size={17} />
+            <span>Ask Video AI</span>
+            <span style={{ fontSize: '0.68rem', background: 'rgba(255,255,255,0.22)', padding: '2px 7px', borderRadius: 10 }}>LIVE</span>
+          </button>
+        )}
+
+        {/* Slide-over Ask Video AI Drawer */}
+        {chatDrawerOpen && currentResult && (
+          <VideoChatDrawer
+            videoId={currentResult.videoId}
+            transcript={currentResult.transcript}
+            title={currentResult.title}
+            isDrawer={true}
+            onClose={() => setChatDrawerOpen(false)}
+          />
+        )}
 
       </div>
 
