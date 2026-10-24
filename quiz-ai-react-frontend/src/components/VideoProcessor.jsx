@@ -16,12 +16,6 @@ function YoutubeIcon({ size = 18, color = '#ef4444' }) {
   );
 }
 
-const SAMPLE_VIDEOS = [
-  { title: 'Quantum Computing 101', url: 'https://www.youtube.com/watch?v=JhHMJCUmq28' },
-  { title: 'Economic Principles & Cycles', url: 'https://www.youtube.com/watch?v=PHe0bXAIuk8' },
-  { title: 'Neuroscience of Deep Focus', url: 'https://www.youtube.com/watch?v=4bcfyv5eMog' },
-];
-
 export default function VideoProcessor({ initialUrl, onProcessingComplete }) {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -358,37 +352,6 @@ export default function VideoProcessor({ initialUrl, onProcessingComplete }) {
                     </button>
                   )}
                 </div>
-              </div>
-
-              {/* Quick Sample Links */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--text-muted)' }}>Sample:</span>
-                {SAMPLE_VIDEOS.map((s, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => {
-                      setYoutubeUrl(s.url);
-                      setError('');
-                    }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 4,
-                      padding: '3px 9px',
-                      borderRadius: 6,
-                      background: youtubeUrl === s.url ? 'var(--primary-light)' : 'var(--bg-subtle)',
-                      border: `1px solid ${youtubeUrl === s.url ? 'var(--primary)' : 'var(--border)'}`,
-                      color: youtubeUrl === s.url ? 'var(--primary)' : 'var(--text-secondary)',
-                      fontSize: '0.74rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <Play size={9} color="var(--primary)" />
-                    <span>{s.title}</span>
-                  </button>
-                ))}
               </div>
             </div>
           ) : (
