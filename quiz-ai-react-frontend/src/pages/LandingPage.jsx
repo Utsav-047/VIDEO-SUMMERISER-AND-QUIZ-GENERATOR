@@ -21,12 +21,6 @@ export default function LandingPage({ isDark, toggleTheme }) {
   const { user } = useAuth();
   const [openFaq, setOpenFaq] = useState(null);
 
-  const samples = [
-    { title: 'Quantum Computing Fundamentals', category: 'Science', url: 'https://www.youtube.com/watch?v=JhHMJCUmq28' },
-    { title: 'Economic Principles & Market Cycles', category: 'Finance', url: 'https://www.youtube.com/watch?v=PHe0bXAIuk8' },
-    { title: 'Neuroscience of Deep Focus', category: 'Productivity', url: 'https://www.youtube.com/watch?v=4bcfyv5eMog' },
-  ];
-
   const faqs = [
     {
       q: 'How does Synapse AI transcribe and summarize videos?',
@@ -300,49 +294,6 @@ export default function LandingPage({ isDark, toggleTheme }) {
 
             </div>
 
-          </div>
-        </div>
-      </section>
-
-      {/* ── INTERACTIVE SAMPLE PREVIEWS SECTION ── */}
-      <section style={{ padding: '40px 24px 60px', maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 10, padding: 24 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
-            <div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.05em' }}>Interactive Demonstrations</div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>Try a sample video in the studio</h3>
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14 }}>
-            {samples.map((s, i) => (
-              <div
-                key={i}
-                onClick={() => navigate(`/app?url=${encodeURIComponent(s.url)}`)}
-                style={{
-                  background: 'var(--bg-subtle)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 8,
-                  padding: '14px 16px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  transition: 'all 0.15s ease',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.background = 'var(--bg-surface)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--bg-subtle)'; }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <Play size={14} color="var(--primary)" />
-                  <div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>{s.title}</div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{s.category}</div>
-                  </div>
-                </div>
-                <ChevronRight size={16} color="var(--text-muted)" />
-              </div>
-            ))}
           </div>
         </div>
       </section>
