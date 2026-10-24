@@ -228,9 +228,9 @@ button, input, select, textarea {
   flex-direction: column;
   min-width: 0;
   overflow-x: hidden;
-  background-color: var(--bg-page);
+  background-color: #f8fafc;
   background-image: 
-    linear-gradient(135deg, rgba(255, 255, 255, 0.40) 0%, rgba(248, 250, 252, 0.35) 50%, rgba(239, 246, 255, 0.30) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(248, 250, 252, 0.15) 100%),
     url('/dashboard-light-bg.jpg');
   background-position: center center;
   background-size: cover;
@@ -239,9 +239,9 @@ button, input, select, textarea {
 }
 
 [data-theme="dark"] .app-main-view {
-  background-color: #0b1324;
+  background-color: #070e1c;
   background-image: 
-    linear-gradient(135deg, rgba(11, 19, 36, 0.65) 0%, rgba(7, 14, 28, 0.70) 50%, rgba(15, 23, 42, 0.65) 100%),
+    linear-gradient(180deg, rgba(7, 14, 28, 0.25) 0%, rgba(11, 19, 36, 0.20) 100%),
     url('/dashboard-dark-bg.jpg');
   background-position: center center;
   background-size: cover;
@@ -507,6 +507,11 @@ button, input, select, textarea {
   to { transform: rotate(360deg); }
 }
 
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
 @media (max-width: 800px) {
   .app-sidebar {
     position: fixed;
@@ -520,3 +525,76 @@ button, input, select, textarea {
     display: none !important;
   }
 }
+
+/* ── SUMMARY FORMATTING STYLES (TABLES & CALLOUTS) ── */
+.summary-table-container {
+  overflow-x: auto;
+  margin: 18px 0;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  text-align: left;
+}
+
+.summary-table th {
+  background: var(--bg-subtle);
+  padding: 11px 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border);
+  letter-spacing: 0.02em;
+}
+
+.summary-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.summary-table tr:last-child td {
+  border-bottom: none;
+}
+
+.summary-table tr:hover td {
+  background: rgba(11, 50, 111, 0.02);
+}
+
+[data-theme="dark"] .summary-table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ── PRINT & PDF EXPORT STYLES ── */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .app-sidebar,
+  .app-top-status-bar,
+  #process-another-btn,
+  #view-quiz-tab-btn,
+  #view-summary-tab-btn,
+  .summary-actions-bar,
+  #toggle-transcript-btn {
+    display: none !important;
+  }
+  .app-main-view,
+  .app-content-body {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    max-width: 100% !important;
+  }
+  .summary-table-container {
+    border: 1px solid #ccc !important;
+  }
+}
+
