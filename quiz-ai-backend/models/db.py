@@ -253,6 +253,30 @@ def get_transcript_by_video(video_id):
         conn.close()
 
 
+def find_existing_transcript_by_source_ref(source_ref):
+    """
+    Checks if a video with the same source_ref (e.g. YouTube URL) already has
+    an extracted transcript in the database.
+    Returns dictionary with {video_id, title, transcript_text} or None.
+    """
+    if not source_ref:
+        return None
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT v.id AS video_id, v.title, t.transcript_text
+                FROM videos v
+                JOIN transcripts t ON t.video_id = v.id
+                WHERE v.source_ref = %s AND t.transcript_text IS NOT NULL AND t.transcript_text != ''
+                ORDER BY t.id DESC LIMIT 1
+            """, (source_ref,))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+
 # ---------- summaries ----------
 def insert_summary(video_id, summary_text):
     conn = get_connection()
