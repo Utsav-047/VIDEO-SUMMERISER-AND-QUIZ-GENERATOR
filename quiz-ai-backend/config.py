@@ -3,15 +3,22 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+IS_PRODUCTION = os.getenv("RENDER") is not None or os.getenv("FLASK_ENV") == "production"
+
 class Config:
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-this-in-production")
 
+    # MySQL Database Configuration
     DB_HOST = os.getenv("DB_HOST", "localhost")
     DB_PORT = int(os.getenv("DB_PORT", 3306))
     DB_USER = os.getenv("DB_USER", "root")
     DB_PASSWORD = os.getenv("DB_PASSWORD", "")
     DB_NAME = os.getenv("DB_NAME", "quiz_ai_db")
+    DB_SSL = os.getenv("DB_SSL", "False").lower() in ("true", "1")
+
+    # Allowed Frontend URLs for CORS
+    FRONTEND_URL = os.getenv("FRONTEND_URL", "")
 
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")
     MAX_VIDEO_MINUTES = int(os.getenv("MAX_VIDEO_MINUTES", 65))
@@ -19,9 +26,10 @@ class Config:
     ALLOWED_EXTENSIONS = {".mp4", ".mkv", ".mov", ".webm", ".avi", ".flv", ".wmv", ".m4v", ".mp3", ".wav", ".m4a"}
 
     # Cookie & Session Security Settings
+    # For cross-origin cookies (Vercel frontend + Render backend), SameSite must be None and Secure must be True
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = os.getenv("SESSION_COOKIE_SAMESITE", "Lax")
-    SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "False").lower() in ("true", "1")
+    SESSION_COOKIE_SAMESITE = os.getenv("SESSION_COOKIE_SAMESITE", "None" if IS_PRODUCTION else "Lax")
+    SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "True" if IS_PRODUCTION else "False").lower() in ("true", "1")
 
     # SMTP Email Configuration
     SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")

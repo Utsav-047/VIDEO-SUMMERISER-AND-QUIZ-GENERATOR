@@ -1,6 +1,8 @@
 // API Service Client for Synapse AI Backend
-
-const BASE_URL = ''; // Relative path leverages Vite dev server proxy to http://127.0.0.1:5000
+// Supports VITE_API_URL in production (Vercel) with fallback to empty string (local Vite proxy)
+const BASE_URL = import.meta.env.VITE_API_URL 
+  ? import.meta.env.VITE_API_URL.replace(/\/$/, '') 
+  : '';
 
 async function request(endpoint, options = {}) {
   const defaultHeaders = {};

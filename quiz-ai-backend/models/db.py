@@ -5,15 +5,18 @@ from config import Config
 
 
 def get_connection():
-    return pymysql.connect(
-        host=Config.DB_HOST,
-        port=Config.DB_PORT,
-        user=Config.DB_USER,
-        password=Config.DB_PASSWORD,
-        database=Config.DB_NAME,
-        cursorclass=pymysql.cursors.DictCursor,
-        autocommit=True,
-    )
+    conn_params = {
+        "host": Config.DB_HOST,
+        "port": Config.DB_PORT,
+        "user": Config.DB_USER,
+        "password": Config.DB_PASSWORD,
+        "database": Config.DB_NAME,
+        "cursorclass": pymysql.cursors.DictCursor,
+        "autocommit": True,
+    }
+    if getattr(Config, "DB_SSL", False):
+        conn_params["ssl"] = {"ssl": True}
+    return pymysql.connect(**conn_params)
 
 
 # ---------- users ----------
