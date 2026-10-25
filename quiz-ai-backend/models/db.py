@@ -391,7 +391,10 @@ def get_history(user_id=None):
                     t.transcript_text AS transcript,
                     q.id AS quiz_id,
                     q.difficulty,
-                    q.questions_json
+                    q.questions_json,
+                    a.score,
+                    a.total_questions,
+                    a.created_at AS attempt_date
                 FROM videos v
                 LEFT JOIN (
                     SELECT s1.video_id, s1.summary_text 
@@ -411,6 +414,12 @@ def get_history(user_id=None):
                     INNER JOIN (SELECT video_id, MAX(id) AS max_id FROM quizzes GROUP BY video_id) q2
                     ON q1.id = q2.max_id
                 ) q ON q.video_id = v.id
+                LEFT JOIN (
+                    SELECT a1.quiz_id, a1.score, a1.total_questions, a1.created_at
+                    FROM attempts a1
+                    INNER JOIN (SELECT quiz_id, MAX(id) AS max_id FROM attempts GROUP BY quiz_id) a2
+                    ON a1.id = a2.max_id
+                ) a ON a.quiz_id = q.id
             """
             if user_id is not None:
                 sql += " WHERE v.user_id = %s ORDER BY v.created_at DESC"
@@ -426,6 +435,10 @@ def get_history(user_id=None):
                         r["questions_json"] = json.loads(r["questions_json"])
                     except Exception:
                         pass
+                if r.get("score") is not None and not r.get("total_questions") and isinstance(r.get("questions_json"), list):
+                    r["total_questions"] = len(r["questions_json"])
+                if r.get("attempt_date") and hasattr(r["attempt_date"], "isoformat"):
+                    r["attempt_date"] = r["attempt_date"].isoformat()
             return rows
     finally:
         conn.close()

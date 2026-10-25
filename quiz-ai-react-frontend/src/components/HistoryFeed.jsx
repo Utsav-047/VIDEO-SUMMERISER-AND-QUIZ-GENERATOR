@@ -4,7 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {
   Search, FileVideo, ChevronRight, Loader2, Calendar, FileText,
-  CheckCircle2, X, Copy, Check, ExternalLink, Filter, Sparkles
+  CheckCircle2, X, Copy, Check, ExternalLink, Filter, Sparkles,
+  Trophy, Award
 } from 'lucide-react';
 import { FormattedSummaryContent } from './SummaryViewer';
 
@@ -250,6 +251,9 @@ export default function HistoryFeed({ onSelectVideo }) {
             const isYoutube = item.source_type === 'youtube';
             const summaryContent = item.summary || item.summary_text;
             const hasQuiz = Boolean(item.quiz_id || (item.questions_json && item.questions_json.length > 0));
+            const totalQ = item.total_questions || (item.questions_json && item.questions_json.length) || 0;
+            const hasAttempted = item.score !== null && item.score !== undefined;
+            const scorePercent = hasAttempted && totalQ > 0 ? Math.round((item.score / totalQ) * 100) : 0;
 
             // Clean excerpt
             const cleanExcerpt = summaryContent
@@ -297,11 +301,30 @@ export default function HistoryFeed({ onSelectVideo }) {
                       </span>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                       {hasQuiz && (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.7rem', fontWeight: 800, color: '#10b981', background: 'rgba(16, 185, 129, 0.12)', padding: '2px 8px', borderRadius: 4 }}>
-                          <CheckCircle2 size={11} /> Quiz
-                        </span>
+                        hasAttempted ? (
+                          <span
+                            title={`Quiz Score: ${item.score}/${totalQ} (${scorePercent}%)`}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 4,
+                              fontSize: '0.7rem',
+                              fontWeight: 800,
+                              color: scorePercent >= 70 ? '#10b981' : scorePercent >= 50 ? '#f59e0b' : '#ef4444',
+                              background: scorePercent >= 70 ? 'rgba(16, 185, 129, 0.12)' : scorePercent >= 50 ? 'rgba(245, 158, 11, 0.12)' : 'rgba(239, 68, 68, 0.12)',
+                              padding: '2px 8px',
+                              borderRadius: 4,
+                            }}
+                          >
+                            <Trophy size={11} /> Score: {item.score}/{totalQ}
+                          </span>
+                        ) : (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.7rem', fontWeight: 800, color: '#10b981', background: 'rgba(16, 185, 129, 0.12)', padding: '2px 8px', borderRadius: 4 }}>
+                            <CheckCircle2 size={11} /> Quiz
+                          </span>
+                        )
                       )}
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600 }}>
                         <Calendar size={11} />
@@ -338,11 +361,42 @@ export default function HistoryFeed({ onSelectVideo }) {
                       WebkitLineClamp: 3,
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
-                      marginBottom: 16,
+                      marginBottom: 14,
                     }}
                   >
                     {cleanExcerpt}
                   </p>
+
+                  {/* Score Performance Strip if Attempted */}
+                  {hasAttempted && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '7px 11px',
+                        background: 'var(--bg-subtle, rgba(255,255,255,0.03))',
+                        border: '1px solid var(--border)',
+                        borderRadius: 6,
+                        marginBottom: 14,
+                        fontSize: '0.78rem',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, color: 'var(--text-secondary)' }}>
+                        <Award size={13} color="var(--primary)" />
+                        <span>Quiz Performance</span>
+                      </div>
+                      <div
+                        style={{
+                          fontWeight: 800,
+                          fontSize: '0.82rem',
+                          color: scorePercent >= 70 ? '#10b981' : scorePercent >= 50 ? '#f59e0b' : '#ef4444',
+                        }}
+                      >
+                        {item.score} / {totalQ} ({scorePercent}%)
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Bottom Action Buttons */}
@@ -433,6 +487,31 @@ export default function HistoryFeed({ onSelectVideo }) {
 
             {/* Modal Body */}
             <div style={{ padding: 24, overflowY: 'auto', flex: 1 }}>
+              {previewItem.score !== null && previewItem.score !== undefined && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '10px 14px',
+                    background: 'rgba(16, 185, 129, 0.08)',
+                    border: '1px solid rgba(16, 185, 129, 0.25)',
+                    borderRadius: 8,
+                    marginBottom: 16,
+                    fontSize: '0.85rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 700, color: 'var(--text-primary)' }}>
+                    <Trophy size={16} color="#10b981" />
+                    <span>Quiz Result:</span>
+                  </div>
+                  <span style={{ fontWeight: 800, color: '#10b981', fontSize: '0.9rem' }}>
+                    {previewItem.score} / {previewItem.total_questions || previewItem.questions_json?.length || 0}
+                    {' '}
+                    ({Math.round((previewItem.score / (previewItem.total_questions || previewItem.questions_json?.length || 1)) * 100)}%)
+                  </span>
+                </div>
+              )}
               <FormattedSummaryContent summary={previewItem.summary || previewItem.summary_text} fontSize="0.94rem" />
             </div>
 
