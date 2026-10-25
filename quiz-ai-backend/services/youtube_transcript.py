@@ -1,3 +1,4 @@
+import os
 import json
 import urllib.request
 from youtube_transcript_api import YouTubeTranscriptApi
@@ -63,9 +64,9 @@ def get_youtube_transcript(youtube_url: str):
             cj.load(ignore_discard=True, ignore_expires=True)
             http_session = requests.Session()
             http_session.cookies = cj
-            print(f"[YT-TRANSCRIPT] 🍪 Injected cookies into requests session")
+            print(f"[YT-TRANSCRIPT] [COOKIE] Injected cookies into requests session")
         except Exception as ce:
-            print(f"[YT-TRANSCRIPT] ⚠️ Could not load cookie jar: {ce}")
+            print(f"[YT-TRANSCRIPT] [WARNING] Could not load cookie jar: {ce}")
 
     # Method 1: Modern v1.x API (instance methods: fetch, list)
     try:

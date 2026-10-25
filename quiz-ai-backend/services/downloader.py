@@ -56,7 +56,7 @@ def download_youtube_video(youtube_url):
     cookie_file = get_cookie_file_path()
     if cookie_file and os.path.exists(cookie_file):
         ydl_opts["cookiefile"] = cookie_file
-        print(f"[DOWNLOADER] 🍪 Using YouTube cookies from {cookie_file}")
+        print(f"[DOWNLOADER] [COOKIE] Using YouTube cookies from {cookie_file}")
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(youtube_url, download=True)
