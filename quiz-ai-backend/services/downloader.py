@@ -43,13 +43,11 @@ def download_youtube_video(youtube_url):
     output_path = os.path.join(Config.UPLOAD_FOLDER, f"{file_id}.%(ext)s")
 
     ydl_opts = {
-        "format": "worstaudio/worst",
+        "format": "ba/ba*/bestaudio/best",
         "outtmpl": output_path,
         "quiet": True,
         "noplaylist": True,
-        # Use mweb + web + android clients for higher reliability across cloud/server IPs
-        "extractor_args": {"youtube": {"player_client": ["mweb", "web", "android"]}},
-        "socket_timeout": 60,     # Increased to 60s for 30-60 min long video streams
+        "socket_timeout": 60,
         "retries": 5,
     }
 
