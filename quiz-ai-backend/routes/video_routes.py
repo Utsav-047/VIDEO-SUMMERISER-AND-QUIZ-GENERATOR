@@ -5,6 +5,7 @@ from flask import Blueprint, request, jsonify, session
 from services.downloader import download_youtube_video, save_uploaded_file
 from services.audio import extract_audio
 from services.transcriber import transcribe_audio
+from services.youtube_transcript import get_youtube_transcript
 from services.ai_generator import (
     generate_summary, generate_quiz, generate_summary_and_quiz,
     answer_video_question, generate_flashcards, generate_mindmap
@@ -66,22 +67,30 @@ def process_video():
                     "cached": True
                 })
 
-            print(f"\n[CACHE MISS] No cached transcript found for '{youtube_url}'. Starting download & Whisper transcription...\n")
-            # Video not found in DB: Proceed with download and Whisper transcription
-            video_path, title = download_youtube_video(youtube_url)
-            source_type, source_ref = "youtube", youtube_url
-            audio_path = extract_audio(video_path)
-            transcript_text = transcribe_audio(audio_path)
+            # 🎯 PRIMARY METHOD: YouTube Transcript API (no download, no ffmpeg, no bot detection)
+            # Works on cloud servers like Render where yt-dlp is blocked by YouTube's datacenter IP filter.
+            transcript_text = None
+            title = "YouTube Video"
+            try:
+                print(f"\n[YT-TRANSCRIPT] Fetching captions directly from YouTube for: {youtube_url}\n")
+                transcript_text, title = get_youtube_transcript(youtube_url)
+                print(f"[YT-TRANSCRIPT] ✅ Got transcript via YouTube captions for '{title}' ({len(transcript_text)} chars)\n")
+            except Exception as yt_api_err:
+                # ⬇️ FALLBACK: yt-dlp + Whisper (for videos with no captions)
+                print(f"[YT-TRANSCRIPT] ⚠️ YouTube captions unavailable ({yt_api_err}). Falling back to yt-dlp + Whisper...\n")
+                video_path, title = download_youtube_video(youtube_url)
+                audio_path = extract_audio(video_path)
+                transcript_text = transcribe_audio(audio_path)
 
-            video_id = insert_video(source_type, source_ref, title, user_id=user_id)
+                for path in (video_path, audio_path):
+                    if path and os.path.exists(path):
+                        try:
+                            os.remove(path)
+                        except Exception:
+                            pass
+
+            video_id = insert_video("youtube", youtube_url, title, user_id=user_id)
             insert_transcript(video_id, transcript_text)
-
-            for path in (video_path, audio_path):
-                if path and os.path.exists(path):
-                    try:
-                        os.remove(path)
-                    except Exception:
-                        pass
 
             return jsonify({"video_id": video_id, "title": title, "transcript": transcript_text, "cached": False})
 
@@ -89,7 +98,8 @@ def process_video():
         return jsonify({"error": str(ve)}), 400
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"error": f"Processing failed: {str(e)}"}), 500
+        return jsonify({"error": f"Processing failed: {str(e)}\n\nTip: If this is a YouTube video, make sure it has captions/subtitles enabled. For videos without captions, try uploading the file directly."}), 500
+
 
 
 @video_bp.route("/api/generate/<int:video_id>", methods=["POST"])
