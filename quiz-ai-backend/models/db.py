@@ -253,24 +253,51 @@ def get_transcript_by_video(video_id):
         conn.close()
 
 
+def extract_youtube_video_id(url: str):
+    """Extracts 11-character YouTube video ID from various URL formats."""
+    if not url:
+        return None
+    import re
+    patterns = [
+        r"(?:v=|\/v\/|youtu\.be\/|\/embed\/|\/shorts\/)([a-zA-Z0-9_-]{11})",
+        r"^([a-zA-Z0-9_-]{11})$",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, url.strip())
+        if match:
+            return match.group(1)
+    return None
+
+
 def find_existing_transcript_by_source_ref(source_ref):
     """
-    Checks if a video with the same source_ref (e.g. YouTube URL) already has
-    an extracted transcript in the database.
+    Checks if a video with the same source_ref (or same YouTube video ID)
+    already has an extracted transcript in the database.
     Returns dictionary with {video_id, title, transcript_text} or None.
     """
     if not source_ref:
         return None
+    yt_id = extract_youtube_video_id(source_ref)
     conn = get_connection()
     try:
         with conn.cursor() as cur:
-            cur.execute("""
-                SELECT v.id AS video_id, v.title, t.transcript_text
-                FROM videos v
-                JOIN transcripts t ON t.video_id = v.id
-                WHERE v.source_ref = %s AND t.transcript_text IS NOT NULL AND t.transcript_text != ''
-                ORDER BY t.id DESC LIMIT 1
-            """, (source_ref,))
+            if yt_id:
+                cur.execute("""
+                    SELECT v.id AS video_id, v.title, t.transcript_text
+                    FROM videos v
+                    JOIN transcripts t ON t.video_id = v.id
+                    WHERE (v.source_ref = %s OR v.source_ref LIKE %s)
+                      AND t.transcript_text IS NOT NULL AND t.transcript_text != ''
+                    ORDER BY t.id DESC LIMIT 1
+                """, (source_ref, f"%{yt_id}%"))
+            else:
+                cur.execute("""
+                    SELECT v.id AS video_id, v.title, t.transcript_text
+                    FROM videos v
+                    JOIN transcripts t ON t.video_id = v.id
+                    WHERE v.source_ref = %s AND t.transcript_text IS NOT NULL AND t.transcript_text != ''
+                    ORDER BY t.id DESC LIMIT 1
+                """, (source_ref,))
             return cur.fetchone()
     finally:
         conn.close()
