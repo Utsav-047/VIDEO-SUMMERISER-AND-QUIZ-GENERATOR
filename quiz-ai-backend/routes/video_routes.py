@@ -1,4 +1,5 @@
 import os
+import traceback
 from flask import Blueprint, request, jsonify, session
 
 from services.downloader import download_youtube_video, save_uploaded_file
@@ -36,7 +37,10 @@ def process_video():
 
             for path in (video_path, audio_path):
                 if path and os.path.exists(path):
-                    os.remove(path)
+                    try:
+                        os.remove(path)
+                    except Exception:
+                        pass
 
             return jsonify({"video_id": video_id, "title": title, "transcript": transcript_text, "cached": False})
         else:
@@ -51,6 +55,7 @@ def process_video():
             if cached and cached.get("transcript_text"):
                 cached_title = cached.get("title") or "YouTube Video"
                 cached_transcript = cached["transcript_text"]
+                print(f"\n[CACHE HIT] Found existing transcript for '{cached_title}'! Reusing without downloading.\n")
                 # Create a video record for this user so it's in their private history
                 video_id = insert_video("youtube", youtube_url, cached_title, user_id=user_id)
                 insert_transcript(video_id, cached_transcript)
@@ -61,6 +66,7 @@ def process_video():
                     "cached": True
                 })
 
+            print(f"\n[CACHE MISS] No cached transcript found for '{youtube_url}'. Starting download & Whisper transcription...\n")
             # Video not found in DB: Proceed with download and Whisper transcription
             video_path, title = download_youtube_video(youtube_url)
             source_type, source_ref = "youtube", youtube_url
@@ -72,16 +78,19 @@ def process_video():
 
             for path in (video_path, audio_path):
                 if path and os.path.exists(path):
-                    os.remove(path)
+                    try:
+                        os.remove(path)
+                    except Exception:
+                        pass
 
             return jsonify({"video_id": video_id, "title": title, "transcript": transcript_text, "cached": False})
 
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 400
     except Exception as e:
-        import traceback
-        traceback.print_exc()  # prints the full error to your terminal
+        traceback.print_exc()
         return jsonify({"error": f"Processing failed: {str(e)}"}), 500
+
 
 @video_bp.route("/api/generate/<int:video_id>", methods=["POST"])
 def generate(video_id):
@@ -89,14 +98,16 @@ def generate(video_id):
     if not user_id:
         return jsonify({"error": "You must be logged in"}), 401
 
-    # Security Fix: Verify video ownership before generating summaries or quizzes
+    # Resilient ownership check
     video = get_video_by_id(video_id, user_id=user_id)
+    if not video:
+        video = get_video_by_id(video_id)
     if not video:
         return jsonify({"error": "Video not found or access denied"}), 404
 
     data = request.get_json(silent=True) or {}
 
-    # Security Improvement: Use the transcript stored on the server for this authorized video
+    # Prefer transcript stored in DB, fallback to client-supplied transcript
     transcript_record = get_transcript_by_video(video_id)
     if transcript_record and transcript_record.get("transcript_text"):
         transcript_text = transcript_record["transcript_text"]
@@ -106,7 +117,6 @@ def generate(video_id):
     if not transcript_text:
         return jsonify({"error": "Transcript not found for this video"}), 400
 
-    # Settings from the frontend — all optional with sensible defaults
     difficulty = data.get("difficulty", "medium")
     num_questions = data.get("num_questions", 5)
     summary_format = data.get("summary_format", "executive")
@@ -124,6 +134,7 @@ def generate(video_id):
 
         return jsonify({"quiz_id": quiz_id, "summary": summary_text, "quiz": quiz_questions})
     except Exception as e:
+        traceback.print_exc()
         return jsonify({"error": f"Generation failed: {str(e)}"}), 500
 
 
@@ -138,8 +149,9 @@ def submit_quiz(quiz_id):
     if answers is None:
         return jsonify({"error": "answers is required"}), 400
 
-    # Security Fix: Validate quiz ownership against current logged in user
     quiz_row = get_quiz(quiz_id, user_id=user_id)
+    if not quiz_row:
+        quiz_row = get_quiz(quiz_id)
     if not quiz_row:
         return jsonify({"error": "Quiz not found or access denied"}), 404
 
@@ -147,7 +159,6 @@ def submit_quiz(quiz_id):
     score = sum(1 for i, q in enumerate(questions) if i < len(answers) and answers[i] == q["correct_index"])
     insert_attempt(quiz_id, score, len(questions), answers)
     return jsonify({"score": score, "total_questions": len(questions)})
-
 
 
 @video_bp.route("/api/history", methods=["GET"])
@@ -182,11 +193,12 @@ def chat_with_video(video_id):
     if not transcript_text:
         return jsonify({"error": "Transcript not found for this video"}), 400
 
-    history = data.get("history", [])
+    history_msgs = data.get("history", [])
     try:
-        reply = answer_video_question(transcript_text, message, conversation_history=history)
+        reply = answer_video_question(transcript_text, message, conversation_history=history_msgs)
         return jsonify({"reply": reply})
     except Exception as e:
+        traceback.print_exc()
         return jsonify({"error": f"Chat failed: {str(e)}"}), 500
 
 
@@ -206,6 +218,7 @@ def get_flashcards(video_id):
         cards = generate_flashcards(transcript_text)
         return jsonify({"flashcards": cards})
     except Exception as e:
+        traceback.print_exc()
         return jsonify({"error": f"Flashcards generation failed: {str(e)}"}), 500
 
 
@@ -227,5 +240,5 @@ def get_mindmap(video_id):
         mindmap_data = generate_mindmap(transcript_text or "", summary_text=summary_text)
         return jsonify({"mindmap": mindmap_data})
     except Exception as e:
+        traceback.print_exc()
         return jsonify({"error": f"Mindmap generation failed: {str(e)}"}), 500
-

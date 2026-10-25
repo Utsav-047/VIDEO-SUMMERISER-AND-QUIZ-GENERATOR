@@ -18,6 +18,20 @@ export default function FlashcardPlayer({ videoId, transcript = '', summary = ''
     const list = [];
     if (!summaryText) return list;
 
+    const isMeta = (text) => {
+      const lower = (text || '').toLowerCase();
+      return (
+        lower.includes('presenter') ||
+        lower.includes('author') ||
+        lower.includes('speaker') ||
+        lower.includes('host') ||
+        lower.includes('youtube') ||
+        lower.includes('channel') ||
+        lower.includes('subscribe') ||
+        lower.includes('welcome')
+      );
+    };
+
     // Extract table rows if available
     const lines = summaryText.split('\n');
     lines.forEach((line) => {
@@ -25,11 +39,15 @@ export default function FlashcardPlayer({ videoId, transcript = '', summary = ''
       if (trimmed.startsWith('|') && trimmed.endsWith('|') && !trimmed.includes('---') && !trimmed.toLowerCase().includes('term / acronym')) {
         const parts = trimmed.slice(1, -1).split('|').map((s) => s.trim());
         if (parts.length >= 2 && parts[0] && parts[1]) {
-          list.push({
-            front: parts[0].replace(/\*\*/g, ''),
-            back: parts[1].replace(/\*\*/g, ''),
-            category: parts[2] ? parts[2].replace(/\*\*/g, '') : 'Core Concept',
-          });
+          const front = parts[0].replace(/\*\*/g, '');
+          const back = parts[1].replace(/\*\*/g, '');
+          if (!isMeta(front) && !isMeta(back)) {
+            list.push({
+              front,
+              back,
+              category: parts[2] ? parts[2].replace(/\*\*/g, '') : 'Core Concept',
+            });
+          }
         }
       }
     });
@@ -41,11 +59,15 @@ export default function FlashcardPlayer({ videoId, transcript = '', summary = ''
         if (trimmed.startsWith('- **') || trimmed.startsWith('* **')) {
           const match = trimmed.match(/^[-*]\s+\*\*([^*]+)\*\*:\s*(.+)$/);
           if (match) {
-            list.push({
-              front: match[1],
-              back: match[2],
-              category: 'Key Principle',
-            });
+            const front = match[1];
+            const back = match[2];
+            if (!isMeta(front) && !isMeta(back)) {
+              list.push({
+                front,
+                back,
+                category: 'Key Principle',
+              });
+            }
           }
         }
       });

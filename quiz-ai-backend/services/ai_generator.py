@@ -98,69 +98,86 @@ def _prepare_transcript_for_llm(transcript_text, max_chars=14000):
     end = transcript_text[-part_3_len:]
 
     return (
-        f"[=== Section 1: Lecture Beginning & Core Definitions ===]\n{start}\n\n"
-        f"[=== Section 2: Deep Explanations & Practical Insights ===]\n{middle}\n\n"
-        f"[=== Section 3: Key Conclusions & Final Takeaways ===]\n{end}"
+        f"{start}\n\n"
+        f"[...lecture continues in depth: middle discussion...]\n\n"
+        f"{middle}\n\n"
+        f"[...lecture conclusion and synthesis...]\n\n"
+        f"{end}"
     )
 
 
 def _clean_json_response(raw_text):
+    """Cleans and extracts JSON object from LLM response text."""
+    text = raw_text.strip()
+    if text.startswith("```json"):
+        text = text[7:]
+    elif text.startswith("```"):
+        text = text[3:]
+    if text.endswith("```"):
+        text = text[:-3]
+    text = text.strip()
+
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        # Fallback: regex search for outer JSON object
+        match = re.search(r"\{.*\}", text, re.DOTALL)
+        if match:
+            return json.loads(match.group(0))
+        raise
+
+
+def generate_summary_and_quiz(
+    transcript_text,
+    summary_format="executive",
+    num_questions=5,
+    difficulty="medium",
+):
     """
-    Extracts and parses JSON safely, handling markdown backticks or extra wrapping.
-    """
-    raw_text = raw_text.strip()
-    # Strip markdown code fence if present
-    if raw_text.startswith("```"):
-        raw_text = re.sub(r"^```(?:json)?\s*", "", raw_text)
-        raw_text = re.sub(r"\s*```$", "", raw_text)
-        raw_text = raw_text.strip()
-
-    # Find outermost { ... }
-    first_brace = raw_text.find("{")
-    last_brace = raw_text.rfind("}")
-    if first_brace != -1 and last_brace != -1 and last_brace > first_brace:
-        raw_text = raw_text[first_brace:last_brace + 1]
-
-    return json.loads(raw_text)
-
-
-def generate_summary_and_quiz(transcript_text, summary_format="executive", num_questions=5, difficulty="medium"):
-    """
-    Single unified generation call: Produces BOTH summary and quiz in ONE request.
-    Benefits:
-    1. Cuts token consumption by ~50% (transcript is sent once instead of twice).
-    2. Completely eliminates the Groq 8,000 TPM limit collision caused by back-to-back calls.
-    3. Twice as fast for the user.
-    4. Automatically falls back between available models if rate-limited.
+    Single combined LLM call to generate both the structured summary and quiz questions.
+    Uses multi-model fallback and dynamic token budget.
     """
     fmt_key = summary_format if summary_format in SUMMARY_FORMAT_INSTRUCTIONS else "executive"
-    instruction = SUMMARY_FORMAT_INSTRUCTIONS[fmt_key]
-    num_questions = max(1, min(int(num_questions), 20))
     diff_key = difficulty if difficulty in DIFFICULTY_INSTRUCTIONS else "medium"
-    diff_instruction = DIFFICULTY_INSTRUCTIONS[diff_key]
+    num_questions = max(1, min(int(num_questions), 20))
+
+    summary_instruction = SUMMARY_FORMAT_INSTRUCTIONS[fmt_key]
+    difficulty_instruction = DIFFICULTY_INSTRUCTIONS[diff_key]
 
     processed_text = _prepare_transcript_for_llm(transcript_text, max_chars=14000)
 
-    system_prompt = (
-        "You are an expert tutor and master communicator. You synthesize video transcripts "
-        "into clear, high-yield markdown summaries and rigorous multiple-choice quizzes.\n\n"
-        "You must respond ONLY with a valid JSON object containing two top-level keys:\n"
-        "1. 'summary': A markdown-formatted string adhering strictly to the requested summary format.\n"
-        f"Format requirements:\n{instruction}\n\n"
-        "2. 'questions': An array of multiple-choice question objects.\n"
-        f"Create exactly {num_questions} questions at {diff_key} difficulty ({diff_instruction}).\n"
-        "Each question object must strictly follow this structure:\n"
-        "{\n"
-        '  "question": "Question text here (plain text, no markdown)",\n'
-        '  "options": ["Option A", "Option B", "Option C", "Option D"],\n'
-        '  "correct_index": 0,\n'
-        '  "explanation": "One clear sentence explaining why the correct choice is right."\n'
-        "}\n\n"
-        "Output ONLY the JSON object. Do not include markdown code block ticks outside the JSON."
-    )
+    # Dynamic token budget calculation:
+    # Summary takes ~1200-1500 tokens. Each quiz question takes ~100-120 tokens.
+    base_summary_tokens = 1500
+    quiz_tokens = num_questions * 130
+    max_tokens = min(4096, base_summary_tokens + quiz_tokens + 300)
 
-    # Scale token budget: summary needs ~1800 tokens, each question ~120 tokens
-    max_tokens = min(6000, 1800 + (num_questions * 130))
+    system_prompt = (
+        "You are an expert tutor and assessment designer. Analyze the video transcript "
+        "and produce BOTH a comprehensive structured summary AND a high-quality multiple-choice quiz.\n\n"
+        f"--- SUMMARY INSTRUCTIONS ({fmt_key.upper()}) ---\n"
+        f"{summary_instruction}\n\n"
+        f"--- QUIZ INSTRUCTIONS ({diff_key.upper()} DIFFICULTY) ---\n"
+        f"Create exactly {num_questions} multiple-choice questions. {difficulty_instruction}\n"
+        "Each question must have:\n"
+        "- Exactly 4 plausible options\n"
+        "- Exactly one correct answer indicated by correct_index (0, 1, 2, or 3)\n"
+        "- A clear 1-2 sentence explanation of why the correct answer is right\n"
+        "- Plain text only for questions and options (no markdown symbols)\n\n"
+        "--- OUTPUT FORMAT ---\n"
+        "You MUST respond ONLY with a valid JSON object matching this exact schema:\n"
+        "{\n"
+        '  "summary": "Full formatted markdown summary following the instructions above",\n'
+        '  "questions": [\n'
+        "    {\n"
+        '      "question": "Question text?",\n'
+        '      "options": ["Option A", "Option B", "Option C", "Option D"],\n'
+        '      "correct_index": 0,\n'
+        '      "explanation": "Why this answer is correct."\n'
+        "    }\n"
+        "  ]\n"
+        "}"
+    )
 
     last_error = None
     for model_name in MODELS:
@@ -267,7 +284,6 @@ def generate_quiz(transcript_text, num_questions=5, difficulty="medium"):
     last_error = None
     for model_name in MODELS:
         try:
-            # Scale token budget per question count
             quiz_max_tokens = min(3200, 400 + (num_questions * 130))
             response = client.chat.completions.create(
                 model=model_name,
@@ -332,15 +348,23 @@ def answer_video_question(transcript_text, question, conversation_history=None):
 def generate_flashcards(transcript_text, num_cards=8):
     """
     Generates high-yield 3D flashcards for rapid revision and spaced repetition.
+    Strictly focuses on core educational/academic concepts, theories, formulas, and mechanisms.
+    Excludes presenter introductions, channel names, sponsor promotions, or video production meta-data.
     """
     processed_text = _prepare_transcript_for_llm(transcript_text, max_chars=14000)
     system_prompt = (
-        f"Generate {num_cards} high-yield study flashcards based on the video transcript.\n"
-        "Focus on key terms, definitions, principles, formulas, and critical insights.\n"
+        f"You are an expert university professor creating {num_cards} high-yield study flashcards based on the video transcript.\n"
+        "CRITICAL RULES:\n"
+        "1. Focus STRICTLY and EXCLUSIVELY on the academic, technical, and educational concepts, definitions, theories, formulas, key steps, and mechanisms discussed in the lecture.\n"
+        "2. ABSOLUTELY DO NOT create flashcards about the presenter's identity, host name, YouTube channel name, video intro/outro, subscribe/like requests, sponsors, or greetings.\n"
+        "3. Every card must have:\n"
+        "   - 'front': A concise conceptual question, technical term, or problem statement (e.g. 'What is backpropagation?', 'Explain Amdahl\\'s Law').\n"
+        "   - 'back': A clear, complete explanation, formula, or definitive answer (2-3 sentences max).\n"
+        "   - 'category': An educational domain label (e.g., 'Core Principle', 'Architecture', 'Algorithm', 'Terminology', 'Mechanism', 'Application').\n"
         "Respond ONLY with a valid JSON object in this exact format:\n"
         "{\n"
         '  "flashcards": [\n'
-        '    {"front": "Concise term or question", "back": "Clear, complete explanation or answer", "category": "Core Principle"}\n'
+        '    {"front": "...", "back": "...", "category": "..."}\n'
         "  ]\n"
         "}"
     )
@@ -360,7 +384,21 @@ def generate_flashcards(transcript_text, num_cards=8):
             )
             raw = response.choices[0].message.content
             parsed = _clean_json_response(raw)
-            return parsed.get("flashcards", [])
+            cards = parsed.get("flashcards", [])
+
+            # Secondary sanitization: filter out any card mentioning presenter or channel metadata
+            meta_blacklist = [
+                "presenter", "speaker", "channel", "host", "video is presented by",
+                "welcome to", "subscribe", "like and share", "youtube channel",
+                "author of the video", "who presented", "who is the speaker"
+            ]
+            clean_cards = []
+            for card in cards:
+                combined = f"{card.get('front', '')} {card.get('back', '')}".lower()
+                if not any(b in combined for b in meta_blacklist):
+                    clean_cards.append(card)
+
+            return clean_cards if clean_cards else cards
         except Exception as e:
             last_error = e
             continue
@@ -378,20 +416,19 @@ def generate_mindmap(transcript_text, summary_text=None):
         "Organize it into a central topic, 3-5 main branches, and 2-3 sub-nodes under each branch with brief descriptions.\n"
         "Respond ONLY with a valid JSON object matching this structure:\n"
         "{\n"
-        '  "mindmap": {\n'
-        '    "title": "Central Theme/Title",\n'
-        '    "branches": [\n'
-        '      {\n'
-        '        "name": "Main Branch 1",\n'
-        '        "summary": "Brief 1-sentence description",\n'
-        '        "color": "#3b82f6",\n'
-        '        "nodes": [\n'
-        '          {"name": "Subtopic A", "detail": "Specific mechanism or concept"},\n'
-        '          {"name": "Subtopic B", "detail": "Key takeaway or formula"}\n'
-        '        ]\n'
-        '      }\n'
-        '    ]\n'
-        '  }\n'
+        '  "root": {\n'
+        '    "title": "Central Topic Title",\n'
+        '    "children": [\n'
+        "      {\n"
+        '        "title": "Main Theme 1",\n'
+        '        "description": "Brief description of theme 1",\n'
+        '        "children": [\n'
+        '          {"title": "Sub-concept A", "description": "Details about sub-concept A"},\n'
+        '          {"title": "Sub-concept B", "description": "Details about sub-concept B"}\n'
+        "        ]\n"
+        "      }\n"
+        "    ]\n"
+        "  }\n"
         "}"
     )
 
@@ -406,11 +443,11 @@ def generate_mindmap(transcript_text, summary_text=None):
                 ],
                 response_format={"type": "json_object"},
                 temperature=0.3,
-                max_tokens=1600,
+                max_tokens=1500,
             )
             raw = response.choices[0].message.content
             parsed = _clean_json_response(raw)
-            return parsed.get("mindmap", {})
+            return parsed.get("root", {})
         except Exception as e:
             last_error = e
             continue
