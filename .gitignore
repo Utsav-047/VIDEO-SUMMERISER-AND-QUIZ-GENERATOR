@@ -47,10 +47,11 @@ temp/
 *.mp3
 *.wav
 
-# Node & Frontend dependencies
+# Frontend dependencies & build artifacts
 node_modules/
 **/node_modules/
 dist/
+**/dist/
 dist-ssr/
 *.local
 
@@ -61,4 +62,3 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
-

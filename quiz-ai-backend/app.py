@@ -1,26 +1,3 @@
-
-
-# from flask import Flask
-# from flask_cors import CORS
-
-# from routes.video_routes import video_bp
-
-# app = Flask(__name__)
-# CORS(app)  # allows the frontend (running on a different port) to call this API
-
-# app.register_blueprint(video_bp)
-
-
-# @app.route("/")
-# def health_check():
-#     return {"status": "AI Video Summarizer & Quiz Generator backend is running"}
-
-
-# if __name__ == "__main__":
-#     app.run(debug=True, port=5000)
-
-
-
 from flask import Flask, jsonify
 from flask_cors import CORS
 
@@ -34,10 +11,10 @@ app = Flask(__name__)
 app.secret_key = Config.SECRET_KEY
 
 # Security & Session cookie hardening
-app.config["SESSION_COOKIE_HTTPONLY"] = Config.SESSION_COOKIE_HTTPONLY
-app.config["SESSION_COOKIE_SAMESITE"] = Config.SESSION_COOKIE_SAMESITE
-app.config["SESSION_COOKIE_SECURE"] = Config.SESSION_COOKIE_SECURE
-app.config["MAX_CONTENT_LENGTH"] = Config.MAX_CONTENT_LENGTH
+app.config["SESSION_COOKIE_HTTPONLY"] = getattr(Config, "SESSION_COOKIE_HTTPONLY", True)
+app.config["SESSION_COOKIE_SAMESITE"] = getattr(Config, "SESSION_COOKIE_SAMESITE", "Lax")
+app.config["SESSION_COOKIE_SECURE"] = getattr(Config, "SESSION_COOKIE_SECURE", False)
+app.config["MAX_CONTENT_LENGTH"] = getattr(Config, "MAX_CONTENT_LENGTH", 500 * 1024 * 1024)
 
 # Initialize Rate Limiter
 limiter.init_app(app)
@@ -69,7 +46,6 @@ def request_entity_too_large(e):
     return jsonify({
         "error": "Uploaded file is too large. The maximum permitted size is 500 MB."
     }), 413
-
 
 
 @app.route("/")
