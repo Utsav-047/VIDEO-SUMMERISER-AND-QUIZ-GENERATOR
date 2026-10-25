@@ -9,11 +9,26 @@ def _get_video_title(video_id: str) -> str:
     """Fetches the YouTube video title via the free oEmbed API (no API key needed)."""
     try:
         url = f"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={video_id}&format=json"
-        with urllib.request.urlopen(url, timeout=10) as resp:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
             data = json.loads(resp.read().decode())
             return data.get("title") or "YouTube Video"
     except Exception:
         return "YouTube Video"
+
+
+def _extract_text_from_entries(entries) -> str:
+    """Extracts plain text from entries, supporting both dataclass objects and dicts."""
+    if not entries:
+        return ""
+    text_parts = []
+    for snippet in entries:
+        txt = getattr(snippet, "text", None)
+        if txt is None and isinstance(snippet, dict):
+            txt = snippet.get("text")
+        if txt and str(txt).strip():
+            text_parts.append(str(txt).strip())
+    return " ".join(text_parts)
 
 
 def get_youtube_transcript(youtube_url: str):
@@ -22,10 +37,7 @@ def get_youtube_transcript(youtube_url: str):
     This is the primary method for YouTube videos on cloud deployments —
     it requires no video download, no ffmpeg, and bypasses all bot detection.
 
-    Strategy:
-      1. Try manual or auto-generated English captions
-      2. Fall back to any available transcript language
-      3. If all fail, raise an exception so the caller can fall back to yt-dlp + Whisper
+    Compatible with both modern (v1.x) and legacy (v0.x) youtube-transcript-api.
 
     Returns:
         (transcript_text: str, title: str)
@@ -37,37 +49,76 @@ def get_youtube_transcript(youtube_url: str):
         raise ValueError(f"Could not extract a valid YouTube video ID from: {youtube_url}")
 
     title = _get_video_title(video_id)
+    preferred_langs = ["en", "en-US", "en-GB", "en-IN"]
+    entries = None
 
+    # Method 1: Modern v1.x API (instance methods: fetch, list)
     try:
-        # Primary: prefer English (manual > auto-generated)
-        entries = YouTubeTranscriptApi.get_transcript(
-            video_id,
-            languages=["en", "en-US", "en-GB", "en-IN"],
-        )
-    except NoTranscriptFound:
+        ytt = YouTubeTranscriptApi()
+        if hasattr(ytt, "fetch"):
+            try:
+                entries = ytt.fetch(video_id, languages=preferred_langs)
+            except Exception:
+                pass
+
+        if not entries and hasattr(ytt, "list"):
+            try:
+                t_list = ytt.list(video_id)
+                # First try finding preferred languages
+                try:
+                    t = t_list.find_transcript(preferred_langs)
+                    entries = t.fetch()
+                except Exception:
+                    # Try finding generated transcript
+                    try:
+                        t = t_list.find_generated_transcript(preferred_langs)
+                        entries = t.fetch()
+                    except Exception:
+                        # Fallback: take the first available transcript and translate to English
+                        for candidate in t_list:
+                            try:
+                                if hasattr(candidate, "translate"):
+                                    entries = candidate.translate("en").fetch()
+                                else:
+                                    entries = candidate.fetch()
+                                break
+                            except Exception:
+                                entries = candidate.fetch()
+                                break
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    # Method 2: Legacy v0.x API (static methods: get_transcript, list_transcripts)
+    if not entries:
         try:
-            # Fallback: use whatever language is available and hope for the best
-            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-            transcript = transcript_list.find_generated_transcript(
-                [t.language_code for t in transcript_list]
-            )
-            entries = transcript.fetch()
+            if hasattr(YouTubeTranscriptApi, "get_transcript"):
+                try:
+                    entries = YouTubeTranscriptApi.get_transcript(
+                        video_id, languages=preferred_langs
+                    )
+                except Exception:
+                    if hasattr(YouTubeTranscriptApi, "list_transcripts"):
+                        t_list = YouTubeTranscriptApi.list_transcripts(video_id)
+                        try:
+                            t = t_list.find_transcript(preferred_langs)
+                            entries = t.fetch()
+                        except Exception:
+                            for candidate in t_list:
+                                entries = candidate.fetch()
+                                break
         except Exception:
-            raise NoTranscriptFound(
-                video_id,
-                ["en"],
-                f"No captions found for video {video_id}. Try uploading the video file instead.",
-            )
-    except TranscriptsDisabled:
-        raise TranscriptsDisabled(video_id)
+            pass
 
-    # Join all caption segments into a clean paragraph
-    transcript_text = " ".join(
-        entry.get("text", "").strip()
-        for entry in entries
-        if entry.get("text", "").strip()
-    )
+    if not entries:
+        raise NoTranscriptFound(
+            video_id,
+            preferred_langs,
+            f"No captions found for video {video_id}. Try uploading the video file directly.",
+        )
 
+    transcript_text = _extract_text_from_entries(entries)
     if not transcript_text:
         raise ValueError(f"Transcript for video {video_id} was empty after fetching.")
 

@@ -20,9 +20,8 @@ def download_youtube_video(youtube_url):
         "outtmpl": output_path,
         "quiet": True,
         "noplaylist": True,
-        # Use tv_embedded + web as fallbacks — more reliable on cloud/server IPs.
-        # Android client is frequently throttled/blocked by YouTube on non-residential IPs.
-        "extractor_args": {"youtube": {"player_client": ["tv_embedded", "web"]}},
+        # Use mweb + web + android clients for higher reliability across cloud/server IPs
+        "extractor_args": {"youtube": {"player_client": ["mweb", "web", "android"]}},
         "socket_timeout": 60,     # Increased to 60s for 30-60 min long video streams
         "retries": 5,
     }
