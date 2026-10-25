@@ -52,9 +52,24 @@ def get_youtube_transcript(youtube_url: str):
     preferred_langs = ["en", "en-US", "en-GB", "en-IN"]
     entries = None
 
+    from services.downloader import get_cookie_file_path
+    cookie_file = get_cookie_file_path()
+    http_session = None
+    if cookie_file and os.path.exists(cookie_file):
+        try:
+            import http.cookiejar
+            import requests
+            cj = http.cookiejar.MozillaCookieJar(cookie_file)
+            cj.load(ignore_discard=True, ignore_expires=True)
+            http_session = requests.Session()
+            http_session.cookies = cj
+            print(f"[YT-TRANSCRIPT] 🍪 Injected cookies into requests session")
+        except Exception as ce:
+            print(f"[YT-TRANSCRIPT] ⚠️ Could not load cookie jar: {ce}")
+
     # Method 1: Modern v1.x API (instance methods: fetch, list)
     try:
-        ytt = YouTubeTranscriptApi()
+        ytt = YouTubeTranscriptApi(http_client=http_session) if http_session else YouTubeTranscriptApi()
         if hasattr(ytt, "fetch"):
             try:
                 entries = ytt.fetch(video_id, languages=preferred_langs)

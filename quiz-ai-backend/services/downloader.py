@@ -5,6 +5,33 @@ import yt_dlp
 from config import Config
 
 
+def get_cookie_file_path():
+    """Resolves YouTube cookies from YOUTUBE_COOKIES env var (raw or base64) or local cookies.txt."""
+    raw_cookies = os.getenv("YOUTUBE_COOKIES", "").strip()
+    if raw_cookies:
+        os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)
+        cookie_dest = os.path.join(Config.UPLOAD_FOLDER, "cookies.txt")
+        try:
+            import base64
+            decoded = base64.b64decode(raw_cookies).decode("utf-8")
+            if "youtube.com" in decoded or "# Netscape" in decoded:
+                with open(cookie_dest, "w", encoding="utf-8") as f:
+                    f.write(decoded)
+                return cookie_dest
+        except Exception:
+            pass
+        with open(cookie_dest, "w", encoding="utf-8") as f:
+            f.write(raw_cookies)
+        return cookie_dest
+
+    backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    local_path = os.path.join(backend_dir, "cookies.txt")
+    if os.path.exists(local_path):
+        return local_path
+
+    return None
+
+
 def download_youtube_video(youtube_url):
     """
     Downloads audio from a YouTube video and returns (local_file_path, video_title).
@@ -25,6 +52,11 @@ def download_youtube_video(youtube_url):
         "socket_timeout": 60,     # Increased to 60s for 30-60 min long video streams
         "retries": 5,
     }
+
+    cookie_file = get_cookie_file_path()
+    if cookie_file and os.path.exists(cookie_file):
+        ydl_opts["cookiefile"] = cookie_file
+        print(f"[DOWNLOADER] 🍪 Using YouTube cookies from {cookie_file}")
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(youtube_url, download=True)
