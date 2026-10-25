@@ -278,4 +278,3 @@ This project is open-source under the [MIT License](LICENSE).
 
 ---
 
-<p align="center">Built with ❤️ using React 19 · Flask · Groq AI · Whisper · MySQL</p>
