@@ -5,38 +5,11 @@ import yt_dlp
 from config import Config
 
 
-def get_cookie_file_path():
-    """Resolves YouTube cookies from YOUTUBE_COOKIES env var (raw or base64) or local cookies.txt."""
-    raw_cookies = os.getenv("YOUTUBE_COOKIES", "").strip()
-    if raw_cookies:
-        os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)
-        cookie_dest = os.path.join(Config.UPLOAD_FOLDER, "cookies.txt")
-        try:
-            import base64
-            decoded = base64.b64decode(raw_cookies).decode("utf-8")
-            if "youtube.com" in decoded or "# Netscape" in decoded:
-                with open(cookie_dest, "w", encoding="utf-8") as f:
-                    f.write(decoded)
-                return cookie_dest
-        except Exception:
-            pass
-        with open(cookie_dest, "w", encoding="utf-8") as f:
-            f.write(raw_cookies)
-        return cookie_dest
-
-    backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    local_path = os.path.join(backend_dir, "cookies.txt")
-    if os.path.exists(local_path):
-        return local_path
-
-    return None
-
-
 def download_youtube_video(youtube_url):
     """
     Downloads audio from a YouTube video and returns (local_file_path, video_title).
-    Uses the smallest available audio stream — we only need clear speech for
-    transcription, not high-fidelity audio, so this keeps downloads fast.
+    Checks duration before downloading to avoid wasting bandwidth and disk space.
+    Uses the smallest available audio stream for fast processing.
     """
     os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)
     file_id = str(uuid.uuid4())
@@ -51,23 +24,19 @@ def download_youtube_video(youtube_url):
         "retries": 5,
     }
 
-    cookie_file = get_cookie_file_path()
-    if cookie_file and os.path.exists(cookie_file):
-        ydl_opts["cookiefile"] = cookie_file
-        print(f"[DOWNLOADER] [COOKIE] Using YouTube cookies from {cookie_file}")
-
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(youtube_url, download=True)
-
-        duration_minutes = info.get("duration", 0) / 60
+        # Check duration BEFORE downloading
+        info = ydl.extract_info(youtube_url, download=False)
+        duration_minutes = (info.get("duration") or 0) / 60
         if duration_minutes > Config.MAX_VIDEO_MINUTES:
             raise ValueError(
                 f"Video is {duration_minutes:.1f} min long. "
                 f"Max allowed is {Config.MAX_VIDEO_MINUTES} min."
             )
 
-        downloaded_path = ydl.prepare_filename(info)
-        title = info.get("title", "Untitled video")
+        download_info = ydl.extract_info(youtube_url, download=True)
+        downloaded_path = ydl.prepare_filename(download_info)
+        title = download_info.get("title", "Untitled video")
 
     return downloaded_path, title
 
