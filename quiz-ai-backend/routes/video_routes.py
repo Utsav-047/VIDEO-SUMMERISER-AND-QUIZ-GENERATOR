@@ -1,18 +1,20 @@
 import os
 import traceback
+from urllib.parse import urlparse
 from flask import Blueprint, request, jsonify, session
 
+from extensions import limiter
 from services.downloader import download_youtube_video, save_uploaded_file
 from services.audio import extract_audio
 from services.transcriber import transcribe_audio
-from services.youtube_transcript import get_youtube_transcript
+from services.youtube_transcript import get_youtube_transcript, YouTubeBlocked, NoCaptions
 from services.ai_generator import (
     generate_summary, generate_quiz, generate_summary_and_quiz,
     answer_video_question, generate_flashcards, generate_mindmap
 )
 from models.db import (
     insert_video, get_video_by_id, insert_transcript, get_transcript_by_video,
-    find_existing_transcript_by_source_ref,
+    find_existing_transcript_by_source_ref, extract_youtube_video_id,
     insert_summary, insert_quiz, insert_attempt, get_quiz,
     get_history, get_performance_stats,
 )
@@ -20,45 +22,67 @@ from models.db import (
 video_bp = Blueprint("video_bp", __name__)
 
 
+def require_video(video_id, user_id):
+    """Access control helper: verifies the video belongs to user_id."""
+    if not user_id:
+        return None
+    try:
+        return get_video_by_id(video_id, user_id=user_id)
+    except Exception:
+        return None
+
+
 @video_bp.route("/api/process", methods=["POST"])
+@limiter.limit("10 per hour", key_func=lambda: str(session.get("user_id")))
 def process_video():
     user_id = session.get("user_id")
     if not user_id:
         return jsonify({"error": "You must be logged in to process a video"}), 401
 
+    video_path, audio_path = None, None
     try:
         if "file" in request.files:
-            video_path, title = save_uploaded_file(request.files["file"])
-            source_type, source_ref = "upload", title
-            audio_path = extract_audio(video_path)
-            transcript_text = transcribe_audio(audio_path)
+            try:
+                video_path, title = save_uploaded_file(request.files["file"])
+                source_type, source_ref = "upload", title
+                audio_path = extract_audio(video_path)
+                transcript_text = transcribe_audio(audio_path)
 
-            video_id = insert_video(source_type, source_ref, title, user_id=user_id)
-            insert_transcript(video_id, transcript_text)
+                video_id = insert_video(source_type, source_ref, title, user_id=user_id)
+                insert_transcript(video_id, transcript_text)
 
-            for path in (video_path, audio_path):
-                if path and os.path.exists(path):
-                    try:
-                        os.remove(path)
-                    except Exception:
-                        pass
-
-            return jsonify({"video_id": video_id, "title": title, "transcript": transcript_text, "cached": False})
+                return jsonify({"video_id": video_id, "title": title, "transcript": transcript_text, "cached": False})
+            finally:
+                for p in (video_path, audio_path):
+                    if p and os.path.exists(p):
+                        try:
+                            os.remove(p)
+                        except Exception:
+                            pass
         else:
             data = request.get_json(silent=True) or {}
             youtube_url = (data.get("youtube_url") or "").strip()
             if not youtube_url:
                 return jsonify({"error": "Provide a youtube_url or upload a file"}), 400
 
-            # 🚀 INSTANT TRANSCRIPT CACHING:
-            # If this YouTube link was already transcribed previously, reuse the transcript!
-            cached = find_existing_transcript_by_source_ref(youtube_url)
+            # URL host validation
+            parsed = urlparse(youtube_url)
+            if parsed.netloc.lower() not in {"youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be"}:
+                return jsonify({"error": "Only YouTube URLs are accepted (youtube.com, youtu.be)"}), 400
+
+            vid = extract_youtube_video_id(youtube_url)
+            if not vid:
+                return jsonify({"error": "Invalid YouTube video link"}), 400
+
+            canonical_url = f"https://www.youtube.com/watch?v={vid}"
+
+            # Check cache with canonical URL
+            cached = find_existing_transcript_by_source_ref(canonical_url)
             if cached and cached.get("transcript_text"):
                 cached_title = cached.get("title") or "YouTube Video"
                 cached_transcript = cached["transcript_text"]
-                print(f"\n[CACHE HIT] Found existing transcript for '{cached_title}'! Reusing without downloading.\n")
-                # Create a video record for this user so it's in their private history
-                video_id = insert_video("youtube", youtube_url, cached_title, user_id=user_id)
+                print(f"[CACHE HIT] Reusing cached transcript for '{cached_title}'")
+                video_id = insert_video("youtube", canonical_url, cached_title, user_id=user_id)
                 insert_transcript(video_id, cached_transcript)
                 return jsonify({
                     "video_id": video_id,
@@ -67,57 +91,64 @@ def process_video():
                     "cached": True
                 })
 
-            # 🎯 PRIMARY METHOD: YouTube Transcript API (no download, no ffmpeg, no bot detection)
-            # Works on cloud servers like Render where yt-dlp is blocked by YouTube's datacenter IP filter.
+            # Fetch captions directly
             transcript_text = None
             title = "YouTube Video"
             try:
-                print(f"\n[YT-TRANSCRIPT] Fetching captions directly from YouTube for: {youtube_url}\n")
-                transcript_text, title = get_youtube_transcript(youtube_url)
-                print(f"[YT-TRANSCRIPT] ✅ Got transcript via YouTube captions for '{title}' ({len(transcript_text)} chars)\n")
-            except Exception as yt_api_err:
-                # ⬇️ FALLBACK: yt-dlp + Whisper (for videos with no captions)
-                print(f"[YT-TRANSCRIPT] ⚠️ YouTube captions unavailable ({yt_api_err}). Falling back to yt-dlp + Whisper...\n")
-                video_path, title = download_youtube_video(youtube_url)
-                audio_path = extract_audio(video_path)
-                transcript_text = transcribe_audio(audio_path)
+                transcript_text, title = get_youtube_transcript(canonical_url)
+            except YouTubeBlocked:
+                return jsonify({
+                    "error": "YouTube is temporarily blocking automated access. Please upload the video file instead.",
+                    "code": "youtube_blocked"
+                }), 503
+            except NoCaptions:
+                if os.getenv("ENABLE_YTDLP_FALLBACK") != "true":
+                    return jsonify({
+                        "error": "This video has no captions. Please upload the file.",
+                        "code": "no_captions"
+                    }), 422
 
-                for path in (video_path, audio_path):
-                    if path and os.path.exists(path):
-                        try:
-                            os.remove(path)
-                        except Exception:
-                            pass
+                # Fallback to yt-dlp + Whisper (if explicitly enabled)
+                yt_video_path, yt_audio_path = None, None
+                try:
+                    yt_video_path, title = download_youtube_video(canonical_url)
+                    yt_audio_path = extract_audio(yt_video_path)
+                    transcript_text = transcribe_audio(yt_audio_path)
+                finally:
+                    for p in (yt_video_path, yt_audio_path):
+                        if p and os.path.exists(p):
+                            try:
+                                os.remove(p)
+                            except Exception:
+                                pass
 
-            video_id = insert_video("youtube", youtube_url, title, user_id=user_id)
+            video_id = insert_video("youtube", canonical_url, title, user_id=user_id)
             insert_transcript(video_id, transcript_text)
 
             return jsonify({"video_id": video_id, "title": title, "transcript": transcript_text, "cached": False})
 
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 400
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
-        return jsonify({"error": f"Processing failed: {str(e)}\n\nTip: If this is a YouTube video, make sure it has captions/subtitles enabled. For videos without captions, try uploading the file directly."}), 500
-
+        return jsonify({
+            "error": "An error occurred while processing the video. Please verify the link or upload the video file directly."
+        }), 500
 
 
 @video_bp.route("/api/generate/<int:video_id>", methods=["POST"])
+@limiter.limit("10 per hour", key_func=lambda: str(session.get("user_id")))
 def generate(video_id):
     user_id = session.get("user_id")
     if not user_id:
         return jsonify({"error": "You must be logged in"}), 401
 
-    # Resilient ownership check
-    video = get_video_by_id(video_id, user_id=user_id)
-    if not video:
-        video = get_video_by_id(video_id)
+    video = require_video(video_id, user_id)
     if not video:
         return jsonify({"error": "Video not found or access denied"}), 404
 
     data = request.get_json(silent=True) or {}
 
-    # Prefer transcript stored in DB, fallback to client-supplied transcript
     transcript_record = get_transcript_by_video(video_id)
     if transcript_record and transcript_record.get("transcript_text"):
         transcript_text = transcript_record["transcript_text"]
@@ -127,9 +158,16 @@ def generate(video_id):
     if not transcript_text:
         return jsonify({"error": "Transcript not found for this video"}), 400
 
-    difficulty = data.get("difficulty", "medium")
-    num_questions = data.get("num_questions", 5)
-    summary_format = data.get("summary_format", "executive")
+    raw_difficulty = str(data.get("difficulty", "medium")).lower()
+    difficulty = raw_difficulty if raw_difficulty in ("easy", "medium", "hard") else "medium"
+
+    raw_summary_format = str(data.get("summary_format", "executive")).lower()
+    summary_format = raw_summary_format if raw_summary_format in ("executive", "bullet", "detailed") else "executive"
+
+    try:
+        num_questions = min(max(int(data.get("num_questions", 5)), 1), 30)
+    except (TypeError, ValueError):
+        num_questions = 5
 
     try:
         summary_text, quiz_questions = generate_summary_and_quiz(
@@ -143,9 +181,9 @@ def generate(video_id):
         quiz_id = insert_quiz(video_id, quiz_questions, difficulty=difficulty)
 
         return jsonify({"quiz_id": quiz_id, "summary": summary_text, "quiz": quiz_questions})
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
-        return jsonify({"error": f"Generation failed: {str(e)}"}), 500
+        return jsonify({"error": "Failed to generate summary and quiz. Please try again."}), 500
 
 
 @video_bp.route("/api/quiz/<int:quiz_id>/submit", methods=["POST"])
@@ -156,12 +194,10 @@ def submit_quiz(quiz_id):
 
     data = request.get_json(silent=True) or {}
     answers = data.get("answers")
-    if answers is None:
-        return jsonify({"error": "answers is required"}), 400
+    if answers is None or not isinstance(answers, list):
+        return jsonify({"error": "answers list is required"}), 400
 
     quiz_row = get_quiz(quiz_id, user_id=user_id)
-    if not quiz_row:
-        quiz_row = get_quiz(quiz_id)
     if not quiz_row:
         return jsonify({"error": "Quiz not found or access denied"}), 404
 
@@ -188,59 +224,79 @@ def performance():
 
 
 @video_bp.route("/api/chat/<int:video_id>", methods=["POST"])
+@limiter.limit("10 per hour", key_func=lambda: str(session.get("user_id")))
 def chat_with_video(video_id):
     user_id = session.get("user_id")
     if not user_id:
         return jsonify({"error": "You must be logged in"}), 401
 
+    video = require_video(video_id, user_id)
+    if not video:
+        return jsonify({"error": "Video not found or access denied"}), 404
+
     data = request.get_json(silent=True) or {}
-    message = data.get("message", "").strip()
+    message = str(data.get("message", "")).strip()[:1000]
     if not message:
         return jsonify({"error": "Message is required"}), 400
 
     transcript_record = get_transcript_by_video(video_id)
-    transcript_text = transcript_record.get("transcript_text") if transcript_record else data.get("transcript")
+    transcript_text = transcript_record.get("transcript_text") if transcript_record else None
     if not transcript_text:
         return jsonify({"error": "Transcript not found for this video"}), 400
 
-    history_msgs = data.get("history", [])
+    raw_history = data.get("history", [])
+    clean_history = []
+    if isinstance(raw_history, list):
+        for item in raw_history[-10:]:
+            if isinstance(item, dict) and item.get("role") in ("user", "assistant") and isinstance(item.get("content"), str):
+                clean_history.append({"role": item["role"], "content": item["content"][:2000]})
+
     try:
-        reply = answer_video_question(transcript_text, message, conversation_history=history_msgs)
+        reply = answer_video_question(transcript_text, message, conversation_history=clean_history)
         return jsonify({"reply": reply})
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
-        return jsonify({"error": f"Chat failed: {str(e)}"}), 500
+        return jsonify({"error": "Failed to process chat message."}), 500
 
 
 @video_bp.route("/api/flashcards/<int:video_id>", methods=["POST"])
+@limiter.limit("10 per hour", key_func=lambda: str(session.get("user_id")))
 def get_flashcards(video_id):
     user_id = session.get("user_id")
     if not user_id:
         return jsonify({"error": "You must be logged in"}), 401
 
-    data = request.get_json(silent=True) or {}
+    video = require_video(video_id, user_id)
+    if not video:
+        return jsonify({"error": "Video not found or access denied"}), 404
+
     transcript_record = get_transcript_by_video(video_id)
-    transcript_text = transcript_record.get("transcript_text") if transcript_record else data.get("transcript")
+    transcript_text = transcript_record.get("transcript_text") if transcript_record else None
     if not transcript_text:
         return jsonify({"error": "Transcript not found"}), 400
 
     try:
         cards = generate_flashcards(transcript_text)
         return jsonify({"flashcards": cards})
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
-        return jsonify({"error": f"Flashcards generation failed: {str(e)}"}), 500
+        return jsonify({"error": "Failed to generate flashcards."}), 500
 
 
 @video_bp.route("/api/mindmap/<int:video_id>", methods=["POST"])
+@limiter.limit("10 per hour", key_func=lambda: str(session.get("user_id")))
 def get_mindmap(video_id):
     user_id = session.get("user_id")
     if not user_id:
         return jsonify({"error": "You must be logged in"}), 401
 
-    data = request.get_json(silent=True) or {}
+    video = require_video(video_id, user_id)
+    if not video:
+        return jsonify({"error": "Video not found or access denied"}), 404
+
     transcript_record = get_transcript_by_video(video_id)
-    transcript_text = transcript_record.get("transcript_text") if transcript_record else data.get("transcript")
+    transcript_text = transcript_record.get("transcript_text") if transcript_record else ""
+    data = request.get_json(silent=True) or {}
     summary_text = data.get("summary")
 
     if not transcript_text and not summary_text:
@@ -249,6 +305,6 @@ def get_mindmap(video_id):
     try:
         mindmap_data = generate_mindmap(transcript_text or "", summary_text=summary_text)
         return jsonify({"mindmap": mindmap_data})
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
-        return jsonify({"error": f"Mindmap generation failed: {str(e)}"}), 500
+        return jsonify({"error": "Failed to generate mindmap."}), 500
