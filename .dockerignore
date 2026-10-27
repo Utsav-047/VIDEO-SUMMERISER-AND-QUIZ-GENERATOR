@@ -1,0 +1,14 @@
+cookies.txt
+*cookies*.txt
+.env
+*.env
+quiz-ai-backend/.env
+uploads/
+quiz-ai-backend/uploads/
+.git
+__pycache__/
+*.pyc
+venv/
+.venv/
+node_modules/
+dist/

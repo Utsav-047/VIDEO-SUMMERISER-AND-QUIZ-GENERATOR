@@ -1,0 +1,11 @@
+cookies.txt
+*cookies*.txt
+.env
+*.env
+uploads/
+.git
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
