@@ -166,6 +166,9 @@ export default function VideoProcessor({ initialUrl, onProcessingComplete }) {
         summaryFormat,
       });
     } catch (err) {
+      if (err.code === 'youtube_blocked' || err.data?.code === 'youtube_blocked') {
+        setMode('upload');
+      }
       setError(err.message || 'Processing failed. Please check the video link or file.');
     } finally {
       setProcessing(false);

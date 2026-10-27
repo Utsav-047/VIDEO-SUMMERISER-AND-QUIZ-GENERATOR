@@ -70,7 +70,7 @@ function AppShell({ isDark, toggleTheme }) {
       transcript: item.transcript || item.transcript_text || '',
       summary: summaryText,
       quiz: parsedQuiz,
-      quizId: item.quiz_id || item.id || item.video_id,
+      quizId: item.quiz_id || '',
     });
     setActiveTab('dashboard');
     setResultSubView('summary');
@@ -249,7 +249,7 @@ function AppShell({ isDark, toggleTheme }) {
                   {(user.full_name || user.email || 'U')[0].toUpperCase()}
                 </div>
                 <span style={{ fontWeight: 700 }}>{user.full_name || user.email}</span>
-                <span style={{ color: 'var(--text-muted)' }}>&bull; Role: Learner</span>
+                <span style={{ color: 'var(--text-muted)' }}>&bull; Role: {user.role ? (user.role.charAt(0).toUpperCase() + user.role.slice(1)) : 'Learner'}</span>
               </div>
             ) : (
               <button className="btn-secondary" onClick={() => navigate('/login')} style={{ fontSize: '0.82rem', padding: '6px 14px' }}>
@@ -296,7 +296,7 @@ function AppShell({ isDark, toggleTheme }) {
                         <span>Executive Summary</span>
                       </button>
 
-                      {currentResult.quiz && currentResult.quiz.length > 0 && (
+                      {currentResult.quiz && currentResult.quiz.length > 0 && currentResult.quizId && (
                         <button
                           id="view-quiz-tab-btn"
                           onClick={() => setResultSubView('quiz')}

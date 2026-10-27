@@ -27,6 +27,7 @@ async function request(endpoint, options = {}) {
     const error = new Error(errorMsg);
     error.status = response.status;
     error.data = data;
+    error.code = data?.code;
     throw error;
   }
 

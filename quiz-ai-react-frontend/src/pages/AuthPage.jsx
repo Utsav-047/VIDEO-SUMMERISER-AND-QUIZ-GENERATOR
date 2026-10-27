@@ -125,7 +125,7 @@ export default function AuthPage() {
       setTimerSeconds(600); // Reset timer to 10 minutes
       setForgotStep(2);
     } catch (err) {
-      setError(err.message || 'This email is not registered in our app. Please check your email or sign up.');
+      setError(err.message || 'Unable to process request. Please try again later.');
     } finally {
       setLoading(false);
     }
