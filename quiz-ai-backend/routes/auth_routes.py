@@ -28,6 +28,8 @@ def validate_password_strength(password: str) -> tuple[bool, str]:
     """
     if not password or len(password) < 8:
         return False, "Password must be at least 8 characters long."
+    if len(password) > 128:
+        return False, "Password cannot exceed 128 characters."
     if not re.search(r"[A-Za-z]", password):
         return False, "Password must contain at least one letter."
     if not re.search(r"\d", password):
@@ -113,7 +115,7 @@ def me():
 def forgot_password():
     """
     Generates a 6-digit OTP valid for 10 minutes to reset password.
-    Returns a uniform generic message to prevent account enumeration.
+    Returns the same success message whether or not the email exists to prevent account enumeration.
     """
     data = request.get_json(silent=True) or {}
     email = (data.get("email") or "").strip()
@@ -122,27 +124,16 @@ def forgot_password():
         return jsonify({"error": "Email is required"}), 400
 
     user = get_user_by_email(email)
-    if not user:
-        return jsonify({
-            "error": "This email is not registered in our app. Please check your email or create a new account."
-        }), 404
-
-    # Generate secure 6-digit OTP code
-    otp_code = f"{secrets.randbelow(900000) + 100000:06d}"
-    expires_at = datetime.now() + timedelta(minutes=10)
-
-    create_password_reset_otp(user["id"], otp_code, expires_at)
-
-    # Deliver OTP strictly via configured email service (console printing removed)
-    email_sent, email_msg = send_otp_email(email, otp_code)
-    if not email_sent:
-        return jsonify({
-            "error": f"Failed to send verification email: {email_msg}. Please configure SMTP_EMAIL and SMTP_PASSWORD in the backend .env file."
-        }), 500
+    if user:
+        # Generate secure 6-digit OTP code
+        otp_code = f"{secrets.randbelow(900000) + 100000:06d}"
+        expires_at = datetime.now() + timedelta(minutes=10)
+        create_password_reset_otp(user["id"], otp_code, expires_at)
+        send_otp_email(email, otp_code)
 
     return jsonify({
         "status": "success",
-        "message": f"A 6-digit verification code has been sent to {email}.",
+        "message": f"If an account is associated with {email}, a 6-digit verification code has been sent.",
         "email": email,
     }), 200
 

@@ -1,4 +1,5 @@
 import smtplib
+import html
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from config import Config
@@ -41,6 +42,7 @@ Synapse Video Intelligence Team
 """
 
         # Modern HTML version
+        safe_recipient = html.escape(recipient_email)
         html_content = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -76,7 +78,7 @@ Synapse Video Intelligence Team
             <td style="padding: 36px 36px 28px 36px;">
               <h1 style="margin: 0 0 12px 0; font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px;">Password Reset Verification</h1>
               <p style="margin: 0 0 24px 0; font-size: 14px; line-height: 1.6; color: #475569;">
-                We received a request to reset the password for your account associated with <strong style="color: #0f172a;">{recipient_email}</strong>. Use the verification code below to complete the process.
+                We received a request to reset the password for your account associated with <strong style="color: #0f172a;">{safe_recipient}</strong>. Use the verification code below to complete the process.
               </p>
 
               <!-- OTP Code Display Card -->

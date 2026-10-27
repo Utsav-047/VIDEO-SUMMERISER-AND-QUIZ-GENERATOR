@@ -7,8 +7,10 @@ from extensions import limiter
 from routes.video_routes import video_bp
 from routes.auth_routes import auth_bp
 from routes.admin_routes import admin_bp
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
 app.secret_key = Config.SECRET_KEY
 
 # Security & Session cookie hardening
@@ -68,4 +70,4 @@ def health_check():
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
-    app.run(debug=True, host="0.0.0.0", port=port, threaded=True)
+    app.run(debug=False, host="0.0.0.0", port=port, threaded=True)
