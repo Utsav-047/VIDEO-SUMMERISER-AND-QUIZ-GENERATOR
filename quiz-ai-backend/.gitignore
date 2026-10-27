@@ -2,6 +2,8 @@
 .env
 *.env
 quiz-ai-backend/.env
+cookies.txt
+*cookies*.txt
 
 __pycache__/
 *.pyc

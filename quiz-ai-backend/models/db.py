@@ -27,8 +27,6 @@ def ensure_user_schema():
             cur.execute("SHOW COLUMNS FROM users LIKE 'role'")
             if not cur.fetchone():
                 cur.execute("ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'user'")
-            # Promote user ID 1 or utsavpatel788190@gmail.com to admin by default if not set
-            cur.execute("UPDATE users SET role = 'admin' WHERE id = 1 AND (role IS NULL OR role = 'user')")
     except Exception as e:
         print(f"[DB] Error ensuring user schema: {e}")
     finally:
@@ -213,17 +211,16 @@ def insert_video(source_type, source_ref, title=None, user_id=None):
         conn.close()
 
 
-def get_video_by_id(video_id, user_id=None):
+def get_video_by_id(video_id, user_id):
+    if not user_id:
+        raise ValueError("user_id is required")
     conn = get_connection()
     try:
         with conn.cursor() as cur:
-            if user_id is not None:
-                cur.execute(
-                    "SELECT * FROM videos WHERE id = %s AND user_id = %s",
-                    (video_id, user_id),
-                )
-            else:
-                cur.execute("SELECT * FROM videos WHERE id = %s", (video_id,))
+            cur.execute(
+                "SELECT * FROM videos WHERE id = %s AND user_id = %s",
+                (video_id, user_id),
+            )
             return cur.fetchone()
     finally:
         conn.close()
@@ -276,31 +273,24 @@ def find_existing_transcript_by_source_ref(source_ref):
     """
     Checks if a video with the same source_ref (or same YouTube video ID)
     already has an extracted transcript in the database.
+    Normalizes to canonical https://www.youtube.com/watch?v=<id> URL.
     Returns dictionary with {video_id, title, transcript_text} or None.
     """
     if not source_ref:
         return None
     yt_id = extract_youtube_video_id(source_ref)
+    canonical_ref = f"https://www.youtube.com/watch?v={yt_id}" if yt_id else source_ref.strip()
     conn = get_connection()
     try:
         with conn.cursor() as cur:
-            if yt_id:
-                cur.execute("""
-                    SELECT v.id AS video_id, v.title, t.transcript_text
-                    FROM videos v
-                    JOIN transcripts t ON t.video_id = v.id
-                    WHERE (v.source_ref = %s OR v.source_ref LIKE %s)
-                      AND t.transcript_text IS NOT NULL AND t.transcript_text != ''
-                    ORDER BY t.id DESC LIMIT 1
-                """, (source_ref, f"%{yt_id}%"))
-            else:
-                cur.execute("""
-                    SELECT v.id AS video_id, v.title, t.transcript_text
-                    FROM videos v
-                    JOIN transcripts t ON t.video_id = v.id
-                    WHERE v.source_ref = %s AND t.transcript_text IS NOT NULL AND t.transcript_text != ''
-                    ORDER BY t.id DESC LIMIT 1
-                """, (source_ref,))
+            cur.execute("""
+                SELECT v.id AS video_id, v.title, t.transcript_text
+                FROM videos v
+                JOIN transcripts t ON t.video_id = v.id
+                WHERE (v.source_ref = %s OR v.source_ref LIKE %s)
+                  AND t.transcript_text IS NOT NULL AND t.transcript_text != ''
+                ORDER BY t.id DESC LIMIT 1
+            """, (canonical_ref, f"%{yt_id}%" if yt_id else canonical_ref))
             return cur.fetchone()
     finally:
         conn.close()
@@ -335,19 +325,18 @@ def insert_quiz(video_id, questions, difficulty="medium"):
         conn.close()
 
 
-def get_quiz(quiz_id, user_id=None):
+def get_quiz(quiz_id, user_id):
+    if not user_id:
+        raise ValueError("user_id is required")
     conn = get_connection()
     try:
         with conn.cursor() as cur:
-            if user_id is not None:
-                cur.execute("""
-                    SELECT q.*, v.user_id 
-                    FROM quizzes q
-                    JOIN videos v ON q.video_id = v.id
-                    WHERE q.id = %s AND v.user_id = %s
-                """, (quiz_id, user_id))
-            else:
-                cur.execute("SELECT * FROM quizzes WHERE id = %s", (quiz_id,))
+            cur.execute("""
+                SELECT q.*, v.user_id 
+                FROM quizzes q
+                JOIN videos v ON q.video_id = v.id
+                WHERE q.id = %s AND v.user_id = %s
+            """, (quiz_id, user_id))
             row = cur.fetchone()
             if row and row.get("questions_json"):
                 if isinstance(row["questions_json"], str):
@@ -376,8 +365,10 @@ def insert_attempt(quiz_id, score, total_questions, answers):
 
 
 # ---------- history ----------
-def get_history(user_id=None):
-    """If user_id is given, only that user's videos are returned. Otherwise returns everyone's (used pre-auth)."""
+def get_history(user_id):
+    """Returns only the specified user's video history."""
+    if not user_id:
+        raise ValueError("user_id is required")
     conn = get_connection()
     try:
         with conn.cursor() as cur:
@@ -423,14 +414,10 @@ def get_history(user_id=None):
                     INNER JOIN (SELECT quiz_id, MAX(id) AS max_id FROM attempts GROUP BY quiz_id) a2
                     ON a1.id = a2.max_id
                 ) a ON a.quiz_id = q.id
+                WHERE v.user_id = %s
+                ORDER BY v.created_at DESC
             """
-            if user_id is not None:
-                sql += " WHERE v.user_id = %s ORDER BY v.created_at DESC"
-                cur.execute(sql, (user_id,))
-            else:
-                sql += " ORDER BY v.created_at DESC"
-                cur.execute(sql)
-
+            cur.execute(sql, (user_id,))
             rows = cur.fetchall()
             for r in rows:
                 if r.get("questions_json") and isinstance(r["questions_json"], str):

@@ -7,7 +7,7 @@ IS_PRODUCTION = os.getenv("RENDER") is not None or os.getenv("FLASK_ENV") == "pr
 
 class Config:
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-this-in-production")
+    SECRET_KEY = os.environ["SECRET_KEY"]  # app refuses to start if missing
 
     # MySQL Database Configuration
     DB_HOST = os.getenv("DB_HOST", "localhost")
