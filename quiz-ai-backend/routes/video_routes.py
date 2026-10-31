@@ -61,52 +61,58 @@ def check_env():
     })
 
 
-@video_bp.route("/api/health/check-youtube", methods=["GET"])
-def check_youtube():
-    import shutil
-    from services.downloader import get_cookie_file_path, download_youtube_video
-    from config import Config
-
+@video_bp.route("/api/health/check-captions", methods=["GET"])
+def check_captions():
+    import time
+    from services.downloader import get_cookie_file_path
+    from services.youtube_transcript import _client, get_ytdlp_transcript
+    
     test_url = request.args.get("url", "https://www.youtube.com/watch?v=Tp37HXfekNo")
+    vid = extract_youtube_video_id(test_url)
     results = {
-        "ffmpeg_available": shutil.which("ffmpeg") is not None,
-        "deno_available": shutil.which("deno") is not None,
+        "url": test_url,
+        "vid": vid,
         "cookie_file": get_cookie_file_path(),
-        "etc_secrets_exists": os.path.exists("/etc/secrets/cookies.txt"),
     }
-
-    # Test 1: Direct captions
+    
+    # Step 1: Test youtube-transcript-api
+    t0 = time.time()
     try:
-        text, title = get_youtube_transcript(test_url)
-        results["direct_captions"] = {
+        ytt = _client()
+        entries = ytt.fetch(vid, languages=["en", "en-US", "en-GB", "en-IN"])
+        parts = [getattr(s, "text", "") if hasattr(s, "text") else s.get("text", "") for s in entries]
+        text1 = " ".join(parts).strip()
+        results["youtube_transcript_api"] = {
             "success": True,
-            "title": title,
-            "length": len(text) if text else 0
+            "char_count": len(text1),
+            "sample": text1[:100],
+            "elapsed_seconds": round(time.time() - t0, 2)
         }
     except Exception as e:
-        results["direct_captions"] = {
+        results["youtube_transcript_api"] = {
             "success": False,
-            "error": f"{type(e).__name__}: {e}"
+            "error_type": type(e).__name__,
+            "error": str(e),
+            "elapsed_seconds": round(time.time() - t0, 2)
         }
 
-    # Test 2: Audio download
+    # Step 2: Test yt-dlp subtitle extraction
+    t1 = time.time()
     try:
-        path, title = download_youtube_video(test_url)
-        results["download_audio"] = {
-            "success": True,
-            "title": title,
-            "path": path,
-            "size": os.path.getsize(path) if os.path.exists(path) else 0
+        ytdlp_text, ytdlp_title = get_ytdlp_transcript(test_url)
+        results["ytdlp_transcript"] = {
+            "success": bool(ytdlp_text),
+            "title": ytdlp_title,
+            "char_count": len(ytdlp_text) if ytdlp_text else 0,
+            "sample": ytdlp_text[:100] if ytdlp_text else None,
+            "elapsed_seconds": round(time.time() - t1, 2)
         }
-        if os.path.exists(path):
-            try:
-                os.remove(path)
-            except Exception:
-                pass
     except Exception as e:
-        results["download_audio"] = {
+        results["ytdlp_transcript"] = {
             "success": False,
-            "error": f"{type(e).__name__}: {e}"
+            "error_type": type(e).__name__,
+            "error": str(e),
+            "elapsed_seconds": round(time.time() - t1, 2)
         }
 
     return jsonify(results)
