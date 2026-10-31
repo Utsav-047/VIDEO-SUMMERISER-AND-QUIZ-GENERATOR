@@ -22,6 +22,45 @@ from models.db import (
 video_bp = Blueprint("video_bp", __name__)
 
 
+@video_bp.route("/api/health/env", methods=["GET"])
+def check_env():
+    import shutil
+    from services.downloader import get_cookie_file_path
+    cookie_p = get_cookie_file_path()
+    
+    secrets_dir = "/etc/secrets"
+    secrets_files = []
+    if os.path.exists(secrets_dir):
+        try:
+            secrets_files = os.listdir(secrets_dir)
+        except Exception as e:
+            secrets_files = [f"Error listing: {e}"]
+
+    cookie_sample = []
+    cookie_line_count = 0
+    if cookie_p and os.path.exists(cookie_p):
+        try:
+            with open(cookie_p, "r", encoding="utf-8", errors="ignore") as f:
+                lines = [line.strip() for line in f if line.strip()]
+                cookie_line_count = len(lines)
+                cookie_sample = [l for l in lines if not l.startswith("#")][:3]
+        except Exception as e:
+            cookie_sample = [f"Error reading: {e}"]
+
+    return jsonify({
+        "ffmpeg": shutil.which("ffmpeg") is not None,
+        "deno": shutil.which("deno") is not None,
+        "cookie_file": cookie_p,
+        "cookie_file_exists": os.path.exists(cookie_p) if cookie_p else False,
+        "cookie_file_size": os.path.getsize(cookie_p) if cookie_p and os.path.exists(cookie_p) else 0,
+        "cookie_line_count": cookie_line_count,
+        "cookie_sample_masked": [s[:20] + "..." for s in cookie_sample],
+        "etc_secrets_exists": os.path.exists(secrets_dir),
+        "etc_secrets_files": secrets_files,
+        "raw_cookie_len": len(os.getenv("YOUTUBE_COOKIES", "")),
+    })
+
+
 @video_bp.route("/api/health/check-youtube", methods=["GET"])
 def check_youtube():
     import shutil
