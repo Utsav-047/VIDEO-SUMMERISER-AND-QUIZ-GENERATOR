@@ -22,6 +22,57 @@ from models.db import (
 video_bp = Blueprint("video_bp", __name__)
 
 
+@video_bp.route("/api/health/check-youtube", methods=["GET"])
+def check_youtube():
+    import shutil
+    from services.downloader import get_cookie_file_path, download_youtube_video
+    from config import Config
+
+    test_url = request.args.get("url", "https://www.youtube.com/watch?v=Tp37HXfekNo")
+    results = {
+        "ffmpeg_available": shutil.which("ffmpeg") is not None,
+        "deno_available": shutil.which("deno") is not None,
+        "cookie_file": get_cookie_file_path(),
+        "etc_secrets_exists": os.path.exists("/etc/secrets/cookies.txt"),
+    }
+
+    # Test 1: Direct captions
+    try:
+        text, title = get_youtube_transcript(test_url)
+        results["direct_captions"] = {
+            "success": True,
+            "title": title,
+            "length": len(text) if text else 0
+        }
+    except Exception as e:
+        results["direct_captions"] = {
+            "success": False,
+            "error": f"{type(e).__name__}: {e}"
+        }
+
+    # Test 2: Audio download
+    try:
+        path, title = download_youtube_video(test_url)
+        results["download_audio"] = {
+            "success": True,
+            "title": title,
+            "path": path,
+            "size": os.path.getsize(path) if os.path.exists(path) else 0
+        }
+        if os.path.exists(path):
+            try:
+                os.remove(path)
+            except Exception:
+                pass
+    except Exception as e:
+        results["download_audio"] = {
+            "success": False,
+            "error": f"{type(e).__name__}: {e}"
+        }
+
+    return jsonify(results)
+
+
 def require_video(video_id, user_id):
     """Access control helper: verifies the video belongs to user_id."""
     if not user_id:

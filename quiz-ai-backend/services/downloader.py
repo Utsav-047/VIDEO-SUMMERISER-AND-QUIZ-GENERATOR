@@ -138,7 +138,7 @@ def download_youtube_video(youtube_url):
     output_path = os.path.join(Config.UPLOAD_FOLDER, f"{file_id}.%(ext)s")
 
     ydl_opts = {
-        "format": "ba/ba*/bestaudio/best",
+        "format": "bestaudio/ba/b/best",
         "outtmpl": output_path,
         "quiet": True,
         "noplaylist": True,
