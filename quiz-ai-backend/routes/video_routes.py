@@ -48,6 +48,7 @@ def check_env():
             cookie_sample = [f"Error reading: {e}"]
 
     return jsonify({
+        "version": "v3-native-vtt",
         "ffmpeg": shutil.which("ffmpeg") is not None,
         "deno": shutil.which("deno") is not None,
         "cookie_file": cookie_p,
