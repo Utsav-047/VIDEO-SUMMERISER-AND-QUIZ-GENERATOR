@@ -2,6 +2,7 @@ import os
 import uuid
 import json
 import base64
+import re
 from werkzeug.utils import secure_filename
 import yt_dlp
 from config import Config
@@ -10,7 +11,7 @@ from config import Config
 def normalize_cookies(raw: str) -> str:
     """
     Normalizes cookies from any common format:
-    - Netscape format text
+    - Netscape format text (both tab-separated and space-separated if pasted in web forms)
     - JSON array (exported from browser extensions like Cookie-Editor)
     - Base64-encoded Netscape or JSON
     - Strings with literal \\n instead of real newlines
@@ -48,20 +49,57 @@ def normalize_cookies(raw: str) -> str:
         except Exception:
             pass
 
-    if not raw.startswith("# Netscape"):
-        raw = "# Netscape HTTP Cookie File\n" + raw
-    if not raw.endswith("\n"):
-        raw += "\n"
-    return raw
+    # Ensure tab separation even if Render web input form converted tabs to spaces
+    lines = raw.splitlines()
+    netscape_lines = ["# Netscape HTTP Cookie File"]
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "\t" in line:
+            parts = line.split("\t")
+            if len(parts) >= 7:
+                netscape_lines.append(line)
+                continue
+        # If space separated:
+        parts = re.split(r"\s+", line)
+        if len(parts) >= 7 and parts[1] in ("TRUE", "FALSE") and parts[3] in ("TRUE", "FALSE"):
+            netscape_lines.append("\t".join(parts[:6] + [" ".join(parts[6:])]))
+        elif len(parts) >= 2:
+            domain = parts[0] if parts[0].startswith(".") else f".{parts[0]}"
+            name = parts[1] if len(parts) >= 3 else parts[0]
+            val = parts[2] if len(parts) >= 3 else parts[1]
+            netscape_lines.append(f".youtube.com\tTRUE\t/\tTRUE\t2147483647\t{name}\t{val}")
+
+    return "\n".join(netscape_lines) + "\n"
 
 
 def get_cookie_file_path():
     """
-    Resolves YouTube cookies from:
-    1. YOUTUBE_COOKIES environment variable (raw Netscape, JSON, or base64)
-    2. Local cookies.txt in the backend directory
-    Writes normalized cookies to uploads/cookies.txt and returns the absolute path.
+    Resolves YouTube cookies across:
+    1. Render Secret Files (/etc/secrets/cookies.txt)
+    2. COOKIE_FILE or YOUTUBE_COOKIE_PATH environment variables
+    3. YOUTUBE_COOKIES environment variable (auto-normalized to Netscape format)
+    4. Local cookies.txt in project/backend directory
+    Returns the path to a valid cookies file, or None.
     """
+    # 1. Render Secret Files mount path
+    render_secret_paths = [
+        "/etc/secrets/cookies.txt",
+        "/etc/secrets/cookies",
+        "/etc/secrets/YOUTUBE_COOKIES"
+    ]
+    for sp in render_secret_paths:
+        if os.path.exists(sp) and os.path.getsize(sp) > 10:
+            print(f"[COOKIES] Loaded Render Secret File: {sp}")
+            return sp
+
+    # 2. Custom environment path
+    env_path = os.getenv("COOKIE_FILE") or os.getenv("YOUTUBE_COOKIE_PATH")
+    if env_path and os.path.exists(env_path) and os.path.getsize(env_path) > 10:
+        return env_path
+
+    # 3. YOUTUBE_COOKIES environment variable
     raw_cookies = os.getenv("YOUTUBE_COOKIES", "").strip()
     if raw_cookies:
         os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)
@@ -70,14 +108,21 @@ def get_cookie_file_path():
         try:
             with open(cookie_dest, "w", encoding="utf-8") as f:
                 f.write(normalized)
+            print(f"[COOKIES] Injected {len(normalized.splitlines())} cookie lines to {cookie_dest}")
             return cookie_dest
         except Exception as e:
             print(f"[COOKIES] Failed to write cookie file: {e}")
 
+    # 4. Local files in project
     backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    local_path = os.path.join(backend_dir, "cookies.txt")
-    if os.path.exists(local_path):
-        return local_path
+    candidates = [
+        os.path.join(backend_dir, "cookies.txt"),
+        os.path.join(os.path.dirname(backend_dir), "cookies.txt"),
+        os.path.join(Config.UPLOAD_FOLDER, "cookies.txt"),
+    ]
+    for candidate in candidates:
+        if os.path.exists(candidate) and os.path.getsize(candidate) > 10:
+            return candidate
 
     return None
 

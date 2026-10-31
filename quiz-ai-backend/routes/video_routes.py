@@ -112,11 +112,13 @@ def process_video():
                     if "blocked" in err_msg or "bot" in err_msg or "429" in err_msg or "sign in" in err_msg:
                         return jsonify({
                             "error": "YouTube is temporarily blocking automated access from cloud servers. Please upload the video file directly.",
-                            "code": "youtube_blocked"
+                            "code": "youtube_blocked",
+                            "details": str(dl_err)
                         }), 503
                     return jsonify({
                         "error": "Could not extract audio or captions for this YouTube video. Please upload the video file directly.",
-                        "code": "youtube_failed"
+                        "code": "youtube_failed",
+                        "details": str(dl_err)
                     }), 422
                 finally:
                     for p in (yt_video_path, yt_audio_path):

@@ -122,9 +122,30 @@ def get_ytdlp_transcript(url: str):
             if not chosen_url:
                 return None, title
 
-            req = urllib.request.Request(chosen_url, headers={"User-Agent": "Mozilla/5.0"})
-            with urllib.request.urlopen(req, timeout=15) as resp:
-                data = resp.read().decode("utf-8")
+            import http.cookiejar
+            import requests
+
+            sess = requests.Session()
+            if cookie_file and os.path.exists(cookie_file):
+                try:
+                    cj = http.cookiejar.MozillaCookieJar(cookie_file)
+                    cj.load(ignore_discard=True, ignore_expires=True)
+                    sess.cookies = cj
+                except Exception:
+                    pass
+
+            sess.headers.update({
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Referer": "https://www.youtube.com/",
+            })
+
+            resp = sess.get(chosen_url, timeout=15)
+            if resp.status_code != 200 or not resp.text:
+                print(f"[YT-DLP] Subtitle fetch returned status {resp.status_code}")
+                return None, title
+
+            data = resp.text
 
             # Try parsing json3 format
             try:
