@@ -91,29 +91,33 @@ def process_video():
                     "cached": True
                 })
 
-            # Fetch captions directly
+            # Fetch captions directly (tries youtube-transcript-api and yt-dlp subtitles)
             transcript_text = None
             title = "YouTube Video"
             try:
                 transcript_text, title = get_youtube_transcript(canonical_url)
-            except YouTubeBlocked:
-                return jsonify({
-                    "error": "YouTube is temporarily blocking automated access. Please upload the video file instead.",
-                    "code": "youtube_blocked"
-                }), 503
-            except NoCaptions:
-                if os.getenv("ENABLE_YTDLP_FALLBACK") != "true":
-                    return jsonify({
-                        "error": "This video has no captions. Please upload the file.",
-                        "code": "no_captions"
-                    }), 422
+            except Exception as caption_err:
+                print(f"[PROCESS] Direct caption extraction failed: {caption_err}. Falling back to audio download + Whisper...")
 
-                # Fallback to yt-dlp + Whisper (if explicitly enabled)
+            # Fallback: If direct captions could not be fetched, download audio and transcribe with Whisper
+            if not transcript_text:
                 yt_video_path, yt_audio_path = None, None
                 try:
                     yt_video_path, title = download_youtube_video(canonical_url)
                     yt_audio_path = extract_audio(yt_video_path)
                     transcript_text = transcribe_audio(yt_audio_path)
+                except Exception as dl_err:
+                    print(f"[PROCESS] yt-dlp fallback download/transcription failed: {dl_err}")
+                    err_msg = str(dl_err).lower()
+                    if "blocked" in err_msg or "bot" in err_msg or "429" in err_msg or "sign in" in err_msg:
+                        return jsonify({
+                            "error": "YouTube is temporarily blocking automated access from cloud servers. Please upload the video file directly.",
+                            "code": "youtube_blocked"
+                        }), 503
+                    return jsonify({
+                        "error": "Could not extract audio or captions for this YouTube video. Please upload the video file directly.",
+                        "code": "youtube_failed"
+                    }), 422
                 finally:
                     for p in (yt_video_path, yt_audio_path):
                         if p and os.path.exists(p):
@@ -121,6 +125,12 @@ def process_video():
                                 os.remove(p)
                             except Exception:
                                 pass
+
+            if not transcript_text or not transcript_text.strip():
+                return jsonify({
+                    "error": "Could not extract speech from this video. Please upload the video file directly.",
+                    "code": "empty_transcript"
+                }), 422
 
             video_id = insert_video("youtube", canonical_url, title, user_id=user_id)
             insert_transcript(video_id, transcript_text)
