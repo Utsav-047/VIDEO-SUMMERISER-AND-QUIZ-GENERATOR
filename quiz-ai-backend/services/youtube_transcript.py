@@ -116,7 +116,7 @@ def get_ytdlp_transcript(url: str):
         "skip_download": True,
         "writesubtitles": True,
         "writeautomaticsub": True,
-        "subtitleslangs": ["en", "en-US", "en-GB", "en-IN", ".*-orig"],
+        "subtitleslangs": ["en", "en-US", "en-GB", "en-IN", "en-orig", ".*-orig"],
         "subtitlesformat": "vtt/srt/best",
         "outtmpl": outtmpl,
         "quiet": True,
@@ -131,46 +131,58 @@ def get_ytdlp_transcript(url: str):
             }
         }
     }
-    if cookie_file and os.path.exists(cookie_file):
-        ydl_opts["cookiefile"] = cookie_file
+    def _try_ytdlp(use_cookies: bool):
+        opts = dict(ydl_opts)
+        if use_cookies and cookie_file and os.path.exists(cookie_file):
+            opts["cookiefile"] = cookie_file
 
-    title = "YouTube Video"
-    try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=True)
-            if info and info.get("title"):
-                title = info.get("title")
-            elif not title or title == "YouTube Video":
-                title = _get_video_title(vid)
+        sub_text, video_title = None, _get_video_title(vid)
+        try:
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                info = ydl.extract_info(url, download=False)
+                if info and info.get("title"):
+                    video_title = info.get("title")
+                ydl.download([url])
 
-        # Check for downloaded subtitle files
-        matches = glob.glob(os.path.join(temp_dir, f"{temp_prefix}*"))
-        if matches:
-            chosen_file = None
-            for m in matches:
-                if ".en." in m or m.endswith(".en.vtt"):
-                    chosen_file = m
-                    break
-            if not chosen_file:
-                chosen_file = matches[0]
+            matches = glob.glob(os.path.join(temp_dir, f"{temp_prefix}*"))
+            if matches:
+                chosen_file = None
+                for m in matches:
+                    if ".en." in m or m.endswith(".en.vtt") or "en-orig" in m:
+                        chosen_file = m
+                        break
+                if not chosen_file:
+                    chosen_file = matches[0]
 
-            with open(chosen_file, "r", encoding="utf-8", errors="ignore") as f:
-                content = f.read()
+                with open(chosen_file, "r", encoding="utf-8", errors="ignore") as f:
+                    content = f.read()
 
-            text = clean_vtt(content)
-            if text and len(text) > 30:
-                print(f"[YT-DLP] Downloaded and cleaned {len(text)} chars of subtitles from {chosen_file}")
-                return text, title
-    except Exception as e:
-        print(f"[YT-DLP] Subtitle extraction attempt failed: {e}")
-    finally:
-        for m in glob.glob(os.path.join(temp_dir, f"{temp_prefix}*")):
-            try:
-                os.remove(m)
-            except Exception:
-                pass
+                cleaned = clean_vtt(content)
+                if cleaned and len(cleaned) > 30:
+                    sub_text = cleaned
+        except Exception as e:
+            print(f"[YT-DLP] Subtitle attempt (use_cookies={use_cookies}) error: {e}")
+        finally:
+            for m in glob.glob(os.path.join(temp_dir, f"{temp_prefix}*")):
+                try:
+                    os.remove(m)
+                except Exception:
+                    pass
 
-    return None, title
+        return sub_text, video_title
+
+    # Attempt 1: with cookies if available
+    res_text, res_title = _try_ytdlp(use_cookies=True)
+    if res_text:
+        return res_text, res_title
+
+    # Attempt 2: without cookies (anonymous mobile client fallback)
+    if cookie_file:
+        res_text, res_title = _try_ytdlp(use_cookies=False)
+        if res_text:
+            return res_text, res_title
+
+    return None, _get_video_title(vid)
 
 
 def get_youtube_transcript(url: str):
