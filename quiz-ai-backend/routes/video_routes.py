@@ -206,7 +206,7 @@ def process_video():
                 except Exception as dl_err:
                     print(f"[PROCESS] yt-dlp fallback download/transcription failed: {dl_err}")
                     err_msg = str(dl_err).lower()
-                    if "blocked" in err_msg or "bot" in err_msg or "429" in err_msg or "sign in" in err_msg:
+                    if any(k in err_msg for k in ("blocked", "bot", "429", "sign in", "403", "forbidden")):
                         return jsonify({
                             "error": "YouTube is temporarily blocking automated access from cloud servers. Please upload the video file directly.",
                             "code": "youtube_blocked",

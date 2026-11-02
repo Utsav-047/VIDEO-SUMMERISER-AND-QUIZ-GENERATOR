@@ -40,13 +40,20 @@ def _client():
         except Exception as ce:
             print(f"[YT] Could not load cookie jar: {ce}")
 
-    if proxy_config and http_session:
+    if not http_session:
+        import requests
+        http_session = requests.Session()
+
+    http_session.headers.update({
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept": "*/*",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Referer": "https://www.youtube.com/",
+    })
+
+    if proxy_config:
         return YouTubeTranscriptApi(proxy_config=proxy_config, http_client=http_session)
-    elif proxy_config:
-        return YouTubeTranscriptApi(proxy_config=proxy_config)
-    elif http_session:
-        return YouTubeTranscriptApi(http_client=http_session)
-    return YouTubeTranscriptApi()
+    return YouTubeTranscriptApi(http_client=http_session)
 
 
 def _get_video_title(video_id: str) -> str:
@@ -109,13 +116,20 @@ def get_ytdlp_transcript(url: str):
         "skip_download": True,
         "writesubtitles": True,
         "writeautomaticsub": True,
-        "subtitleslangs": ["en.*", "en", ".*-orig", "hi.*", "hi"],
+        "subtitleslangs": ["en", "en-US", "en-GB", "en-IN", ".*-orig"],
         "subtitlesformat": "vtt/srt/best",
         "outtmpl": outtmpl,
         "quiet": True,
         "no_warnings": True,
+        "ignoreerrors": True,
         "socket_timeout": 30,
         "retries": 3,
+        "nocheckcertificate": True,
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["android", "web"]
+            }
+        }
     }
     if cookie_file and os.path.exists(cookie_file):
         ydl_opts["cookiefile"] = cookie_file
@@ -124,12 +138,14 @@ def get_ytdlp_transcript(url: str):
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
-            title = info.get("title") or _get_video_title(vid)
+            if info and info.get("title"):
+                title = info.get("title")
+            elif not title or title == "YouTube Video":
+                title = _get_video_title(vid)
 
         # Check for downloaded subtitle files
         matches = glob.glob(os.path.join(temp_dir, f"{temp_prefix}*"))
         if matches:
-            # Prefer English subtitle file
             chosen_file = None
             for m in matches:
                 if ".en." in m or m.endswith(".en.vtt"):
@@ -145,85 +161,16 @@ def get_ytdlp_transcript(url: str):
             if text and len(text) > 30:
                 print(f"[YT-DLP] Downloaded and cleaned {len(text)} chars of subtitles from {chosen_file}")
                 return text, title
-
-        # Fallback: check metadata if file was not downloaded
-        sub_dict = info.get("subtitles") or {}
-        if not sub_dict:
-            sub_dict = info.get("automatic_captions") or {}
-
-        chosen_formats = None
-        for lang, formats in sub_dict.items():
-            if lang.startswith("en"):
-                chosen_formats = formats
-                break
-        if not chosen_formats and sub_dict:
-            chosen_formats = list(sub_dict.values())[0]
-
-        if not chosen_formats:
-            return None, title
-
-        chosen_url = None
-        for fmt in chosen_formats:
-            if fmt.get("ext") == "json3":
-                chosen_url = fmt.get("url")
-                break
-        if not chosen_url:
-            for fmt in chosen_formats:
-                chosen_url = fmt.get("url")
-                break
-
-        if not chosen_url:
-            return None, title
-
-        import http.cookiejar
-        import requests
-
-        sess = requests.Session()
-        if cookie_file and os.path.exists(cookie_file):
-            try:
-                cj = http.cookiejar.MozillaCookieJar(cookie_file)
-                cj.load(ignore_discard=True, ignore_expires=True)
-                sess.cookies = cj
-            except Exception:
-                pass
-
-        sess.headers.update({
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "Accept-Language": "en-US,en;q=0.9",
-            "Referer": "https://www.youtube.com/",
-        })
-
-        resp = sess.get(chosen_url, timeout=15)
-        if resp.status_code == 200 and resp.text:
-            data = resp.text
-            try:
-                parsed = json.loads(data)
-                parts = []
-                for ev in parsed.get("events", []):
-                    for s in ev.get("segs", []):
-                        t = (s.get("utf8") or "").strip()
-                        if t and t != "\n":
-                            parts.append(t)
-                text = " ".join(parts).strip()
-                if text:
-                    return text, title
-            except Exception:
-                pass
-
-            cleaned_text = clean_vtt(data)
-            if cleaned_text:
-                return cleaned_text, title
-
-        return None, title
     except Exception as e:
-        print(f"[YT-DLP] Subtitle extraction error: {e}")
-        return None, _get_video_title(vid)
+        print(f"[YT-DLP] Subtitle extraction attempt failed: {e}")
     finally:
         for m in glob.glob(os.path.join(temp_dir, f"{temp_prefix}*")):
             try:
                 os.remove(m)
             except Exception:
                 pass
+
+    return None, title
 
 
 def get_youtube_transcript(url: str):

@@ -49,6 +49,20 @@ def normalize_cookies(raw: str) -> str:
         except Exception:
             pass
 
+    # Header format: "name=val; name2=val2" (from browser request headers)
+    if ";" in raw and "=" in raw and "\t" not in raw and not any(line.startswith("#") for line in raw.splitlines()):
+        lines = ["# Netscape HTTP Cookie File"]
+        for pair in raw.split(";"):
+            pair = pair.strip()
+            if not pair or "=" not in pair:
+                continue
+            k, v = pair.split("=", 1)
+            k, v = k.strip(), v.strip()
+            if k:
+                lines.append(f".youtube.com\tTRUE\t/\tTRUE\t2147483647\t{k}\t{v}")
+        if len(lines) > 1:
+            return "\n".join(lines) + "\n"
+
     # Ensure tab separation even if Render web input form converted tabs to spaces
     lines = raw.splitlines()
     netscape_lines = ["# Netscape HTTP Cookie File"]
@@ -138,12 +152,13 @@ def download_youtube_video(youtube_url):
     output_path = os.path.join(Config.UPLOAD_FOLDER, f"{file_id}.%(ext)s")
 
     ydl_opts = {
-        "format": "bestaudio/ba/b/best",
+        "format": "ba/ba*/bestaudio/best",
         "outtmpl": output_path,
         "quiet": True,
         "noplaylist": True,
         "socket_timeout": 60,
         "retries": 5,
+        "nocheckcertificate": True,
         "extractor_args": {
             "youtube": {
                 "player_client": ["android", "web"]
